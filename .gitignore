@@ -362,5 +362,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Visual Paradigm temporary and backup files
-*.vpp.lck
-*.vpp.bak_000f
+*.vpp.lck*
+*.vpp.bak*
