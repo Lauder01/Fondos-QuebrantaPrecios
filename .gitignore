@@ -360,3 +360,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Visual Paradigm temporary and backup files
+*.vpp.lck
+*.vpp.bak_000f
