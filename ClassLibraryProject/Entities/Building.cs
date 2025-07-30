@@ -8,11 +8,12 @@ namespace ClassLibraryProject.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public string? Name { get; set; } = "Empty";
-        public District BuildingDistrict { get; set; } = new District();
-        public Address BuildingAdress { get; set; } = new Address();
-        public Company? BuildingCompany { get; set; } = new Company();
+        public string Doorway { get; set; } = "0";
+        public District? BuildingDistrict { get; set; } = null;
+        public Address? BuildingAdress { get; set; } = null;
+        public Company? BuildingCompany { get; set; } = null;
         public double? Price { get; set; } = 0.0;
-        public Status Status { get; set; } = new Status();
+        public Status? Status { get; set; } = null;
         public EnergyCertificateEnum? BuildingEnergyCertificate { get; set; } = EnergyCertificateEnum.U;
         public List<Floor> FloorCount { get; set; } = new List<Floor>();
         public int? YearBuilt { get; set; } = 1;
