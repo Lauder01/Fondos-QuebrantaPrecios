@@ -1,4 +1,4 @@
-﻿namespace ClassLibraryProject.Entities
+﻿namespace FQP.Entities
 {
     public class Status
     {

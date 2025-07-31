@@ -1,4 +1,4 @@
-﻿namespace ClassLibraryProject.Enums
+﻿namespace FQP.Enums
 {
     public enum EnergyCertificateEnum
     {

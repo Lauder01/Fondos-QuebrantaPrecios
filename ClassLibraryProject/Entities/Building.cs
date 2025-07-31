@@ -1,6 +1,6 @@
 using ClassLibraryProject.Enums;
 
-namespace ClassLibraryProject.Entities
+namespace FQP.Entities
 {
     public class Building
     {
