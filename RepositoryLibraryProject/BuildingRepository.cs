@@ -1,6 +1,6 @@
-﻿using F.Entities;
+﻿
 using FQP.Entities;
-using RepositoryLibraryProject.Interfaces;
+using FQP.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

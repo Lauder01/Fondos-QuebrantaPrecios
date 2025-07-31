@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ClassLibraryProject.Entities;
-using ClassLibraryProject.Enums;
+using FQP.Enums;
+using FQP.Entities;
 using System.Collections.Generic;
 
 namespace WebAPI.Controllers

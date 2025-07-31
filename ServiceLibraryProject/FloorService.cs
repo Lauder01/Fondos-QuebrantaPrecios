@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FQP.Entities;
-using FQP.Repository.Interfaces;
+using FQP.Service.Interfaces;
 
-namespace FQP.Repository
+namespace FQP.Service
 {
-    public class StatusRepository : IRepository<Status>
+    public class FloorService : IService<Floor>
     {
-        public void Add(Status entity)
+        public void Add(Floor entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace FQP.Repository
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Status> GetAll()
+        public IEnumerable<Floor> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Status? GetById(Guid id)
+        public Floor? GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Status entity)
+        public void Update(Floor entity)
         {
             throw new NotImplementedException();
         }

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FQP.Service.Interfaces;
 using FQP.Entities;
-using FQP.Repository.Interfaces;
 
-namespace FQP.Repository
+namespace FQP.Service
 {
-    public class StatusRepository : IRepository<Status>
+    public class PurchaseService : IService<Purchase>
     {
-        public void Add(Status entity)
+        public void Add(Purchase entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace FQP.Repository
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Status> GetAll()
+        public IEnumerable<Purchase> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Status? GetById(Guid id)
+        public Purchase? GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Status entity)
+        public void Update(Purchase entity)
         {
             throw new NotImplementedException();
         }

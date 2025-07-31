@@ -1,4 +1,4 @@
-﻿using ClassLibraryProject.Enums;
+﻿using FQP.Enums;
 
 namespace FQP.Entities
 {

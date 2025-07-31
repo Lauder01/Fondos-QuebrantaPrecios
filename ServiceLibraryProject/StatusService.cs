@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FQP.Entities;
-using FQP.Repository.Interfaces;
+using FQP.Service.Interfaces;
 
-namespace FQP.Repository
+namespace FQP.Service
 {
-    public class StatusRepository : IRepository<Status>
+    public class StatusService : IService<Status>
     {
         public void Add(Status entity)
         {

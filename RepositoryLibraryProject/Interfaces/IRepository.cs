@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RepositoryLibraryProject.Interfaces
+namespace FQP.Repository.Interfaces
 {
     public interface IRepository<T>
     {

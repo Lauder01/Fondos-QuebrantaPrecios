@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FQP.Entities;
-using FQP.Repository.Interfaces;
+using FQP.Enums;
+using FQP.Service.Interfaces;
 
-namespace FQP.Repository
+namespace FQP.Service
 {
-    public class StatusRepository : IRepository<Status>
+    public class StreetTypeEnumService : IService<StreetTypeEnum>
     {
-        public void Add(Status entity)
+        public void Add(StreetTypeEnum entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace FQP.Repository
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Status> GetAll()
+        public IEnumerable<StreetTypeEnum> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Status? GetById(Guid id)
+        public StreetTypeEnum GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Status entity)
+        public void Update(StreetTypeEnum entity)
         {
             throw new NotImplementedException();
         }

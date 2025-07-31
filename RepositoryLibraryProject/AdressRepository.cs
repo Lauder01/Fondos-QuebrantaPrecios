@@ -1,10 +1,11 @@
-﻿using RepositoryLibraryProject.Interfaces;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FQP.Entities
+using FQP.Entities;
+using FQP.Repository.Interfaces;
 
 namespace FQP.Repository
 {
