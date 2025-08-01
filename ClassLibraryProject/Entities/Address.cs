@@ -1,4 +1,6 @@
-﻿namespace FQP.Entities
+﻿using System;
+
+namespace FQP.Entities
 {
     public class Address
     {

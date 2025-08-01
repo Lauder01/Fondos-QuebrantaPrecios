@@ -1,3 +1,4 @@
+using System;
 using FQP.Enums;
 
 namespace FQP.Entities
@@ -11,6 +12,7 @@ namespace FQP.Entities
         public string Doorway { get; set; } = "0";
         public District? BuildingDistrict { get; set; } = null;
         public Address? BuildingAdress { get; set; } = null;
+        public string? Code { get; set; }
         public Company? BuildingCompany { get; set; } = null;
         public double? Price { get; set; } = 0.0;
         public Status? Status { get; set; } = null;
@@ -22,5 +24,13 @@ namespace FQP.Entities
         public bool IsCompanyBuilding { get; set; } = false;
 
         public Building() { }
+
+        public string BuildBuildingCode()
+        {
+            var zipCode = BuildingAdress?.AddressZipCode ?? "ZZZ";
+            var streetCode = BuildingAdress?.AddressStreet?.Code ?? "XXX";
+            var doorway = Doorway ?? "0";
+            return $"{zipCode}-{streetCode}-{doorway}";
+        }
     }
 }

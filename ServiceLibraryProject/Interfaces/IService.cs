@@ -1,11 +1,14 @@
-﻿namespace FQP.Service.Interfaces;
+﻿using System;
+using System.Collections.Generic;
 
-public interface IService<T> 
+namespace FQP.Service.Interfaces
 {
-    IEnumerable<T> GetAll();
-    T? GetById(Guid id);
-    void Add(T entity);
-    void Update(T entity);
-    void Delete(Guid id);
-
+    public interface IService<T>
+    {
+        IEnumerable<T> GetAll();
+        T? GetById(Guid id);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(Guid id);
+    }
 }
