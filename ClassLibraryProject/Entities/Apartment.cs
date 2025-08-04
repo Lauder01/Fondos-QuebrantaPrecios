@@ -13,5 +13,12 @@ namespace FQP.Entities
         public Address? ApartmentAddress { get; set; } = null;
 
         public Apartment(){}
+
+		public string BuildApartmentCode()
+		{
+			var floorCode = ApartmentFloor?.Code ?? "00";
+			var doorCode = Door ?? "0";
+			return $"{floorCode}-{doorCode}";
+        }
 	}
 }
