@@ -20,15 +20,20 @@ namespace FQP.Service
             _streetRepository = streetRepository;
         }
 
-        public void Add(Street entity)
+        public bool Add(Street entity)
         {
-            // Ejemplo: Validar unicidad antes de agregar
-            var uniqueCode = GetUniqueStreetCode(entity.Name, entity.AddressStreetType);
-            if (uniqueCode == null)
+            var uniqueCode = GetUniqueStreetCode(entity.Name, entity.AddressStreetType) ??
                 throw new InvalidOperationException("No se puede generar un código único para la calle.");
             entity.Code = uniqueCode;
-            // Aquí iría la lógica para guardar la entidad
-            throw new NotImplementedException();
+            try
+            {
+                _streetRepository.Add(entity);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Delete(Guid id)
@@ -69,6 +74,11 @@ namespace FQP.Service
                 else
                     return null;
             } while (true);
+        }
+
+        void IService<Street>.Add(Street entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

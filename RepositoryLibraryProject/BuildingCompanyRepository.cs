@@ -8,9 +8,9 @@ using FQP.Repository.Interfaces;
 
 namespace FQP.Repository
 {
-    public class CompanyRepository : IRepository<Company>
+    public class BuildingCompanyRepository : IRepository<BuildingCompany>
     {
-        public void Add(Company entity)
+        public void Add(BuildingCompany entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace FQP.Repository
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Company> GetAll()
+        public IEnumerable<BuildingCompany> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Company? GetById(Guid id)
+        public BuildingCompany? GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Company entity)
+        public void Update(BuildingCompany entity)
         {
             throw new NotImplementedException();
         }

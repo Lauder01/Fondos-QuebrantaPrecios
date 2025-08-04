@@ -8,9 +8,9 @@ using FQP.Service.Interfaces;
 
 namespace FQP.Service
 {
-    public class CompanyService : IService<Company>
+    public class BuildingCompanyService : IService<BuildingCompany>
     {
-        public void Add(Company entity)
+        public void Add(BuildingCompany entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace FQP.Service
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Company> GetAll()
+        public IEnumerable<BuildingCompany> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Company? GetById(Guid id)
+        public BuildingCompany? GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Company entity)
+        public void Update(BuildingCompany entity)
         {
             throw new NotImplementedException();
         }

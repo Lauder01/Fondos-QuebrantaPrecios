@@ -7,33 +7,23 @@ namespace FQP.Entities
 {
     public class Street
     {
+        // Remote
         public Guid Id { get; set; } = Guid.NewGuid();
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+
+        // Local
         public StreetTypeEnum AddressStreetType { get; set; } = StreetTypeEnum.Undefined;
 
         public Street() { }
 
-        public Street(string name, StreetTypeEnum streetType, string uniqueCode)
-        {
-            Id = Guid.NewGuid();
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
-            Name = name;
-            AddressStreetType = streetType;
-            Code = uniqueCode;
-        }
-
         public Street(string name, StreetTypeEnum streetType)
         {
-            Name = name;
+            Id = Guid.NewGuid();
+            Name = GetComposedName();
             AddressStreetType = streetType;
             Code = BuildStreetCode();
         }
-
-        public override string ToString() => GetComposedName();
 
         public string GetStreetTypeAcronym() => AddressStreetType switch
         {
