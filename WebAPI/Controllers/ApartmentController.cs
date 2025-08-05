@@ -36,13 +36,14 @@ namespace WebAPI.Controllers
                 Name = "Avenida de Navarra",
                 AddressStreetType = StreetTypeEnum.Avenida
             };
+            building.BuildingStreet = street;
             var apartment = new Apartment
             {
                 ApartmentFloor = floor,
                 ApartmentBuilding = building,
                 Door = "B"
             };
-            var apartmentAddress = new Address(building, apartment, street, true);
+            var apartmentAddress = new Address(building, apartment, true);
             apartment.ApartmentAddress = apartmentAddress;
 
             var apartments = new List<object>

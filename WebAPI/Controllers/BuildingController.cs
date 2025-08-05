@@ -24,14 +24,16 @@ namespace WebAPI.Controllers
                 Name = "Avenida de Navarra",
                 AddressStreetType = StreetTypeEnum.Avenida
             };
+
             var building = new Building
             {
                 Name = "Edificio Central",
                 BuildingDistrict = district,
+                BuildingStreet = street,
                 Doorway = "12A"
             };
-            var buildingAddress = new Address(building, null, street, false);
-            building.BuildingAdress = buildingAddress;
+
+            var buildingAddress = new Address(building, default!, false);
 
             var buildings = new List<object>
             {
@@ -41,7 +43,7 @@ namespace WebAPI.Controllers
                     building.Name,
                     building.Doorway,
                     District = new { district.Name, district.ZipCode, district.City, district.Country },
-                    Address = building.BuildingAdress.BuildingAddressToString()
+                    Address = buildingAddress.BuildingAddressToString()
                 }
             };
 
