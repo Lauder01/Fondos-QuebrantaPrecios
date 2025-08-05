@@ -21,6 +21,7 @@ namespace FQP.Entities
         // Local
         public Address? BuildingAdress { get; } = null;
         public Status? Status { get; } = null;
+        public bool HasLift { get; } = true;
         public List<Floor> FloorList { get; } = new List<Floor>();
 
         public Building() { }

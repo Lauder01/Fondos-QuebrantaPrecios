@@ -6,7 +6,7 @@
         public Guid Id { get; set; } = Guid.NewGuid();
         public Building? BuildingFloor { get; set; } = null;
         public string Code { get; set; } = string.Empty;
-        public int FloorNumber { get; set; } = -666;
+        public int FloorNumber { get; set; } = -12;
         public bool HasLift { get; set; } = false;
 
         // Local
