@@ -2,11 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using FQP.Entities;
 using FQP.Enums;
+using WebAPI.Data;
+using WebAPI.Dtos;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
     public class StatusController : Controller
     {
+        private readonly AppDbContext _context;
+        public StatusController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: StatusController
         public ActionResult Index()
         {
@@ -80,6 +89,37 @@ namespace WebAPI.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<StatusDto>> GetAll()
+        {
+            var statuses = _context.Statuses.Select(s => new StatusDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Description = s.Description
+            }).ToList();
+            return Ok(statuses);
+        }
+
+        [HttpPost]
+        public ActionResult<StatusDto> Create(CreateStatusDto dto)
+        {
+            var status = new Status
+            {
+                Name = dto.Name,
+                Description = dto.Description
+            };
+            _context.Statuses.Add(status);
+            _context.SaveChanges();
+            var result = new StatusDto
+            {
+                Id = status.Id,
+                Name = status.Name,
+                Description = status.Description
+            };
+            return CreatedAtAction(nameof(GetAll), new { id = status.Id }, result);
         }
     }
 }

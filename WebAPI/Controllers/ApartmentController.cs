@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using FQP.Enums;
+using WebAPI.Data;
+using WebAPI.Dtos;
 using FQP.Entities;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace WebAPI.Controllers
@@ -9,57 +11,50 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class ApartmentController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetApartments()
+        private readonly AppDbContext _context;
+        public ApartmentController(AppDbContext context)
         {
-            // Mock: create a sample list of apartments
-            var district = new District
+            _context = context;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<ApartmentDto>> GetAll()
+        {
+            var apartments = _context.Apartments.Select(a => new ApartmentDto
             {
-                Name = "Centro",
-                ZipCode = "31001",
-                City = "Pamplona",
-                Country = "Spain"
-            };
-            var building = new Building
-            {
-                Name = "Edificio Central",
-                BuildingDistrict = district,
-                Doorway = "12A"
-            };
-            var floor = new Floor
-            {
-                FloorNumber = 2,
-                BuildingFloor = building
-            };
-            var street = new Street
-            {
-                Name = "Avenida de Navarra",
-                AddressStreetType = StreetTypeEnum.Avenida
-            };
-            building.BuildingStreet = street;
+                Id = a.Id,
+                Code = a.Code,
+                Door = a.Door,
+                FloorId = a.ApartmentFloor != null ? a.ApartmentFloor.Id : Guid.Empty,
+                BuildingId = a.ApartmentBuilding != null ? a.ApartmentBuilding.Id : Guid.Empty
+            }).ToList();
+            return Ok(apartments);
+        }
+
+        [HttpPost]
+        public ActionResult<ApartmentDto> Create(CreateApartmentDto dto)
+        {
+            var floor = _context.Floors.Find(dto.FloorId);
+            var building = _context.Buildings.Find(dto.BuildingId);
+            if (floor == null || building == null) return BadRequest("Floor or Building not found");
             var apartment = new Apartment
             {
+                Code = dto.Code,
+                Door = dto.Door,
                 ApartmentFloor = floor,
-                ApartmentBuilding = building,
-                Door = "B"
+                ApartmentBuilding = building
             };
-            var apartmentAddress = new Address(building, apartment, true);
-            apartment.ApartmentAddress = apartmentAddress;
-
-            var apartments = new List<object>
+            _context.Apartments.Add(apartment);
+            _context.SaveChanges();
+            var result = new ApartmentDto
             {
-                new
-                {
-                    apartment.Id,
-                    apartment.Door,
-                    Floor = floor.FloorNumber,
-                    Building = new { building.Id, building.Name, building.Doorway },
-                    District = new { district.Name, district.ZipCode, district.City, district.Country },
-                    Address = apartment.ApartmentAddress.ApartmentAddressToString()
-                }
+                Id = apartment.Id,
+                Code = apartment.Code,
+                Door = apartment.Door,
+                FloorId = floor.Id,
+                BuildingId = building.Id
             };
-
-            return Ok(apartments);
+            return CreatedAtAction(nameof(GetAll), new { id = apartment.Id }, result);
         }
     }
 }

@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FQP.Entities;
 using FQP.Service.Interfaces;
+using FQP.Repository.Interfaces;
 
 namespace FQP.Service
 {
     public class StatusService : IService<Status>
     {
+        private readonly IRepository<Status> _statusRepository;
+
+        public StatusService(IRepository<Status> statusRepository)
+        {
+            _statusRepository = statusRepository;
+        }
+
         public void Add(Status entity)
         {
-            throw new NotImplementedException();
+            // Validación: Nombre requerido y longitud
+            if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length > 48)
+                throw new ArgumentException("El nombre del estado es obligatorio y debe tener como máximo 48 caracteres.");
+            // Validación: Unicidad de nombre
+            if (_statusRepository.GetAll().Any(s => s.Name == entity.Name))
+                throw new InvalidOperationException("Ya existe un estado con ese nombre.");
+            _statusRepository.Add(entity);
         }
 
         public void Delete(Guid id)

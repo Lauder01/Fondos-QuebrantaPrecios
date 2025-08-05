@@ -1,85 +1,53 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebAPI.Data;
+using WebAPI.Dtos;
 using FQP.Entities;
-using FQP.Enums;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
-    public class BuildingCompanyController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BuildingCompanyController : ControllerBase
     {
-        // GET: BuildingCompanyController
-        public ActionResult Index()
+        private readonly AppDbContext _context;
+        public BuildingCompanyController(AppDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        // GET: BuildingCompanyController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public ActionResult<IEnumerable<BuildingCompanyDto>> GetAll()
         {
-            return View();
+            var companies = _context.BuildingCompanies.Select(c => new BuildingCompanyDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Cif = c.Cif,
+                Website = c.Website
+            }).ToList();
+            return Ok(companies);
         }
 
-        // GET: BuildingCompanyController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: BuildingCompanyController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult<BuildingCompanyDto> Create(CreateBuildingCompanyDto dto)
         {
-            try
+            var company = new BuildingCompany
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+                Name = dto.Name,
+                Cif = dto.Cif,
+                Website = dto.Website
+            };
+            _context.BuildingCompanies.Add(company);
+            _context.SaveChanges();
+            var result = new BuildingCompanyDto
             {
-                return View();
-            }
-        }
-
-        // GET: BuildingCompanyController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: BuildingCompanyController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BuildingCompanyController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: BuildingCompanyController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                Id = company.Id,
+                Name = company.Name,
+                Cif = company.Cif,
+                Website = company.Website
+            };
+            return CreatedAtAction(nameof(GetAll), new { id = company.Id }, result);
         }
     }
 }

@@ -22,17 +22,26 @@ namespace FQP.Service
 
         public bool Add(Street entity)
         {
+            // Validación: Nombre requerido y longitud
+            if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
+                throw new ArgumentException("El nombre de la calle es obligatorio y debe tener entre 2 y 255 caracteres.");
+            // Validación: Unicidad de nombre
+            if (_streetRepository.GetAll().Any(s => s.Name == entity.Name))
+                throw new InvalidOperationException("Ya existe una calle con ese nombre.");
+            // Validación: Código único
             var uniqueCode = GetUniqueStreetCode(entity.Name, entity.AddressStreetType) ??
                 throw new InvalidOperationException("No se puede generar un código único para la calle.");
+            if (_streetRepository.GetAll().Any(s => s.Code == uniqueCode))
+                throw new InvalidOperationException("Ya existe una calle con ese código.");
             entity.Code = uniqueCode;
             try
             {
                 _streetRepository.Add(entity);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new InvalidOperationException("Error al agregar la calle: " + ex.Message);
             }
         }
 
