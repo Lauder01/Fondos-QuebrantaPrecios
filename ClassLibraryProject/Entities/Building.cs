@@ -10,6 +10,7 @@ namespace FQP.Entities
         public Street BuildingStreet { get; set; } = default!;
         public District BuildingDistrict { get; set; } = default!;
         public BuildingCompany BuildingCompany { get; set; } = default!;public string Code { get; set; } = string.Empty;
+        public Status BuildingStatus { get; } = default!;
         public string Doorway { get; set; } = "0";
         public string? Name { get; set; } = "Empty";
         public string? Description { get; set; } = "Empty";
@@ -20,7 +21,6 @@ namespace FQP.Entities
 
         // Local
         public Address? BuildingAdress { get; } = null;
-        public Status? Status { get; } = null;
         public bool HasLift { get; } = true;
         public List<Floor> FloorList { get; } = new List<Floor>();
 
