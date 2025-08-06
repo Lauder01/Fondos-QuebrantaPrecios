@@ -10,6 +10,8 @@ namespace StreetGeneratorConsoleProject
 {
     public class Program
     {
+
+        public const string CONSTRING = "Server=serverdevdemo.database.windows.net,1433;Database= master;User Id= admsql;Password= P@ssw0rd;";
         static void Main(string[] args)
         {
             Console.WriteLine("=== Gestor de Calles ===\n");
@@ -52,7 +54,7 @@ namespace StreetGeneratorConsoleProject
 
         static string GetConnectionString()
         {
-            return "<TU_CADENA_DE_CONEXION_AQUI>";
+            return CONSTRING;
         }
 
         static void InsertStreet(AppDbContext context)
