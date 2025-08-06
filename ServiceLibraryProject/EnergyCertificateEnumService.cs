@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FQP.Enums;
-using FQP.Service.Interfaces;
+using ClassLibraryProject.Enums;
+using ServiceLibraryProject.Interfaces;
 
-namespace FQP.Service
+namespace ServiceLibraryProject
 {
     public class EnergyCertificateEnumService : IService<EnergyCertificateEnum>
     {

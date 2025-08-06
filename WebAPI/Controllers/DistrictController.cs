@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FQP.Enums;
-using FQP.Entities;
+using ClassLibraryProject.Enums;
+using ClassLibraryProject.Entities;
 using WebAPI.Data;
 using WebAPI.Dtos;
 using System.Linq;

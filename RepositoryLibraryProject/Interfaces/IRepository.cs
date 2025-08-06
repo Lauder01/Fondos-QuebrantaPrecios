@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FQP.Repository.Interfaces
+namespace RepositoryLibraryProject.Interfaces
 {
     public interface IRepository<T>
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FQP.Entities;
-using FQP.Enums;
+using ClassLibraryProject.Entities;
+using ClassLibraryProject.Enums;
 
 namespace WebAPI.Controllers
 {

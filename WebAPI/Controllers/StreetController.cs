@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FQP.Entities;
-using FQP.Enums;
+using ClassLibraryProject.Entities;
+using ClassLibraryProject.Enums;
 using WebAPI.Data;
 using WebAPI.Dtos;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WebAPI.Controllers
 {
@@ -98,8 +99,7 @@ namespace WebAPI.Controllers
             {
                 Id = s.Id,
                 Name = s.Name,
-                Code = s.Code,
-                AddressStreetType = s.AddressStreetType
+                Code = s.Code
             }).ToList();
             return Ok(streets);
         }
@@ -107,20 +107,14 @@ namespace WebAPI.Controllers
         [HttpPost]
         public ActionResult<StreetDto> Create(CreateStreetDto dto)
         {
-            var street = new Street
-            {
-                Name = dto.Name,
-                AddressStreetType = dto.AddressStreetType,
-                Code = string.Empty // O usa lógica para generar el código
-            };
+            var street = new Street(dto.Name, dto.StreetType);
             _context.Streets.Add(street);
             _context.SaveChanges();
             var result = new StreetDto
             {
                 Id = street.Id,
                 Name = street.Name,
-                Code = street.Code,
-                AddressStreetType = street.AddressStreetType
+                Code = street.Code
             };
             return CreatedAtAction(nameof(GetAll), new { id = street.Id }, result);
         }

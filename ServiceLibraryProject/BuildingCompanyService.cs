@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FQP.Entities;
-using FQP.Service.Interfaces;
-using FQP.Repository.Interfaces;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
+using ServiceLibraryProject.Interfaces;
 
-namespace FQP.Service
+namespace ServiceLibraryProject
 {
     public class BuildingCompanyService : IService<BuildingCompany>
     {

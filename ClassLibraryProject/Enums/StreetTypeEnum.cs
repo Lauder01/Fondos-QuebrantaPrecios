@@ -1,4 +1,6 @@
-﻿namespace FQP.Enums
+﻿using System;
+
+namespace ClassLibraryProject.Enums
 {
     public enum StreetTypeEnum
     {

@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using FQP.Entities;
+using ClassLibraryProject.Entities;
 
 namespace WebAPI.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<BuildingCompany> BuildingCompanies { get; set; }
         public DbSet<District> Districts { get; set; }

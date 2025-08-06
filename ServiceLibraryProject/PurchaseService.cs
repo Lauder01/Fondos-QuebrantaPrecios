@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FQP.Service.Interfaces;
-using FQP.Entities;
+using ClassLibraryProject.Entities;
+using ServiceLibraryProject.Interfaces;
 
-namespace FQP.Service
+namespace ServiceLibraryProject
 {
     public class PurchaseService : IService<Purchase>
     {

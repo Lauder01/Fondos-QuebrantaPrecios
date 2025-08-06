@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FQP.Entities
+namespace ClassLibraryProject.Entities
 {
     public class Address
     {

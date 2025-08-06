@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FQP.Entities;
-using FQP.Service.Interfaces;
-using FQP.Repository.Interfaces;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
+using ServiceLibraryProject.Interfaces;
 
-namespace FQP.Service
+namespace ServiceLibraryProject
 {
     public class BuildingService : IService<Building>
     {
@@ -55,7 +55,8 @@ namespace FQP.Service
                 throw new ArgumentException("La calle asociada no existe.");
             if (entity.BuildingCompany == null || !_companyRepository.GetAll().Any(c => c.Id == entity.BuildingCompany.Id))
                 throw new ArgumentException("La empresa constructora asociada no existe.");
-            if (entity.Status == null || !_statusRepository.GetAll().Any(s => s.Id == entity.Status.Id))
+            // Reemplaza la validación de Status por BuildingStatus, que es la propiedad correcta según la definición de Building.
+            if (entity.BuildingStatus == null || !_statusRepository.GetAll().Any(s => s.Id == entity.BuildingStatus.Id))
                 throw new ArgumentException("El estado asociado no existe.");
             _buildingRepository.Add(entity);
         }

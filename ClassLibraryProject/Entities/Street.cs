@@ -1,53 +1,38 @@
-﻿using FQP.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClassLibraryProject.Enums;
+using ClassLibraryProject.Extensions;
 
-namespace FQP.Entities
+namespace ClassLibraryProject.Entities
 {
     public class Street
     {
-        // Remote
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
-        // Local
-        public StreetTypeEnum AddressStreetType { get; set; } = StreetTypeEnum.Undefined;
-
         public Street() { }
 
-        public Street(string name, StreetTypeEnum streetType)
+        public Street(string baseName, StreetTypeEnum streetType)
         {
             Id = Guid.NewGuid();
-            Name = GetComposedName();
-            AddressStreetType = streetType;
-            Code = BuildStreetCode();
+            Name = GetComposedName(baseName, streetType);
+            Code = BuildStreetCode(baseName, streetType);
         }
 
-        public string GetStreetTypeAcronym() => AddressStreetType switch
+        private static string GetComposedName(string name, StreetTypeEnum streetType)
         {
-            StreetTypeEnum.Calle => "C",
-            StreetTypeEnum.Avenida => "Avda",
-            StreetTypeEnum.Boulevard or StreetTypeEnum.Bulevar => "Blvr",
-            StreetTypeEnum.Carretera => "Ctra",
-            StreetTypeEnum.Paseo => "P",
-            StreetTypeEnum.Plaza => "Pza",
-            _ => string.Empty,
-        };
-
-        public string GetComposedName()
-        {
-            var acronym = GetStreetTypeAcronym();
+            var acronym = streetType.GetAcronym();
             return string.IsNullOrEmpty(acronym)
-                ? Name
-                : $"{acronym}{(acronym == "P" ? ".º" : ".")} {Name}";
+                ? name
+                : $"{acronym}{(acronym == "P" ? ".º" : ".")} {name}";
         }
 
-        public string BuildStreetCode()
+        private static string BuildStreetCode(string name, StreetTypeEnum streetType)
         {
-            var acronym = GetStreetTypeAcronym();
-            var initials = GetInitials(Name);
+            var acronym = streetType.GetAcronym();
+            var initials = GetInitials(name);
             return string.IsNullOrEmpty(acronym)
                 ? initials
                 : $"{acronym.ToUpper()}-{initials}";
@@ -59,7 +44,7 @@ namespace FQP.Entities
             return string.Join("-", words.Select((word, idx) =>
                 idx == words.Length - 1 && lastWordLength.HasValue && lastWordLength.Value <= word.Length
                     ? word[..lastWordLength.Value].ToUpper()
-                    : (word.Length >= 2 ? word[..2].ToUpper() : word.ToUpper())
+                    : word.Length >= 2 ? word[..2].ToUpper() : word.ToUpper()
             ));
         }
     }

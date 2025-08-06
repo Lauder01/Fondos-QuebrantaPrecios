@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using FQP.Entities;
-using FQP.Service.Interfaces;
+using ClassLibraryProject.Entities;
+using ServiceLibraryProject.Interfaces;
 
-namespace FQP.Service
+namespace ServiceLibraryProject
 {
     public class RequestService : IService<Request>
     {

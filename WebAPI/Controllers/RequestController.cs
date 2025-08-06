@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using FQP.Entities;
+using ClassLibraryProject.Entities;
 
 namespace WebAPI.Controllers
 {

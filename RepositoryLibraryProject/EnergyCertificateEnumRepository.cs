@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FQP.Enums;
-using FQP.Repository.Interfaces;
+using ClassLibraryProject.Enums;
+using RepositoryLibraryProject.Interfaces;
 
-namespace FQP.Repository
+namespace RepositoryLibraryProject
 {
     public class EnergyCertificateEnumRepository : IRepository<EnergyCertificateEnum>
     {

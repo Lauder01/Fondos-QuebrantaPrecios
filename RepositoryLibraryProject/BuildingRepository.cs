@@ -1,13 +1,13 @@
 ﻿
-using FQP.Entities;
-using FQP.Repository.Interfaces;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FQP.Repository
+namespace RepositoryLibraryProject
 {
     public class BuildingRepository : IRepository<Building>
     {

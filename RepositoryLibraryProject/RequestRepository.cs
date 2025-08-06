@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using FQP.Entities;
-using FQP.Repository.Interfaces;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
 
-namespace FQP.Repository
+namespace RepositoryLibraryProject
 {
     public class RequestRepository : IRepository<Request>
     {

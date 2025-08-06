@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Data;
 using WebAPI.Dtos;
-using FQP.Entities;
+using ClassLibraryProject.Entities;
 using System.Linq;
 using System.Collections.Generic;
 

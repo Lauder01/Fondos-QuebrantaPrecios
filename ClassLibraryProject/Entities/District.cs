@@ -1,4 +1,4 @@
-namespace FQP.Entities
+namespace ClassLibraryProject.Entities
 {
 	public class District
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FQP.Service.Interfaces
+namespace ServiceLibraryProject.Interfaces
 {
     public interface IService<T>
     {

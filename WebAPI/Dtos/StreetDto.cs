@@ -1,3 +1,4 @@
+using ClassLibraryProject.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Dtos
@@ -7,7 +8,6 @@ namespace WebAPI.Dtos
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
-        public FQP.Enums.StreetTypeEnum AddressStreetType { get; set; }
     }
     public class CreateStreetDto
     {
@@ -15,6 +15,6 @@ namespace WebAPI.Dtos
         [StringLength(255, MinimumLength = 2)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        public FQP.Enums.StreetTypeEnum AddressStreetType { get; set; }
+        public StreetTypeEnum StreetType { get; set; }
     }
 }

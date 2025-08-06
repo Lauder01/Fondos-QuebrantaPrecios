@@ -1,7 +1,6 @@
 using System;
-using FQP.Entities;
 
-namespace FQP.Entities
+namespace ClassLibraryProject.Entities
 {
     public class Request
     {

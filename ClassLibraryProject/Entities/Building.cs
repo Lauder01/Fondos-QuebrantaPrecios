@@ -1,7 +1,7 @@
 using System;
-using FQP.Enums;
+using ClassLibraryProject.Enums;
 
-namespace FQP.Entities
+namespace ClassLibraryProject.Entities
 {
     public class Building
     {
