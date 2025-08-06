@@ -7,10 +7,11 @@
         public string Name { get; set; } = string.Empty;
         public string Cif { get; set; } = string.Empty;
         public string? Website { get; set; } = string.Empty;
+        public Guid? CompanyAddressId { get; set; }
 
         // Remote
-        public Address? CompanyAddress { get; } = new Address();
-        public List<Building> CompnayBuildings { get; } = new List<Building>();
+        public Address? CompanyAddress { get; set; } = null;
+        public List<Building> CompanyBuildings { get; set; } = new List<Building>();
 
         public BuildingCompany() { }
     }

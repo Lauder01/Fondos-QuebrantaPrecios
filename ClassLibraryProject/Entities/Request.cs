@@ -6,7 +6,9 @@ namespace ClassLibraryProject.Entities
     {
         // Remote
         public Guid Id { get; set; } = Guid.NewGuid();
-        public Building RequestBuilding { get; set; } = new Building();
+        public Guid BuildingId { get; set; }
+        public Building RequestBuilding { get; set; } = default!;
+        public Guid StatusId { get; set; }
         public Status RequestStatus { get; set; } = default!;
         public double Price { get; set; } = 0.0;
 

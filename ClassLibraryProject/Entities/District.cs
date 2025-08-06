@@ -11,7 +11,7 @@ namespace ClassLibraryProject.Entities
 		public int BuildingCount { get; set; } = 0;
         
 		// Local
-		public List<Building> Buildings { get; } = new List<Building>();
+		public List<Building> Buildings { get; set; } = new List<Building>();
 
         public District() { }
 	}

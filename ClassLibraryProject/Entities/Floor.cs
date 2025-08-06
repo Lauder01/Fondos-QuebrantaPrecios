@@ -4,13 +4,14 @@
     {
         // Remote
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid BuildingId { get; set; }
         public Building? BuildingFloor { get; set; } = null;
         public string Code { get; set; } = string.Empty;
         public int FloorNumber { get; set; } = -12;
         public bool HasLift { get; set; } = false;
 
         // Local
-        public List<Apartment> Apartments { get; } = new List<Apartment>();
+        public List<Apartment> Apartments { get; set; } = new List<Apartment>();
 
         public Floor() { }
 
