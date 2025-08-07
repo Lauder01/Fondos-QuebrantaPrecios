@@ -26,6 +26,11 @@ namespace RepositoryLibraryProject
             throw new NotImplementedException();
         }
 
+        public void Delete(String id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Delete(Guid id)
         {
             throw new NotImplementedException();
@@ -36,7 +41,12 @@ namespace RepositoryLibraryProject
             throw new NotImplementedException();
         }
 
-        public T GetById(Guid id)
+        public T GetById(String id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T? GetById(Guid id)
         {
             throw new NotImplementedException();
         }
