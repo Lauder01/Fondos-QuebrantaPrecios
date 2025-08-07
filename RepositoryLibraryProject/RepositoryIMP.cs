@@ -1,16 +1,27 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClassLibraryProject.Entities;
+using WebAPI.Data;
 using RepositoryLibraryProject.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace RepositoryLibraryProject
 {
-    public class StatusRepository : IRepository<Status>
+    public class RepositoryIMP<T> : IRepository<T> where T : class
     {
-        public void Add(Status entity)
+        protected readonly AppDbContext _context;
+        protected readonly DbSet<T> _dbSet;
+
+        public RepositoryIMP(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = context.Set<T>();
+        }
+        public void Add(T entity)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +31,17 @@ namespace RepositoryLibraryProject
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Status> GetAll()
+        public IEnumerable<T> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Status? GetById(Guid id)
+        public T GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Status entity)
+        public void Update(T entity)
         {
             throw new NotImplementedException();
         }
