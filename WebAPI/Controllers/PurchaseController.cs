@@ -1,85 +1,40 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using ClassLibraryProject.Enums;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace WebAPI.Controllers
 {
-    public class PurchaseController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PurchaseController : ControllerBase
     {
-        // GET: PurchaseController
-        public ActionResult Index()
+        private readonly IRepository<Purchase> _purchaseRepository;
+        private readonly IMapper _mapper;
+        public PurchaseController(IRepository<Purchase> purchaseRepository, IMapper mapper)
         {
-            return View();
+            _purchaseRepository = purchaseRepository;
+            _mapper = mapper;
         }
 
-        // GET: PurchaseController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public ActionResult<IEnumerable<PurchaseDto>> GetAll()
         {
-            return View();
+            var purchases = _purchaseRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<PurchaseDto>>(purchases);
+            return Ok(dtos);
         }
 
-        // GET: PurchaseController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: PurchaseController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult<PurchaseDto> Create(CreatePurchaseDto dto)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PurchaseController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PurchaseController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PurchaseController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PurchaseController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var purchase = _mapper.Map<Purchase>(dto);
+            purchase.Id = Guid.NewGuid().ToString();
+            _purchaseRepository.Add(purchase);
+            var result = _mapper.Map<PurchaseDto>(purchase);
+            return CreatedAtAction(nameof(GetAll), new { id = purchase.Id }, result);
         }
     }
 }

@@ -1,85 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ClassLibraryProject.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Enums;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
-    public class EnergyCertificateEnumController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EnergyCertificateEnumController : ControllerBase
     {
-        // GET: EnergyCertificateEnumController
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult<IEnumerable<string>> GetAll()
         {
-            return View();
-        }
-
-        // GET: EnergyCertificateEnumController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: EnergyCertificateEnumController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EnergyCertificateEnumController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EnergyCertificateEnumController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EnergyCertificateEnumController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EnergyCertificateEnumController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EnergyCertificateEnumController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var values = System.Enum.GetNames(typeof(EnergyCertificateEnum)).ToList();
+            return Ok(values);
         }
     }
 }

@@ -1,17 +1,19 @@
 using System;
+using System.Collections.Generic;
 
 namespace ClassLibraryProject.Entities
 {
     public class Request
     {
-        // Remote
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid BuildingId { get; set; }
-        public Building RequestBuilding { get; set; } = default!;
-        public Guid StatusId { get; set; }
-        public Status RequestStatus { get; set; } = default!;
-        public double Price { get; set; } = 0.0;
-
+        public string Id { get; set; }
+        public string BuildingId { get; set; }
+        public decimal Price { get; set; }
+        public float MaintenancePrice { get; set; }
+        public string StatusId { get; set; }
+        public virtual Building Building { get; set; }
+        public virtual Status Status { get; set; }
+        public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
+        public virtual ICollection<RequestStatusLog> RequestStatusLog { get; set; } = new List<RequestStatusLog>();
         public Request() { }
     }
 }

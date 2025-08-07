@@ -1,16 +1,18 @@
-﻿namespace ClassLibraryProject.Entities
+﻿using System;
+
+namespace ClassLibraryProject.Entities
 {
     public class Purchase
     {
-        // Remote
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Building PurchaseBuilding { get; set; } = new Building();
-        public BuildingCompany PurchaseCompany { get; set; } = new BuildingCompany();
-        public Request PurchaseRequest { get; set; } = new Request();
-        public DateTime? Date { get; set; } = DateTime.UtcNow;
-        public decimal? Amount { get; set; } = 0.0m;
-        
-
+        public string Id { get; set; }
+        public string BuildingId { get; set; }
+        public string BuildingCompanyId { get; set; }
+        public string RequestId { get; set; }
+        public DateTime Date { get; set; }
+        public decimal Amount { get; set; }
+        public virtual Building Building { get; set; }
+        public virtual BuildingCompany BuildingCompany { get; set; }
+        public virtual Request Request { get; set; }
         public Purchase() { }
     }
 }

@@ -6,36 +6,39 @@ namespace ClassLibraryProject.Entities
 {
     public class Building
     {
-        // Remote
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid StreetId { get; set; }
-        public Street BuildingStreet { get; set; } = default!;
-        public Guid DistrictId { get; set; }
-        public District BuildingDistrict { get; set; } = default!;
-        public Guid CompanyId { get; set; }
-        public BuildingCompany BuildingCompany { get; set; } = default!;
-        public string Code { get; set; } = string.Empty;
-        public Guid StatusId { get; set; }
-        public Status BuildingStatus { get; set; } = default!;
-        public string Doorway { get; set; } = "0";
-        public string? Name { get; set; } = "Empty";
-        public string? Description { get; set; } = "Empty";
-        public int? FloorCount { get; set; } = 0;
-        public int? YearBuilt { get; set; } = 1970;
-        public double? Price { get; set; } = 0.0;
-        public EnergyCertificateEnum? BuildingEnergyCertificate { get; set; } = EnergyCertificateEnum.U;
-        public Guid? AddressId { get; set; }
-        public Address? BuildingAdress { get; set; } = null;
-        public bool HasLift { get; set; } = true;
-        public List<Floor> FloorList { get; set; } = new List<Floor>();
-        public List<Apartment> Apartments { get; set; } = new List<Apartment>();
+        // Escalares
+        public string Id { get; set; }
+        public string DistrictId { get; set; }
+        public string StreetId { get; set; }
+        public string BuildingCompanyId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Code { get; set; }
+        public string Doorway { get; set; }
+        public int FloorCount { get; set; }
+        public int YearBuilt { get; set; }
+        public decimal Price { get; set; }
+        public string EnergyCertificate { get; set; }
+        public string StatusId { get; set; }
+
+        // Propiedades de navegación
+        public virtual District District { get; set; }
+        public virtual Street Street { get; set; }
+        public virtual BuildingCompany BuildingCompany { get; set; }
+        public virtual Status Status { get; set; }
+        public virtual ICollection<Address> Address { get; set; } = new List<Address>();
+        public virtual ICollection<Floor> Floor { get; set; } = new List<Floor>();
+        public virtual ICollection<BuildingImage> BuildingImage { get; set; } = new List<BuildingImage>();
+        public virtual ICollection<BuildingStatusLog> BuildingStatusLog { get; set; } = new List<BuildingStatusLog>();
+        public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
+        public virtual ICollection<Request> Request { get; set; } = new List<Request>();
 
         public Building() { }
 
         public string BuildBuildingCode()
         {
-            var zipCode = BuildingDistrict?.ZipCode ?? "ZZZ";
-            var streetCode = BuildingStreet?.Code ?? "000";
+            var zipCode = District?.Zipcode ?? "ZZZ";
+            var streetCode = Street?.Code ?? "000";
             var doorway = Doorway ?? "0";
             return $"{zipCode}-{streetCode}-{doorway}";
         }

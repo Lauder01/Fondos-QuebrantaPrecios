@@ -3,7 +3,7 @@ using System.Linq;
 using ClassLibraryProject.Entities;
 using ClassLibraryProject.Enums;
 using ClassLibraryProject.Extensions;
-using WebAPI.Data;
+using RepositoryLibraryProject.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace StreetGeneratorConsoleProject
@@ -11,7 +11,7 @@ namespace StreetGeneratorConsoleProject
     public class Program
     {
 
-        public const string CONSTRING = "Server=serverdevdemo.database.windows.net,1433;Database= master;User Id= admsql;Password= P@ssw0rd;";
+        public const string CONSTRING = "Server=serverdevdemo.database.windows.net,1433;Database=devdemobbdd;User Id= admsql;Password= P@ssw0rd;";
         static void Main(string[] args)
         {
             Console.WriteLine("=== Gestor de Calles ===\n");

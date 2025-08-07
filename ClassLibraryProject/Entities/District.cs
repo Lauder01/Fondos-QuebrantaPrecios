@@ -2,16 +2,15 @@ namespace ClassLibraryProject.Entities
 {
 	public class District
 	{
-		// Remote
-		public Guid Id { get; set; } = Guid.NewGuid();
-        public string Name { get; set; } = string.Empty;
-		public string ZipCode { get; set; } = string.Empty;
-		public string? Country { get; set; } = string.Empty;
-        public string? City { get; set; } = string.Empty;
-		public int BuildingCount { get; set; } = 0;
-        
-		// Local
-		public List<Building> Buildings { get; set; } = new List<Building>();
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Zipcode { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public int? BuildingCount { get; set; }
+
+        public virtual ICollection<Building> Building { get; set; } = new List<Building>();
+        public virtual ICollection<Street> Street { get; set; } = new List<Street>();
 
         public District() { }
 	}

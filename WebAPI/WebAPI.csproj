@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibraryProject\ClassLibraryProject.csproj" />
+    <ProjectReference Include="..\RepositoryLibraryProject\RepositoryLibraryProject.csproj" />
   </ItemGroup>
 
 </Project>
