@@ -1,85 +1,40 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using ClassLibraryProject.Enums;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace WebAPI.Controllers
 {
-    public class AdressController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AdressController : ControllerBase
     {
-        // GET: AdressController
-        public ActionResult Index()
+        private readonly IRepository<Address> _addressRepository;
+        private readonly IMapper _mapper;
+        public AdressController(IRepository<Address> addressRepository, IMapper mapper)
         {
-            return View();
+            _addressRepository = addressRepository;
+            _mapper = mapper;
         }
 
-        // GET: AdressController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public ActionResult<IEnumerable<AddressDto>> GetAll()
         {
-            return View();
+            var addresses = _addressRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<AddressDto>>(addresses);
+            return Ok(dtos);
         }
 
-        // GET: AdressController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: AdressController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult<AddressDto> Create(CreateAddressDto dto)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AdressController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AdressController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AdressController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AdressController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var address = _mapper.Map<Address>(dto);
+            address.Id = Guid.NewGuid().ToString();
+            _addressRepository.Add(address);
+            var result = _mapper.Map<AddressDto>(address);
+            return CreatedAtAction(nameof(GetAll), new { id = address.Id }, result);
         }
     }
 }

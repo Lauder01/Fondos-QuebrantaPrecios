@@ -4,8 +4,7 @@ namespace ClassLibraryProject.Entities
 {
     public class FQP_User
     {
-        // Remote
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? FirstName { get; set; } = string.Empty;

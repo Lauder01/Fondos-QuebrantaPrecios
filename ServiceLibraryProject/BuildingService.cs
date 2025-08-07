@@ -49,14 +49,14 @@ namespace ServiceLibraryProject
             if (entity.Price < 0)
                 throw new ArgumentException("El precio no puede ser negativo.");
             // Validación: District, Street, Company y Status existen
-            if (entity.BuildingDistrict == null || !_districtRepository.GetAll().Any(d => d.Id == entity.BuildingDistrict.Id))
+            if (entity.District == null || !_districtRepository.GetAll().Any(d => d.Id == entity.District.Id))
                 throw new ArgumentException("El distrito asociado no existe.");
-            if (entity.BuildingStreet == null || !_streetRepository.GetAll().Any(s => s.Id == entity.BuildingStreet.Id))
+            if (entity.Street == null || !_streetRepository.GetAll().Any(s => s.Id == entity.Street.Id))
                 throw new ArgumentException("La calle asociada no existe.");
             if (entity.BuildingCompany == null || !_companyRepository.GetAll().Any(c => c.Id == entity.BuildingCompany.Id))
                 throw new ArgumentException("La empresa constructora asociada no existe.");
             // Reemplaza la validación de Status por BuildingStatus, que es la propiedad correcta según la definición de Building.
-            if (entity.BuildingStatus == null || !_statusRepository.GetAll().Any(s => s.Id == entity.BuildingStatus.Id))
+            if (entity.Status == null || !_statusRepository.GetAll().Any(s => s.Id == entity.Status.Id))
                 throw new ArgumentException("El estado asociado no existe.");
             _buildingRepository.Add(entity);
         }

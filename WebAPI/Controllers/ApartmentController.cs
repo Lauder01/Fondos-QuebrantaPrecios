@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Data;
 using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using System.Linq;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
@@ -11,49 +12,29 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class ApartmentController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public ApartmentController(AppDbContext context)
+        private readonly IRepository<Apartment> _apartmentRepository;
+        private readonly IMapper _mapper;
+        public ApartmentController(IRepository<Apartment> apartmentRepository, IMapper mapper)
         {
-            _context = context;
+            _apartmentRepository = apartmentRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<ApartmentDto>> GetAll()
         {
-            var apartments = _context.Apartments.Select(a => new ApartmentDto
-            {
-                Id = a.Id,
-                Code = a.Code,
-                Door = a.Door,
-                FloorId = a.ApartmentFloor != null ? a.ApartmentFloor.Id : Guid.Empty,
-                BuildingId = a.ApartmentBuilding != null ? a.ApartmentBuilding.Id : Guid.Empty
-            }).ToList();
-            return Ok(apartments);
+            var apartments = _apartmentRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<ApartmentDto>>(apartments);
+            return Ok(dtos);
         }
 
         [HttpPost]
         public ActionResult<ApartmentDto> Create(CreateApartmentDto dto)
         {
-            var floor = _context.Floors.Find(dto.FloorId);
-            var building = _context.Buildings.Find(dto.BuildingId);
-            if (floor == null || building == null) return BadRequest("Floor or Building not found");
-            var apartment = new Apartment
-            {
-                Code = dto.Code,
-                Door = dto.Door,
-                ApartmentFloor = floor,
-                ApartmentBuilding = building
-            };
-            _context.Apartments.Add(apartment);
-            _context.SaveChanges();
-            var result = new ApartmentDto
-            {
-                Id = apartment.Id,
-                Code = apartment.Code,
-                Door = apartment.Door,
-                FloorId = floor.Id,
-                BuildingId = building.Id
-            };
+            var apartment = _mapper.Map<Apartment>(dto);
+            apartment.Id = Guid.NewGuid().ToString();
+            _apartmentRepository.Add(apartment);
+            var result = _mapper.Map<ApartmentDto>(apartment);
             return CreatedAtAction(nameof(GetAll), new { id = apartment.Id }, result);
         }
     }

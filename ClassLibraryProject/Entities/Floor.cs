@@ -2,22 +2,19 @@
 {
     public class Floor
     {
-        // Remote
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid BuildingId { get; set; }
-        public Building? BuildingFloor { get; set; } = null;
-        public string Code { get; set; } = string.Empty;
-        public int FloorNumber { get; set; } = -12;
-        public bool HasLift { get; set; } = false;
-
-        // Local
-        public List<Apartment> Apartments { get; set; } = new List<Apartment>();
+        public string Id { get; set; }
+        public string BuildingId { get; set; }
+        public string Code { get; set; }
+        public int FloorNumber { get; set; }
+        public bool HasLift { get; set; }
+        public virtual Building Building { get; set; }
+        public virtual ICollection<Apartment> Apartment { get; set; } = new List<Apartment>();
 
         public Floor() { }
 
         public string BuildFloorCode()
         {
-            var buildingCode = BuildingFloor?.Code ?? "000";
+            var buildingCode = Building?.Code ?? "000";
             var floorNumber = FloorNumber.ToString("D2");
             return $"{buildingCode}-{floorNumber}";
         }

@@ -25,7 +25,7 @@ namespace ServiceLibraryProject
                 throw new ArgumentException("El número de piso no puede ser menor que -12.");
             // Validación: HasLift 0 o 1 (bool en C#)
             // Validación: BuildingId requerido y existencia
-            if (entity.BuildingFloor == null || !_buildingRepository.GetAll().Any(b => b.Id == entity.BuildingFloor.Id))
+            if (entity.Building == null || !_buildingRepository.GetAll().Any(b => b.Id == entity.Building.Id))
                 throw new ArgumentException("El edificio asociado no existe.");
             _floorRepository.Add(entity);
         }

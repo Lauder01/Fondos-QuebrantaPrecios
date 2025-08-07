@@ -1,130 +1,40 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ClassLibraryProject.Enums;
-using ClassLibraryProject.Entities;
-using WebAPI.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.Dtos;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WebAPI.Controllers
 {
-    public class DistrictController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DistrictController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public DistrictController(AppDbContext context)
+        private readonly IRepository<District> _districtRepository;
+        private readonly IMapper _mapper;
+        public DistrictController(IRepository<District> districtRepository, IMapper mapper)
         {
-            _context = context;
-        }
-
-        // GET: DistrictController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: DistrictController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: DistrictController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: DistrictController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: DistrictController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: DistrictController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: DistrictController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: DistrictController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _districtRepository = districtRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<DistrictDto>> GetAll()
         {
-            var districts = _context.Districts.Select(d => new DistrictDto
-            {
-                Id = d.Id,
-                Name = d.Name,
-                ZipCode = d.ZipCode,
-                Country = d.Country,
-                City = d.City
-            }).ToList();
-            return Ok(districts);
+            var districts = _districtRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<DistrictDto>>(districts);
+            return Ok(dtos);
         }
 
         [HttpPost]
         public ActionResult<DistrictDto> Create(CreateDistrictDto dto)
         {
-            var district = new District
-            {
-                Name = dto.Name,
-                ZipCode = dto.ZipCode,
-                Country = dto.Country,
-                City = dto.City
-            };
-            _context.Districts.Add(district);
-            _context.SaveChanges();
-            var result = new DistrictDto
-            {
-                Id = district.Id,
-                Name = district.Name,
-                ZipCode = district.ZipCode,
-                Country = district.Country,
-                City = district.City
-            };
+            var district = _mapper.Map<District>(dto);
+            district.Id = Guid.NewGuid().ToString();
+            _districtRepository.Add(district);
+            var result = _mapper.Map<DistrictDto>(district);
             return CreatedAtAction(nameof(GetAll), new { id = district.Id }, result);
         }
     }

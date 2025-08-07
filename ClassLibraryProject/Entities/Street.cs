@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ClassLibraryProject.Enums;
 using ClassLibraryProject.Extensions;
 
@@ -8,20 +8,24 @@ namespace ClassLibraryProject.Entities
 {
     public class Street
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Code { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+
+        public virtual ICollection<Building> Building { get; set; } = new List<Building>();
+        public virtual ICollection<District> District { get; set; } = new List<District>();
 
         public Street() { }
 
         public Street(string baseName, StreetTypeEnum streetType)
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
             Name = GetComposedName(baseName, streetType);
             Code = BuildStreetCode(baseName, streetType);
         }
 
-        private static string GetComposedName(string name, StreetTypeEnum streetType)
+        // Métodos utilitarios relacionados con la entidad
+        public static string GetComposedName(string name, StreetTypeEnum streetType)
         {
             var acronym = streetType.GetAcronym();
             return string.IsNullOrEmpty(acronym)
@@ -29,7 +33,7 @@ namespace ClassLibraryProject.Entities
                 : $"{acronym}{(acronym == "P" ? ".º" : ".")} {name}";
         }
 
-        private static string BuildStreetCode(string name, StreetTypeEnum streetType)
+        public static string BuildStreetCode(string name, StreetTypeEnum streetType)
         {
             var acronym = streetType.GetAcronym();
             var initials = GetInitials(name);

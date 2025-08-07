@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI.Data;
 using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using System.Linq;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace WebAPI.Controllers
 {
@@ -10,43 +11,29 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class BuildingCompanyController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public BuildingCompanyController(AppDbContext context)
+        private readonly IRepository<BuildingCompany> _companyRepository;
+        private readonly IMapper _mapper;
+        public BuildingCompanyController(IRepository<BuildingCompany> companyRepository, IMapper mapper)
         {
-            _context = context;
+            _companyRepository = companyRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<BuildingCompanyDto>> GetAll()
         {
-            var companies = _context.BuildingCompanies.Select(c => new BuildingCompanyDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Cif = c.Cif,
-                Website = c.Website
-            }).ToList();
-            return Ok(companies);
+            var companies = _companyRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<BuildingCompanyDto>>(companies);
+            return Ok(dtos);
         }
 
         [HttpPost]
         public ActionResult<BuildingCompanyDto> Create(CreateBuildingCompanyDto dto)
         {
-            var company = new BuildingCompany
-            {
-                Name = dto.Name,
-                Cif = dto.Cif,
-                Website = dto.Website
-            };
-            _context.BuildingCompanies.Add(company);
-            _context.SaveChanges();
-            var result = new BuildingCompanyDto
-            {
-                Id = company.Id,
-                Name = company.Name,
-                Cif = company.Cif,
-                Website = company.Website
-            };
+            var company = _mapper.Map<BuildingCompany>(dto);
+            company.Id = Guid.NewGuid().ToString();
+            _companyRepository.Add(company);
+            var result = _mapper.Map<BuildingCompanyDto>(company);
             return CreatedAtAction(nameof(GetAll), new { id = company.Id }, result);
         }
     }

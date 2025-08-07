@@ -1,18 +1,15 @@
-﻿namespace ClassLibraryProject.Entities
+﻿using System.Collections.Generic;
+
+namespace ClassLibraryProject.Entities
 {
     public class BuildingCompany
     {
-        // Local
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Name { get; set; } = string.Empty;
-        public string Cif { get; set; } = string.Empty;
-        public string? Website { get; set; } = string.Empty;
-        public Guid? CompanyAddressId { get; set; }
-
-        // Remote
-        public Address? CompanyAddress { get; set; } = null;
-        public List<Building> CompanyBuildings { get; set; } = new List<Building>();
-
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Cif { get; set; }
+        public string Website { get; set; }
+        public virtual ICollection<Building> Building { get; set; } = new List<Building>();
+        public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
         public BuildingCompany() { }
     }
 }

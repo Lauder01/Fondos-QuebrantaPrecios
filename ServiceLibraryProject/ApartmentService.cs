@@ -31,10 +31,8 @@ namespace ServiceLibraryProject
             if (string.IsNullOrWhiteSpace(entity.Door) || entity.Door.Length > 24)
                 throw new ArgumentException("La puerta es obligatoria y debe tener como máximo 24 caracteres.");
             // Validación: FloorId y BuildingId existen
-            if (entity.ApartmentFloor == null || !_floorRepository.GetAll().Any(f => f.Id == entity.ApartmentFloor.Id))
+            if (entity.Floor == null || !_floorRepository.GetAll().Any(f => f.Id == entity.Floor.Id))
                 throw new ArgumentException("El piso asociado no existe.");
-            if (entity.ApartmentBuilding == null || !_buildingRepository.GetAll().Any(b => b.Id == entity.ApartmentBuilding.Id))
-                throw new ArgumentException("El edificio asociado no existe.");
             _apartmentRepository.Add(entity);
         }
 

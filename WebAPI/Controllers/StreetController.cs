@@ -1,121 +1,40 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ClassLibraryProject.Entities;
-using ClassLibraryProject.Enums;
-using WebAPI.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.Dtos;
-using System.Linq;
+using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
+using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
-    public class StreetController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class StreetController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public StreetController(AppDbContext context)
+        private readonly IRepository<Street> _streetRepository;
+        private readonly IMapper _mapper;
+        public StreetController(IRepository<Street> streetRepository, IMapper mapper)
         {
-            _context = context;
-        }
-
-        // GET: StreetController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: StreetController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: StreetController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: StreetController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: StreetController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: StreetController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: StreetController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: StreetController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _streetRepository = streetRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<StreetDto>> GetAll()
         {
-            var streets = _context.Streets.Select(s => new StreetDto
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Code = s.Code
-            }).ToList();
-            return Ok(streets);
+            var streets = _streetRepository.GetAll();
+            var dtos = _mapper.Map<IEnumerable<StreetDto>>(streets);
+            return Ok(dtos);
         }
 
         [HttpPost]
         public ActionResult<StreetDto> Create(CreateStreetDto dto)
         {
-            var street = new Street(dto.Name, dto.StreetType);
-            _context.Streets.Add(street);
-            _context.SaveChanges();
-            var result = new StreetDto
-            {
-                Id = street.Id,
-                Name = street.Name,
-                Code = street.Code
-            };
+            var street = _mapper.Map<Street>(dto);
+            street.Id = Guid.NewGuid().ToString();
+            _streetRepository.Add(street);
+            var result = _mapper.Map<StreetDto>(street);
             return CreatedAtAction(nameof(GetAll), new { id = street.Id }, result);
         }
     }
