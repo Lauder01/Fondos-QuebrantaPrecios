@@ -17,6 +17,15 @@ namespace ClassLibraryProject.Entities
 
         public Street() { }
 
+        public Street(string baseName, StreetTypeEnum streetType, string code)
+        {
+            Id = Guid.NewGuid().ToString();
+            Name = GetComposedName(baseName, streetType);
+            Code = code;
+        }
+
+        // El constructor antiguo se puede marcar como obsoleto o eliminar si no se usa
+        [Obsolete("Usa el constructor con código único generado")]
         public Street(string baseName, StreetTypeEnum streetType)
         {
             Id = Guid.NewGuid().ToString();
