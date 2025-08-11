@@ -45,7 +45,7 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Street> Streets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=serverdevdemo.database.windows.net,1433;Initial Catalog=devdemobbdd;Persist Security Info=True;User ID=admsql;Password=P@ssw0rd;Encrypt=True");
+        => optionsBuilder.UseSqlServer("Data Source=devdemoserverbbdd.database.windows.net,1433;Initial Catalog=devdemobbdd;Persist Security Info=True;User ID=admsql;Password=P@ssw0rd;Encrypt=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
