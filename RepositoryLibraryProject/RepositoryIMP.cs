@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +32,14 @@ namespace RepositoryLibraryProject
 
         public IEnumerable<T> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _dbSet.AsNoTracking().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error al obtener los datos de la base de datos.", ex);
+            }
         }
 
         public T GetById(Guid id)
