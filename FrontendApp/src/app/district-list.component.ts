@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { DistrictDto } from './api.service';
+import { DistrictGetterDto } from './api.service';
 
 @Component({
   selector: 'app-district-list',
@@ -17,5 +17,5 @@ import { DistrictDto } from './api.service';
   `
 })
 export class DistrictListComponent {
-  @Input() districts: DistrictDto[] = [];
+  @Input() districts: DistrictGetterDto[] = [];
 }

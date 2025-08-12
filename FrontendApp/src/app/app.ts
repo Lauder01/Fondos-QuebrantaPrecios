@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { DistrictListComponent } from './district-list.component';
-import { ApiService, DistrictDto } from './api.service';
+import { ApiService, DistrictGetterDto } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +10,10 @@ import { ApiService, DistrictDto } from './api.service';
 })
 export class App {
   protected readonly title = signal('FrontendApp');
-  districts: DistrictDto[] = [];
+  districts: DistrictGetterDto[] = [];
 
   constructor(private apiService: ApiService) {
-    this.apiService.getDistricts().subscribe((data: DistrictDto[]) => {
+    this.apiService.getDistricts().subscribe((data: DistrictGetterDto[]) => {
       this.districts = data;
     });
   }

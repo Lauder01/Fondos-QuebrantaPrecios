@@ -21,20 +21,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<DistrictDto>> GetAll()
+        public ActionResult<IEnumerable<DistrictGetterDto>> GetAll()
         {
             var districts = _districtRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<DistrictDto>>(districts);
+            var dtos = _mapper.Map<IEnumerable<DistrictGetterDto>>(districts);
             return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult<DistrictDto> Create(CreateDistrictDto dto)
+        public ActionResult<DistrictGetterDto> Create(DistrictCreatorDto dto)
         {
             var district = _mapper.Map<District>(dto);
             district.Id = Guid.NewGuid().ToString();
             _districtRepository.Add(district);
-            var result = _mapper.Map<DistrictDto>(district);
+            var result = _mapper.Map<DistrictGetterDto>(district);
             return CreatedAtAction(nameof(GetAll), new { id = district.Id }, result);
         }
     }

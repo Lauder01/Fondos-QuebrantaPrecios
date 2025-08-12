@@ -2,15 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Dtos
 {
-    public class DistrictDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string ZipCode { get; set; } = string.Empty;
-        public string? Country { get; set; }
-        public string? City { get; set; }
-    }
-    public class CreateDistrictDto
+    public class DistrictBaseDto
     {
         [Required]
         [StringLength(255, MinimumLength = 2)]

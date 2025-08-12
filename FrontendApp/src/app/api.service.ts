@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface DistrictDto {
+export interface DistrictGetterDto {
   id: string;
   name?: string;
   zipCode?: string;
@@ -16,7 +16,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getDistricts(): Observable<DistrictDto[]> {
-    return this.http.get<DistrictDto[]>(`${this.baseUrl}/District`);
+  getDistricts(): Observable<DistrictGetterDto[]> {
+    return this.http.get<DistrictGetterDto[]>(`${this.baseUrl}/District`);
   }
 }

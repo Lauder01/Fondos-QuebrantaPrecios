@@ -6,9 +6,9 @@ public class DistrictProfile : Profile
 {
     public DistrictProfile()
     {
-        CreateMap<District, DistrictDto>()
+        CreateMap<District, DistrictGetterDto>()
             .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.Zipcode));
-        CreateMap<CreateDistrictDto, District>()
+        CreateMap<DistrictGetterDto, District>()
             .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.ZipCode));
     }
 }
