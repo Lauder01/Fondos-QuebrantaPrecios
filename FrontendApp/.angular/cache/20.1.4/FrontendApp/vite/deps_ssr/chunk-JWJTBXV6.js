@@ -2,7 +2,7 @@ import { createRequire } from 'module';const require = createRequire(import.meta
 import {
   XhrFactory,
   parseCookieValue
-} from "./chunk-CCXG4OVJ.js";
+} from "./chunk-6K7GMTFC.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -39,7 +39,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-SEK7UKQV.js";
+} from "./chunk-TYXEL5HN.js";
 import {
   __objRest,
   __spreadValues,
@@ -2518,12 +2518,6 @@ var HttpResourceImpl = class extends ResourceImpl {
     }, defaultValue, equal, injector);
     this.client = injector.get(HttpClient);
   }
-  set(value) {
-    super.set(value);
-    this._headers.set(void 0);
-    this._progress.set(void 0);
-    this._statusCode.set(void 0);
-  }
 };
 var HTTP_TRANSFER_CACHE_ORIGIN_MAP = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_CACHE_ORIGIN_MAP" : "");
 var BODY = "b";
@@ -2749,9 +2743,9 @@ export {
 @angular/common/fesm2022/module.mjs:
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v20.1.6
+   * @license Angular v20.1.4
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-O4M26XUA.js.map
+//# sourceMappingURL=chunk-JWJTBXV6.js.map

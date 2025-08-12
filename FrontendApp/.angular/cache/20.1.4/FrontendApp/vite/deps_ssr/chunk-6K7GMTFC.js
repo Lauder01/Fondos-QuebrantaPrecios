@@ -23,9 +23,9 @@ export {
 
 @angular/common/fesm2022/xhr.mjs:
   (**
-   * @license Angular v20.1.6
+   * @license Angular v20.1.4
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-CCXG4OVJ.js.map
+//# sourceMappingURL=chunk-6K7GMTFC.js.map

@@ -1,7 +1,7 @@
 import {
   XhrFactory,
   parseCookieValue
-} from "./chunk-DBQVMHQU.js";
+} from "./chunk-NDZIWK7R.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -44,7 +44,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-QE7GUPV5.js";
+} from "./chunk-KEYM6BVE.js";
 
 // node_modules/@angular/common/fesm2022/module.mjs
 var HttpHandler = class {
@@ -2514,12 +2514,6 @@ var HttpResourceImpl = class extends ResourceImpl {
     }, defaultValue, equal, injector);
     this.client = injector.get(HttpClient);
   }
-  set(value) {
-    super.set(value);
-    this._headers.set(void 0);
-    this._progress.set(void 0);
-    this._statusCode.set(void 0);
-  }
 };
 var HTTP_TRANSFER_CACHE_ORIGIN_MAP = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_CACHE_ORIGIN_MAP" : "");
 var BODY = "b";
@@ -2716,9 +2710,9 @@ export {
 @angular/common/fesm2022/module.mjs:
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v20.1.6
+   * @license Angular v20.1.4
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-QDVZUSXR.js.map
+//# sourceMappingURL=chunk-WF3YA3JL.js.map
