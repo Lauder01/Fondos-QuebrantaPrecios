@@ -12,7 +12,7 @@ export interface DistrictGetterDto {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private baseUrl = 'https://localhost:7124/api';
+  private baseUrl = 'https://172.30.137.209:7124/api';
 
   constructor(private http: HttpClient) {}
 
