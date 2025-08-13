@@ -37,22 +37,34 @@ namespace ServiceLibraryProject
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _ = _streetRepository.GetById(id) ?? throw new ArgumentException("La calle no existe.", nameof(id));
+            _streetRepository.Delete(id);
         }
 
         public IEnumerable<Street> GetAll()
         {
-            throw new NotImplementedException();
+            return _streetRepository.GetAll();
         }
 
         public Street? GetById(string id)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _streetRepository.GetById(id);
+        }
+
+        public Street? GetByCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return null;
+            return _streetRepository.Find(s => s.Code == code);
         }
 
         public void Update(Street entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La calle no puede ser nula.");
+            _streetRepository.Update(entity);
         }
 
         public string? GetUniqueStreetCode(string baseName, StreetTypeEnum type)

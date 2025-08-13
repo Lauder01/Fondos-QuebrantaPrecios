@@ -27,9 +27,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Registro de repositorio genérico para DI
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryLibraryProject.RepositoryIMP<>));
 
-// Registro de servicios de dominio SOLO para District
+// Registro de servicios de dominio para todas las entidades principales
 builder.Services.AddScoped<IService<District>, DistrictService>();
 builder.Services.AddScoped<DistrictService>();
+builder.Services.AddScoped<StreetService>();
+builder.Services.AddScoped<BuildingService>();
+builder.Services.AddScoped<ApartmentService>();
+builder.Services.AddScoped<FloorService>();
+builder.Services.AddScoped<AdressService>();
+builder.Services.AddScoped<BuildingCompanyService>();
+builder.Services.AddScoped<RequestService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
-using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
 using WebAPI.Dtos.Request;
@@ -11,30 +10,59 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class RequestController : ControllerBase
     {
-        private readonly IRepository<Request> _requestRepository;
         private readonly IMapper _mapper;
-        public RequestController(IRepository<Request> requestRepository, IMapper mapper)
+        private readonly ServiceLibraryProject.RequestService _requestService;
+        public RequestController(ServiceLibraryProject.RequestService requestService, IMapper mapper)
         {
-            _requestRepository = requestRepository;
+            _requestService = requestService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<RequestDto>> GetAll()
+        public ActionResult<IEnumerable<RequestGetterDto>> GetAll()
         {
-            var requests = _requestRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<RequestDto>>(requests);
+            var requests = _requestService.GetAll();
+            var dtos = _mapper.Map<IEnumerable<RequestGetterDto>>(requests);
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public ActionResult<RequestDto> Create(CreateRequestDto dto)
+        [HttpGet("{id}")]
+        public ActionResult<RequestGetterDto> GetById(string id)
         {
+            var request = _requestService.GetById(id);
+            if (request == null) return NotFound();
+            var dto = _mapper.Map<RequestGetterDto>(request);
+            return Ok(dto);
+        }
+
+        [HttpPost]
+        public ActionResult<RequestGetterDto> Create(RequestCreatorDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var request = _mapper.Map<Request>(dto);
             request.Id = Guid.NewGuid().ToString();
-            _requestRepository.Add(request);
-            var result = _mapper.Map<RequestDto>(request);
-            return CreatedAtAction(nameof(GetAll), new { id = request.Id }, result);
+            _requestService.Add(request);
+            var result = _mapper.Map<RequestGetterDto>(request);
+            return CreatedAtAction(nameof(GetById), new { id = request.Id }, result);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, RequestUpdaterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var request = _mapper.Map<Request>(dto);
+            request.Id = id;
+            _requestService.Update(request);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
+        {
+            _requestService.Delete(id);
+            return NoContent();
         }
     }
 }

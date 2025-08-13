@@ -35,22 +35,34 @@ namespace ServiceLibraryProject
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _ = _companyRepository.GetById(id) ?? throw new ArgumentException("La empresa no existe.", nameof(id));
+            _companyRepository.Delete(id);
         }
 
         public IEnumerable<BuildingCompany> GetAll()
         {
-            throw new NotImplementedException();
+            return _companyRepository.GetAll();
+        }
+
+        public BuildingCompany? GetByCif(string cif)
+        {
+            if (string.IsNullOrWhiteSpace(cif))
+                return null;
+            return _companyRepository.Find(c => c.Cif == cif);
         }
 
         public BuildingCompany? GetById(string id)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _companyRepository.GetById(id);
         }
 
         public void Update(BuildingCompany entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La empresa no puede ser nula.");
+            _companyRepository.Update(entity);
         }
     }
 }

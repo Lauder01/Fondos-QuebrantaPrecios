@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
-using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 using WebAPI.Dtos.Street;
 
 namespace WebAPI.Controllers
@@ -12,30 +10,59 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class StreetController : ControllerBase
     {
-        private readonly IRepository<Street> _streetRepository;
         private readonly IMapper _mapper;
-        public StreetController(IRepository<Street> streetRepository, IMapper mapper)
+        private readonly ServiceLibraryProject.StreetService _streetService;
+        public StreetController(ServiceLibraryProject.StreetService streetService, IMapper mapper)
         {
-            _streetRepository = streetRepository;
+            _streetService = streetService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StreetDto>> GetAll()
+        public ActionResult<IEnumerable<StreetGetterDto>> GetAll()
         {
-            var streets = _streetRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<StreetDto>>(streets);
+            var streets = _streetService.GetAll();
+            var dtos = _mapper.Map<IEnumerable<StreetGetterDto>>(streets);
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public ActionResult<StreetDto> Create(CreateStreetDto dto)
+        [HttpGet("{id}")]
+        public ActionResult<StreetGetterDto> GetById(string id)
         {
+            var street = _streetService.GetById(id);
+            if (street == null) return NotFound();
+            var dto = _mapper.Map<StreetGetterDto>(street);
+            return Ok(dto);
+        }
+
+        [HttpPost]
+        public ActionResult<StreetGetterDto> Create(StreetCreatorDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var street = _mapper.Map<Street>(dto);
             street.Id = Guid.NewGuid().ToString();
-            _streetRepository.Add(street);
-            var result = _mapper.Map<StreetDto>(street);
-            return CreatedAtAction(nameof(GetAll), new { id = street.Id }, result);
+            _streetService.Add(street);
+            var result = _mapper.Map<StreetGetterDto>(street);
+            return CreatedAtAction(nameof(GetById), new { id = street.Id }, result);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, StreetUpdaterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var street = _mapper.Map<Street>(dto);
+            street.Id = id;
+            _streetService.Update(street);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
+        {
+            _streetService.Delete(id);
+            return NoContent();
         }
     }
 }

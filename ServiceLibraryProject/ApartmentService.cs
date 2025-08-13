@@ -37,22 +37,34 @@ namespace ServiceLibraryProject
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _ = _apartmentRepository.GetById(id) ?? throw new ArgumentException("El apartamento no existe.", nameof(id));
+            _apartmentRepository.Delete(id);
         }
 
         public IEnumerable<Apartment> GetAll()
         {
-            throw new NotImplementedException();
+            return _apartmentRepository.GetAll();
         }
 
         public Apartment? GetById(string id)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _apartmentRepository.GetById(id);
+        }
+
+        public Apartment? GetByCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return null;
+            return _apartmentRepository.Find(a => a.Code == code);
         }
 
         public void Update(Apartment entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "El apartamento no puede ser nulo.");
+            _apartmentRepository.Update(entity);
         }
     }
 }
