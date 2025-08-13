@@ -18,23 +18,22 @@ namespace ServiceLibraryProject
 
         public void Add(BuildingCompany entity)
         {
-            // Validación: Nombre requerido y único
             if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
                 throw new ArgumentException("El nombre de la empresa es obligatorio y debe tener entre 2 y 255 caracteres.");
             if (_companyRepository.GetAll().Any(c => c.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe una empresa con ese nombre.");
-            // Validación: CIF requerido, longitud y único
+
             if (string.IsNullOrWhiteSpace(entity.Cif) || entity.Cif.Length != 9)
                 throw new ArgumentException("El CIF es obligatorio y debe tener 9 caracteres.");
             if (_companyRepository.GetAll().Any(c => c.Cif == entity.Cif))
                 throw new InvalidOperationException("Ya existe una empresa con ese CIF.");
-            // Validación: Website longitud
+
             if (!string.IsNullOrEmpty(entity.Website) && entity.Website.Length > 1024)
                 throw new ArgumentException("La web no puede superar los 1024 caracteres.");
             _companyRepository.Add(entity);
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +43,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public BuildingCompany? GetById(Guid id)
+        public BuildingCompany? GetById(string id)
         {
             throw new NotImplementedException();
         }

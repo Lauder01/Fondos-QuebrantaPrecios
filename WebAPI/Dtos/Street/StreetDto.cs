@@ -1,7 +1,7 @@
 using ClassLibraryProject.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI.Dtos
+namespace WebAPI.Dtos.Street
 {
     public class StreetDto
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
+using WebAPI.Dtos.Address;
 
 namespace WebAPI.Controllers
 {

@@ -37,7 +37,7 @@ namespace ClassLibraryProject.Entities
 
         public string BuildBuildingCode()
         {
-            var zipCode = District?.Zipcode ?? "ZZZ";
+            var zipCode = District?.ZipCode ?? "ZZZ";
             var streetCode = Street?.Code ?? "000";
             var doorway = Doorway ?? "0";
             return $"{zipCode}-{streetCode}-{doorway}";

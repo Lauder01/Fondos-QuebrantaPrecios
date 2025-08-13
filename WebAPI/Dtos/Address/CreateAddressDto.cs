@@ -1,4 +1,4 @@
-namespace WebAPI.Dtos
+namespace WebAPI.Dtos.Address
 {
     public class CreateAddressDto
     {

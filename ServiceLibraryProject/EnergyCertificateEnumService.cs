@@ -15,7 +15,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public EnergyCertificateEnum GetById(Guid id)
+        public EnergyCertificateEnum GetById(string id)
         {
             throw new NotImplementedException();
         }

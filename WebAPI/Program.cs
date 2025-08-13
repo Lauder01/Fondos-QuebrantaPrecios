@@ -4,8 +4,18 @@ using RepositoryLibraryProject.Interfaces;
 using RepositoryLibraryProject;
 using ClassLibraryProject.Entities;
 using AutoMapper;
+using ServiceLibraryProject;
+using ServiceLibraryProject.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(7124, listenOptions =>
+    {
+        listenOptions.UseHttps();
+    });
+}); 
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -16,6 +26,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Registro de repositorio genérico para DI
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryLibraryProject.RepositoryIMP<>));
+
+// Registro de servicios de dominio SOLO para District
+builder.Services.AddScoped<IService<District>, DistrictService>();
+builder.Services.AddScoped<DistrictService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

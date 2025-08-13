@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI.Dtos
+namespace WebAPI.Dtos.District
 {
     public class DistrictUpdaterDto : DistrictBaseDto
     {

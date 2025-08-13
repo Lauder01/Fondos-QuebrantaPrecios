@@ -30,7 +30,7 @@ namespace ServiceLibraryProject
             _floorRepository.Add(entity);
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -40,7 +40,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public Floor? GetById(Guid id)
+        public Floor? GetById(string id)
         {
             throw new NotImplementedException();
         }

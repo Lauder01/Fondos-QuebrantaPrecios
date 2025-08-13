@@ -35,7 +35,7 @@ namespace ServiceLibraryProject
             _streetRepository.Add(entity);
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +45,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public Street? GetById(Guid id)
+        public Street? GetById(string id)
         {
             throw new NotImplementedException();
         }

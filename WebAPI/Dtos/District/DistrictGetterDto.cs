@@ -1,6 +1,6 @@
 using System;
 
-namespace WebAPI.Dtos
+namespace WebAPI.Dtos.District
 {
     public class DistrictGetterDto : DistrictBaseDto
     {

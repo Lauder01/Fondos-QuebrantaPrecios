@@ -6,9 +6,10 @@ namespace RepositoryLibraryProject.Interfaces
     public interface IRepository<T> where T : class
     {
         IEnumerable<T> GetAll();
-        T? GetById(Guid id);
+        T? GetById(string id);
         void Add(T entity);
         void Update(T entity);
-        void Delete(Guid id);
+        void Delete(string id);
+        T? Find(Func<T, bool> predicate);
     }
 }

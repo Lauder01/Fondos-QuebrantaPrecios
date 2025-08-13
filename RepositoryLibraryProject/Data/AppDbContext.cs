@@ -277,7 +277,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable(tb => tb.HasTrigger("TrgDistrictUpdateUpdatedAt"));
 
-            entity.HasIndex(e => e.Zipcode, "District_Zipcode").IsUnique();
+            entity.HasIndex(e => e.ZipCode, "District_ZipCode").IsUnique();
 
             entity.HasIndex(e => e.Name, "UQ__District__737584F657C378C6").IsUnique();
 
@@ -296,9 +296,13 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.Zipcode)
+            entity.Property(e => e.ZipCode)
                 .IsRequired()
                 .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Code)
+                .IsRequired()
+                .HasMaxLength(24)
                 .IsUnicode(false);
 
             entity.HasMany(d => d.Street).WithMany(p => p.District)
