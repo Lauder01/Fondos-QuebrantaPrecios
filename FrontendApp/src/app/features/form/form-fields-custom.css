@@ -1,0 +1,10 @@
+@import '../../../styles/theme-colors.css';
+
+.ps-4-5 {
+  padding-left: 2rem !important;
+}
+
+.placeholder-light::placeholder {
+  color: #545a6e !important;
+  opacity: 1;
+}

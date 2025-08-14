@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ClassLibraryProject\ClassLibraryProject.csproj" />
     <ProjectReference Include="..\RepositoryLibraryProject\RepositoryLibraryProject.csproj" />
+    <ProjectReference Include="..\ServiceLibraryProject\ServiceLibraryProject.csproj" />
   </ItemGroup>
 
 </Project>

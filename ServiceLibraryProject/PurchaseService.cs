@@ -15,7 +15,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace ServiceLibraryProject
             throw new NotImplementedException();
         }
 
-        public Purchase? GetById(Guid id)
+        public Purchase? GetById(string id)
         {
             throw new NotImplementedException();
         }

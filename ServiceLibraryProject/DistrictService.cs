@@ -7,53 +7,68 @@ using ServiceLibraryProject.Interfaces;
 
 namespace ServiceLibraryProject
 {
-    public class DistrictService : IService<District>
+    public class DistrictService(IRepository<District> districtRepository) : IService<District>
     {
-        private readonly IRepository<District> _districtRepository;
+        private readonly IRepository<District> _districtRepository = districtRepository;
 
-        public DistrictService(IRepository<District> districtRepository)
+        public IEnumerable<District> GetAll()
         {
-            _districtRepository = districtRepository;
+            return _districtRepository.GetAll();
+        }
+
+        public District? GetById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _districtRepository.GetById(id);
+        }
+
+        public District? GetByName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+            return _districtRepository.Find(d => d.Name == name);
+        }
+
+        public District? GetByCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return null;
+            return _districtRepository.Find(d => d.Code == code);
         }
 
         public void Add(District entity)
         {
-            // Validación: Nombre requerido y longitud
             if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
                 throw new ArgumentException("El nombre del distrito es obligatorio y debe tener entre 2 y 255 caracteres.");
-            // Validación: ZipCode requerido y longitud
-            if (string.IsNullOrWhiteSpace(entity.Zipcode) || entity.Zipcode.Length < 2 || entity.Zipcode.Length > 255)
+
+            if (string.IsNullOrWhiteSpace(entity.ZipCode) || entity.ZipCode.Length < 2 || entity.ZipCode.Length > 255)
                 throw new ArgumentException("El código postal es obligatorio y debe tener entre 2 y 255 caracteres.");
-            // Validación: Unicidad de nombre
+
             if (_districtRepository.GetAll().Any(d => d.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe un distrito con ese nombre.");
-            // Validación: Unicidad de ZipCode
-            if (_districtRepository.GetAll().Any(d => d.Zipcode == entity.Zipcode))
+
+            if (_districtRepository.GetAll().Any(d => d.ZipCode == entity.ZipCode))
                 throw new InvalidOperationException("Ya existe un distrito con ese código postal.");
-            // Validación: BuildingCount >= 0
+
             if (entity.BuildingCount < 0)
                 throw new ArgumentException("El número de edificios no puede ser negativo.");
+
             _districtRepository.Add(entity);
-        }
-
-        public void Delete(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<District> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public District? GetById(Guid id)
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(District entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "El distrito no puede ser nulo.");
+
+            _districtRepository.Update(entity);
+        }
+
+        public void Delete(string id)
+        {
+            _ = _districtRepository.GetById(id) ?? throw new ArgumentException("El distrito no existe.", nameof(id));
+            _districtRepository.Delete(id);
         }
     }
 }

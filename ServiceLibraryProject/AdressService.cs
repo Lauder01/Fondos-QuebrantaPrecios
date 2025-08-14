@@ -1,38 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ClassLibraryProject.Entities;
+using RepositoryLibraryProject.Interfaces;
 using ServiceLibraryProject.Interfaces;
 
 namespace ServiceLibraryProject
 {
     public class AdressService : IService<Address>
     {
-        public void Add(Address entity)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly IRepository<Address> _addressRepository;
 
-        public void Delete(Guid id)
+        public AdressService(IRepository<Address> addressRepository)
         {
-            throw new NotImplementedException();
+            _addressRepository = addressRepository;
         }
 
         public IEnumerable<Address> GetAll()
         {
-            throw new NotImplementedException();
+            return _addressRepository.GetAll();
         }
 
-        public Address? GetById(Guid id)
+        public Address? GetById(string id)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _addressRepository.GetById(id);
+        }
+
+        public void Add(Address entity)
+        {
+            _addressRepository.Add(entity);
         }
 
         public void Update(Address entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
+            _addressRepository.Update(entity);
+        }
+
+        public void Delete(string id)
+        {
+            _ = _addressRepository.GetById(id) ?? throw new ArgumentException("La dirección no existe.", nameof(id));
+            _addressRepository.Delete(id);
         }
     }
 }

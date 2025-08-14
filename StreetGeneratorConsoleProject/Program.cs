@@ -208,7 +208,7 @@ namespace StreetGeneratorConsoleProject
             for (int i = 0; i < districts.Count; i++)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"{i + 1}. {districts[i].Name} (Código postal: {districts[i].Zipcode})");
+                Console.WriteLine($"{i + 1}. {districts[i].Name} (Código postal: {districts[i].ZipCode})");
                 Console.ResetColor();
             }
             int[] selectedIndexes;
@@ -343,11 +343,18 @@ namespace StreetGeneratorConsoleProject
                 WriteError("Nombre no válido.");
                 return;
             }
-            Console.Write("Código postal (Zipcode): ");
-            var zipcode = Console.ReadLine()?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(zipcode) || zipcode.Length < 2 || zipcode.Length > 20)
+            Console.Write("Código postal (ZipCode): ");
+            var zipCode = Console.ReadLine()?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(zipCode) || zipCode.Length < 2 || zipCode.Length > 20)
             {
                 WriteError("Código postal no válido.");
+                return;
+            }
+            Console.Write("Código del distrito: ");
+            var code = Console.ReadLine()?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(code) || code.Length < 2 || code.Length > 20 || !System.Text.RegularExpressions.Regex.IsMatch(code, "^[a-zA-Z0-9-]+$"))
+            {
+                WriteError("Código no válido. Debe tener entre 2 y 20 caracteres y solo puede contener letras, números y guiones.");
                 return;
             }
             Console.Write("Ciudad: ");
@@ -362,23 +369,29 @@ namespace StreetGeneratorConsoleProject
                 WriteWarning($"Ya existe un distrito con ese nombre: {name}");
                 return;
             }
-            if (context.Districts.Any(d => d.Zipcode == zipcode))
+            if (context.Districts.Any(d => d.ZipCode == zipCode))
             {
-                WriteWarning($"Ya existe un distrito con ese código postal: {zipcode}");
+                WriteWarning($"Ya existe un distrito con ese código postal: {zipCode}");
+                return;
+            }
+            if (context.Districts.Any(d => d.Code == code))
+            {
+                WriteWarning($"Ya existe un distrito con ese código: {code}");
                 return;
             }
             var district = new District
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
-                Zipcode = zipcode,
+                ZipCode = zipCode,
+                Code = code,
                 Country = "España",
                 City = city,
                 BuildingCount = 0
             };
             context.Districts.Add(district);
             context.SaveChanges();
-            WriteSuccess($"Distrito insertado correctamente: {district.Name} (Código postal: {district.Zipcode})");
+            WriteSuccess($"Distrito insertado correctamente: {district.Name} (Código postal: {district.ZipCode}, Código: {district.Code})");
         }
 
         static void ListDistricts(AppDbContext context)
@@ -394,7 +407,7 @@ namespace StreetGeneratorConsoleProject
             foreach (var d in districts)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"- {d.Name} (Código: {d.Zipcode})");
+                Console.WriteLine($"- {d.Name} (Código: {d.ZipCode})");
                 Console.ResetColor();
             }
         }

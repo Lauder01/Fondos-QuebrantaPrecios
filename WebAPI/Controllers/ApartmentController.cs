@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
+using WebAPI.Dtos.Apartment;
 
 namespace WebAPI.Controllers
 {
@@ -12,30 +10,59 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class ApartmentController : ControllerBase
     {
-        private readonly IRepository<Apartment> _apartmentRepository;
         private readonly IMapper _mapper;
-        public ApartmentController(IRepository<Apartment> apartmentRepository, IMapper mapper)
+        private readonly ServiceLibraryProject.ApartmentService _apartmentService;
+        public ApartmentController(ServiceLibraryProject.ApartmentService apartmentService, IMapper mapper)
         {
-            _apartmentRepository = apartmentRepository;
+            _apartmentService = apartmentService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ApartmentDto>> GetAll()
+        public ActionResult<IEnumerable<ApartmentGetterDto>> GetAll()
         {
-            var apartments = _apartmentRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<ApartmentDto>>(apartments);
+            var apartments = _apartmentService.GetAll();
+            var dtos = _mapper.Map<IEnumerable<ApartmentGetterDto>>(apartments);
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public ActionResult<ApartmentDto> Create(CreateApartmentDto dto)
+        [HttpGet("{id}")]
+        public ActionResult<ApartmentGetterDto> GetById(string id)
         {
+            var apartment = _apartmentService.GetById(id);
+            if (apartment == null) return NotFound();
+            var dto = _mapper.Map<ApartmentGetterDto>(apartment);
+            return Ok(dto);
+        }
+
+        [HttpPost]
+        public ActionResult<ApartmentGetterDto> Create(ApartmentCreatorDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var apartment = _mapper.Map<Apartment>(dto);
             apartment.Id = Guid.NewGuid().ToString();
-            _apartmentRepository.Add(apartment);
-            var result = _mapper.Map<ApartmentDto>(apartment);
-            return CreatedAtAction(nameof(GetAll), new { id = apartment.Id }, result);
+            _apartmentService.Add(apartment);
+            var result = _mapper.Map<ApartmentGetterDto>(apartment);
+            return CreatedAtAction(nameof(GetById), new { id = apartment.Id }, result);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, ApartmentUpdaterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var apartment = _mapper.Map<Apartment>(dto);
+            apartment.Id = id;
+            _apartmentService.Update(apartment);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
+        {
+            _apartmentService.Delete(id);
+            return NoContent();
         }
     }
 }

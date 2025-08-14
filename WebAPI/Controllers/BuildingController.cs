@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Dtos;
 using ClassLibraryProject.Entities;
-using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
+using WebAPI.Dtos.Building;
 
 namespace WebAPI.Controllers
 {
@@ -12,30 +10,59 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class BuildingController : ControllerBase
     {
-        private readonly IRepository<Building> _buildingRepository;
         private readonly IMapper _mapper;
-        public BuildingController(IRepository<Building> buildingRepository, IMapper mapper)
+        private readonly ServiceLibraryProject.BuildingService _buildingService;
+        public BuildingController(ServiceLibraryProject.BuildingService buildingService, IMapper mapper)
         {
-            _buildingRepository = buildingRepository;
+            _buildingService = buildingService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BuildingDto>> GetAll()
+        public ActionResult<IEnumerable<BuildingGetterDto>> GetAll()
         {
-            var buildings = _buildingRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<BuildingDto>>(buildings);
+            var buildings = _buildingService.GetAll();
+            var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(buildings);
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public ActionResult<BuildingDto> Create(CreateBuildingDto dto)
+        [HttpGet("{id}")]
+        public ActionResult<BuildingGetterDto> GetById(string id)
         {
+            var building = _buildingService.GetById(id);
+            if (building == null) return NotFound();
+            var dto = _mapper.Map<BuildingGetterDto>(building);
+            return Ok(dto);
+        }
+
+        [HttpPost]
+        public ActionResult<BuildingGetterDto> Create(BuildingCreatorDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var building = _mapper.Map<Building>(dto);
             building.Id = Guid.NewGuid().ToString();
-            _buildingRepository.Add(building);
-            var result = _mapper.Map<BuildingDto>(building);
-            return CreatedAtAction(nameof(GetAll), new { id = building.Id }, result);
+            _buildingService.Add(building);
+            var result = _mapper.Map<BuildingGetterDto>(building);
+            return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, BuildingUpdaterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var building = _mapper.Map<Building>(dto);
+            building.Id = id;
+            _buildingService.Update(building);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
+        {
+            _buildingService.Delete(id);
+            return NoContent();
         }
     }
 }

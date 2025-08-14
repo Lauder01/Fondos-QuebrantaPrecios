@@ -7,27 +7,18 @@ using ServiceLibraryProject.Interfaces;
 
 namespace ServiceLibraryProject
 {
-    public class BuildingService : IService<Building>
+    public class BuildingService(
+        IRepository<Building> buildingRepository,
+        IRepository<District> districtRepository,
+        IRepository<Street> streetRepository,
+        IRepository<BuildingCompany> companyRepository,
+        IRepository<Status> statusRepository) : IService<Building>
     {
-        private readonly IRepository<Building> _buildingRepository;
-        private readonly IRepository<District> _districtRepository;
-        private readonly IRepository<Street> _streetRepository;
-        private readonly IRepository<BuildingCompany> _companyRepository;
-        private readonly IRepository<Status> _statusRepository;
-
-        public BuildingService(
-            IRepository<Building> buildingRepository,
-            IRepository<District> districtRepository,
-            IRepository<Street> streetRepository,
-            IRepository<BuildingCompany> companyRepository,
-            IRepository<Status> statusRepository)
-        {
-            _buildingRepository = buildingRepository;
-            _districtRepository = districtRepository;
-            _streetRepository = streetRepository;
-            _companyRepository = companyRepository;
-            _statusRepository = statusRepository;
-        }
+        private readonly IRepository<Building> _buildingRepository = buildingRepository;
+        private readonly IRepository<District> _districtRepository = districtRepository;
+        private readonly IRepository<Street> _streetRepository = streetRepository;
+        private readonly IRepository<BuildingCompany> _companyRepository = companyRepository;
+        private readonly IRepository<Status> _statusRepository = statusRepository;
 
         public void Add(Building entity)
         {
@@ -61,24 +52,36 @@ namespace ServiceLibraryProject
             _buildingRepository.Add(entity);
         }
 
-        public void Delete(Guid id)
+        public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _ = _buildingRepository.GetById(id) ?? throw new ArgumentException("El edificio no existe.", nameof(id));
+            _buildingRepository.Delete(id);
         }
 
         public IEnumerable<Building> GetAll()
         {
-            throw new NotImplementedException();
+            return _buildingRepository.GetAll();
         }
 
-        public Building? GetById(Guid id)
+        public Building? GetById(string id)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return _buildingRepository.GetById(id);
+        }
+
+        public Building? GetByCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return null;
+            return _buildingRepository.Find(b => b.Code == code);
         }
 
         public void Update(Building entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "El edificio no puede ser nulo.");
+            _buildingRepository.Update(entity);
         }
     }
 }
