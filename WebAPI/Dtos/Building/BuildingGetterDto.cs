@@ -2,6 +2,8 @@ namespace WebAPI.Dtos.Building
 {
     public class BuildingGetterDto : BuildingBaseDto
     {
-        public string Id { get; set; } = string.Empty;
+        // Dirección completa generada desde Address.ToString()
+        public string? Address { get; set; }
+        public string? BuildingCompanyName { get; set; }
     }
 }
