@@ -7,10 +7,12 @@ namespace WebAPI.Dtos.Floor
     {
         [Required]
         [Range(-12, 100)]
+      
         public int FloorNumber { get; set; }
         [Required]
         public bool HasLift { get; set; }
         [Required]
+        public string Id { get; set; } = string.Empty;
         public string BuildingId { get; set; } = string.Empty;
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
