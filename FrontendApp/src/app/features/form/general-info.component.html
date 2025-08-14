@@ -17,7 +17,7 @@
 			<div class="position-relative">
 				<input id="buildingCompanyId" type="text" class="form-control form-control-sm ps-4-5" formControlName="buildingCompanyId" placeholder="Constructora ABC S.L."
 					[ngClass]="{'is-invalid': formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched, 'is-valid': formGroup.get('buildingCompanyId')?.valid && formGroup.get('buildingCompanyId')?.touched}">
-				<i class="bi bi-person-badge position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-light"></i>
+				<i class="bi bi-person-badge position-absolute top-50 start-0 translate-middle-y ms-2 text-gray-500"></i>
 			</div>
 			<div *ngIf="formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched" class="invalid-feedback d-block small">
 				La empresa constructora es obligatoria.
@@ -28,7 +28,7 @@
 			<div class="position-relative">
 				<input id="code" type="text" class="form-control form-control-sm ps-4-5" formControlName="code" placeholder="B12345678"
 					[ngClass]="{'is-invalid': formGroup.get('code')?.invalid && formGroup.get('code')?.touched, 'is-valid': formGroup.get('code')?.valid && formGroup.get('code')?.touched}">
-				<i class="bi bi-credit-card-2-front position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
+				<i class="bi bi-credit-card-2-front position-absolute top-50 start-0 translate-middle-y ms-2 text-gray-500"></i>
 			</div>
 			<div class="form-text small">Introduzca el CIF de la empresa o NIF del constructor</div>
 			<div *ngIf="formGroup.get('code')?.invalid && formGroup.get('code')?.touched" class="invalid-feedback d-block small">
@@ -38,7 +38,7 @@
 		<div class="col-12 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="description">Descripción Detallada</label>
 			<div class="position-relative">
-				<textarea id="description" rows="2" class="form-control form-control-sm ps-4-5" formControlName="description" placeholder="Describa las características principales del edificio, servicios incluidos, acabados..." [ngClass]="{'is-invalid': formGroup.get('description')?.invalid && formGroup.get('description')?.touched, 'is-valid': formGroup.get('description')?.valid && formGroup.get('description')?.touched}"></textarea>
+				<textarea id="description" rows="2" class="form-control form-control-sm ps-2" formControlName="description" placeholder="Describa las características principales del edificio, servicios incluidos, acabados..." [ngClass]="{'is-invalid': formGroup.get('description')?.invalid && formGroup.get('description')?.touched, 'is-valid': formGroup.get('description')?.valid && formGroup.get('description')?.touched}"></textarea>
 			</div>
 			<div class="form-text small">Mínimo 10 caracteres</div>
 			<div *ngIf="formGroup.get('description')?.invalid && formGroup.get('description')?.touched" class="invalid-feedback d-block small">
