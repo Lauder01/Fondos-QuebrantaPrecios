@@ -1,24 +1,23 @@
-
 :root {
   /* === PRIMARIOS === */
-  --color-primary: #5073c0;
-  --color-primary-dark: #263b81;
-  --color-primary-light: #60a5fa;
-  --color-primary-lighter: #dbeafe;
-  --color-primary-lightest: #f0f6ff;
+  --color-primary: #275950;
+  --color-primary-dark: #1b3d36;
+  --color-primary-light: #CDD9C7;
+  --color-primary-lighter: #e6ede3;
+  --color-primary-lightest: #f5f8f4;
 
   /* === SECUNDARIOS === */
-  --color-secondary: #7c3aed;
-  --color-secondary-dark: #5b21b6;
-  --color-secondary-light: #a78bfa;
-  --color-secondary-lighter: #ede9fe;
-  --color-secondary-lightest: #f6f3ff;
+  --color-secondary: #A69646;
+  --color-secondary-dark: #7c7134;
+  --color-secondary-light: #d1c68a;
+  --color-secondary-lighter: #ece6c6;
+  --color-secondary-lightest: #faf8ee;
 
   /* === ACENTO === */
-  --color-accent: #f59e42;
-  --color-accent-dark: #b45309;
-  --color-accent-light: #fde68a;
-  --color-accent-lighter: #fff7ed;
+  --color-accent: #593825;
+  --color-accent-dark: #3d2619;
+  --color-accent-light: #bf9e75;
+  --color-accent-lighter: #e8d8c5;
 
   /* === ESTADO === */
   --color-success: #22c55e;

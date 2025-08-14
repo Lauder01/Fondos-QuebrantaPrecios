@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 import { LandingComponent } from './landing/landing.component';
 import { DistrictsPageComponent } from './features/districts/districts.page';
