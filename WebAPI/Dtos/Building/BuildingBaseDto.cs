@@ -23,6 +23,8 @@ namespace WebAPI.Dtos.Building
         public double? Price { get; set; }
         public string? DistrictId { get; set; }
         public string? StreetId { get; set; }
+        public string? BuildingCompanyId { get; set; } // Nueva propiedad
+        public bool HasElevator { get; set; } // Nueva propiedad
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

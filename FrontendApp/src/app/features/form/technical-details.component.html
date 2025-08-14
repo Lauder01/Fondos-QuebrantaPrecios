@@ -1,39 +1,60 @@
+<link rel="stylesheet" href="./form-fields-custom.css">
 <div [formGroup]="formGroup">
 	<div class="row g-2">
-		<div class="col-md-3">
-			<label class="form-label fw-semibold small text-primary-dark">Número de Plantas</label>
-			<input type="number" class="form-control form-control-sm" formControlName="floorCount" placeholder="1">
-		</div>
-		<div class="col-md-3">
-			<label class="form-label fw-semibold small text-primary-dark"><i class="bi bi-calendar me-1 text-primary-dark"></i> Año de Construcción</label>
-			<input type="number" class="form-control form-control-sm" formControlName="yearBuilt" placeholder="2025">
-		</div>
-		<div class="col-md-3">
-			<label class="form-label fw-semibold small text-primary-dark">€ Precio (€)</label>
-			<input type="number" class="form-control form-control-sm" formControlName="price" placeholder="0">
-		</div>
-		<div class="col-md-3">
-			<label class="form-label fw-semibold small text-primary-dark">Apartamentos por Planta</label>
-			<input type="number" class="form-control form-control-sm" placeholder="1">
-		</div>
-		<div class="col-12">
-			<div class="form-check mt-1">
-				<input class="form-check-input" type="checkbox" id="hasElevator">
-				<label class="form-check-label fw-semibold small" for="hasElevator">
-					El edificio tiene ascensor
-				</label>
-				<div class="form-text ms-1 small">Marque esta opción si el edificio cuenta con ascensor</div>
+		<!-- Número de Plantas -->
+		<div class="col-md-3 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="floorCount">Número de Plantas</label>
+			<div class="position-relative">
+				<input id="floorCount" type="number" class="form-control form-control-sm ps-4-5" formControlName="floorCount" placeholder="1"
+					[ngClass]="{'is-invalid': formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched, 'is-valid': formGroup.get('floorCount')?.valid && formGroup.get('floorCount')?.touched}">
+				<i class="bi bi-layers position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+			</div>
+			<div *ngIf="formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched" class="invalid-feedback d-block small">
+				Debe indicar el número de plantas.
 			</div>
 		</div>
-		<div class="col-md-4">
+
+		<!-- Año de Construcción -->
+		<div class="col-md-3 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="yearBuilt">Año de Construcción</label>
+			<div class="position-relative">
+				<input id="yearBuilt" type="number" class="form-control form-control-sm ps-4-5" formControlName="yearBuilt" placeholder="2025"
+					[ngClass]="{'is-invalid': formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched, 'is-valid': formGroup.get('yearBuilt')?.valid && formGroup.get('yearBuilt')?.touched}">
+				<i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+			</div>
+			<div *ngIf="formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched" class="invalid-feedback d-block small">
+				Debe indicar el año de construcción.
+			</div>
+		</div>
+
+		<!-- Precio -->
+		<div class="col-md-3 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="price">Precio</label>
+			<div class="position-relative">
+				<input id="price" type="number" class="form-control form-control-sm ps-4-5" formControlName="price" placeholder="0"
+					[ngClass]="{'is-invalid': formGroup.get('price')?.invalid && formGroup.get('price')?.touched, 'is-valid': formGroup.get('price')?.valid && formGroup.get('price')?.touched}">
+				<i class="bi bi-currency-euro position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+			</div>
+			<div *ngIf="formGroup.get('price')?.invalid && formGroup.get('price')?.touched" class="invalid-feedback d-block small">
+				Debe indicar el precio.
+			</div>
+		</div>
+
+		<!-- Apartamentos por Planta -->
+		<div class="col-md-3 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="apartmentsPerFloor">Nº de apartamentos por planta</label>
-			<input id="apartmentsPerFloor" type="number" class="form-control form-control-sm" formControlName="apartmentsPerFloor" placeholder="4"
-				[ngClass]="{'is-invalid': formGroup.get('apartmentsPerFloor')?.invalid && formGroup.get('apartmentsPerFloor')?.touched, 'is-valid': formGroup.get('apartmentsPerFloor')?.valid && formGroup.get('apartmentsPerFloor')?.touched}">
+			<div class="position-relative">
+				<input id="apartmentsPerFloor" type="number" class="form-control form-control-sm ps-4-5" formControlName="apartmentsPerFloor" placeholder="4"
+					[ngClass]="{'is-invalid': formGroup.get('apartmentsPerFloor')?.invalid && formGroup.get('apartmentsPerFloor')?.touched, 'is-valid': formGroup.get('apartmentsPerFloor')?.valid && formGroup.get('apartmentsPerFloor')?.touched}">
+				<i class="bi bi-door-open position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+			</div>
 			<div *ngIf="formGroup.get('apartmentsPerFloor')?.invalid && formGroup.get('apartmentsPerFloor')?.touched" class="invalid-feedback d-block small">
 				Debe indicar un número válido de apartamentos por planta.
 			</div>
 		</div>
-		<div class="col-md-4">
+    <div class="mb-2"></div>
+		<!-- Ascensor -->
+		<div class="col-md-4 position-relative mt-2">
 			<label class="form-label fw-semibold small text-primary-dark" for="hasElevator">¿Tiene ascensor?</label>
 			<div class="form-check form-switch mt-1">
 				<input class="form-check-input" type="checkbox" formControlName="hasElevator" id="hasElevator">

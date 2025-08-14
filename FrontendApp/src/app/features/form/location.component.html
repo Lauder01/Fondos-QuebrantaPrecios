@@ -1,92 +1,88 @@
+<link rel="stylesheet" href="./form-fields-custom.css">
 <div [formGroup]="formGroup">
 	<div class="row g-2">
+		<!-- Distrito -->
 		<div class="col-md-4 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="districtId">Distrito</label>
 			<div class="position-relative">
-				<input id="districtId" type="text" class="form-control form-control-sm ps-4 pe-4" formControlName="districtId" placeholder="Escriba o seleccione un distrito"
+				<input id="districtId" type="text" class="form-control form-control-sm ps-2" formControlName="districtId" placeholder="Escriba o seleccione un distrito"
 					autocomplete="off"
 					(input)="onDistrictInput(getInputValue($event))"
 					[ngClass]="{'is-invalid': formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty), 'is-valid': formGroup.get('districtId')?.valid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)}">
-				<i class="bi bi-geo-alt position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
-				<i *ngIf="formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty"
-					[ngClass]="{
-						'bi': true,
-						'bi-check-circle': formGroup.get('districtId')?.valid,
-						'bi-exclamation-circle': formGroup.get('districtId')?.invalid,
-						'text-success': formGroup.get('districtId')?.valid,
-						'text-danger': formGroup.get('districtId')?.invalid
-					}"
-					class="position-absolute top-50 end-0 translate-middle-y me-2 fs-6"></i>
 			</div>
 			<ul *ngIf="(filteredDistricts ?? []).length > 0 && showDistrictList" class="list-group position-absolute w-100 z-3 shadow" style="top:100%;">
 				<li *ngFor="let district of filteredDistricts" class="list-group-item list-group-item-action" (click)="selectDistrict(district)">{{district}}</li>
 			</ul>
-			<div *ngIf="formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)" class="invalid-feedback d-block">
+			<div *ngIf="formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)" class="invalid-feedback d-block small">
 				El distrito es obligatorio.
 			</div>
 		</div>
-			<div class="col-md-4">
-				<label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
-				<div class="position-relative">
-					<input id="streetId" type="text" class="form-control form-control-sm ps-4" formControlName="streetId" placeholder="Calle Mayor" [ngClass]="{'is-invalid': formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched, 'is-valid': formGroup.get('streetId')?.valid && formGroup.get('streetId')?.touched}">
-					<i class="bi bi-signpost position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
-				</div>
-				<div *ngIf="formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched" class="invalid-feedback d-block small">
-					La calle es obligatoria.
-				</div>
+
+		<!-- Calle -->
+		<div class="col-md-4 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
+			<div class="position-relative">
+				<input id="streetId" type="text" class="form-control form-control-sm ps-2" formControlName="streetId" placeholder="Calle Mayor"
+					[ngClass]="{'is-invalid': formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched, 'is-valid': formGroup.get('streetId')?.valid && formGroup.get('streetId')?.touched}">
 			</div>
-			<div class="col-md-4 position-relative">
-				<label class="form-label fw-semibold small text-primary-dark" for="doorway">Portal/Edificio</label>
-				<div class="position-relative">
-					<input id="doorway" type="text" class="form-control form-control-sm ps-4 pe-4" formControlName="doorway" placeholder="15"
-						[ngClass]="{'is-invalid': formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty), 'is-valid': formGroup.get('doorway')?.valid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)}">
-					<i class="bi bi-building position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
-					<i *ngIf="formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty"
-						[ngClass]="{
-							'bi': true,
-							'bi-check-circle': formGroup.get('doorway')?.valid,
-							'bi-exclamation-circle': formGroup.get('doorway')?.invalid,
-							'text-success': formGroup.get('doorway')?.valid,
-							'text-danger': formGroup.get('doorway')?.invalid
-						}"
-						class="position-absolute top-50 end-0 translate-middle-y me-2 fs-6"></i>
-				</div>
-				<div *ngIf="formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)" class="invalid-feedback d-block small">
-					El portal/edificio es obligatorio.
-				</div>
+			<div *ngIf="formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched" class="invalid-feedback d-block small">
+				La calle es obligatoria.
 			</div>
-			<div class="col-md-4">
-				<label class="form-label fw-semibold small text-primary-dark" for="apartmentId">Código Postal</label>
-				<div class="position-relative">
-					<input id="apartmentId" type="text" class="form-control form-control-sm ps-4" formControlName="apartmentId" placeholder="28001" [ngClass]="{'is-invalid': formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched, 'is-valid': formGroup.get('apartmentId')?.valid && formGroup.get('apartmentId')?.touched}">
-					<i class="bi bi-mailbox position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
-				</div>
-				<div *ngIf="formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched" class="invalid-feedback d-block small">
-					El código postal es obligatorio.
-				</div>
+		</div>
+
+		<!-- Portal/Edificio -->
+		<div class="col-md-4 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="doorway">Portal/Edificio</label>
+			<div class="position-relative">
+				<input id="doorway" type="text" class="form-control form-control-sm ps-2" formControlName="doorway" placeholder="15"
+					[ngClass]="{'is-invalid': formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty), 'is-valid': formGroup.get('doorway')?.valid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)}">
 			</div>
-			<div class="col-md-4">
-				<label class="form-label fw-semibold small text-primary-dark" for="city">Ciudad</label>
-				<div class="position-relative">
-					<input id="city" type="text" class="form-control form-control-sm ps-4" formControlName="city" placeholder="Madrid" [ngClass]="{'is-invalid': formGroup.get('city')?.invalid && formGroup.get('city')?.touched, 'is-valid': formGroup.get('city')?.valid && formGroup.get('city')?.touched}">
-					<i class="bi bi-geo-alt-fill position-absolute top-50 start-0 translate-middle-y ms-2 text-primary-dark"></i>
-				</div>
-				<div *ngIf="formGroup.get('city')?.invalid && formGroup.get('city')?.touched" class="invalid-feedback d-block small">
-					La ciudad es obligatoria.
-				</div>
+			<div *ngIf="formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)" class="invalid-feedback d-block small">
+				El portal/edificio es obligatorio.
 			</div>
-			<div class="col-md-4">
-				<label class="form-label fw-semibold small text-primary-dark" for="country">País</label>
-				<select id="country" class="form-select form-select-sm" formControlName="country" [ngClass]="{'is-invalid': formGroup.get('country')?.invalid && formGroup.get('country')?.touched, 'is-valid': formGroup.get('country')?.valid && formGroup.get('country')?.touched}">
+		</div>
+    <div class="mb-2"></div>
+
+		<!-- Código Postal -->
+		<div class="col-md-4 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="apartmentId">Código Postal</label>
+			<div class="position-relative">
+				<input id="apartmentId" type="text" class="form-control form-control-sm ps-2" formControlName="apartmentId" placeholder="28001"
+					[ngClass]="{'is-invalid': formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched, 'is-valid': formGroup.get('apartmentId')?.valid && formGroup.get('apartmentId')?.touched}">
+			</div>
+			<div *ngIf="formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched" class="invalid-feedback d-block small">
+				El código postal es obligatorio.
+			</div>
+		</div>
+
+		<!-- Ciudad -->
+		<div class="col-md-4 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="city">Ciudad</label>
+			<div class="position-relative">
+				<input id="city" type="text" class="form-control form-control-sm ps-2" formControlName="city" placeholder="Madrid"
+					[ngClass]="{'is-invalid': formGroup.get('city')?.invalid && formGroup.get('city')?.touched, 'is-valid': formGroup.get('city')?.valid && formGroup.get('city')?.touched}">
+			</div>
+			<div *ngIf="formGroup.get('city')?.invalid && formGroup.get('city')?.touched" class="invalid-feedback d-block small">
+				La ciudad es obligatoria.
+			</div>
+		</div>
+
+		<!-- País -->
+		<div class="col-md-4 position-relative">
+			<label class="form-label fw-semibold small text-primary-dark" for="country">País</label>
+			<div class="position-relative">
+				<select id="country" class="form-select form-select-sm ps-2" formControlName="country"
+					[ngClass]="{'is-invalid': formGroup.get('country')?.invalid && formGroup.get('country')?.touched, 'is-valid': formGroup.get('country')?.valid && formGroup.get('country')?.touched}">
 					<option value="">Seleccione un país</option>
 					<option value="España">España</option>
 					<option value="Portugal">Portugal</option>
 					<option value="Francia">Francia</option>
 				</select>
-				<div *ngIf="formGroup.get('country')?.invalid && formGroup.get('country')?.touched" class="invalid-feedback d-block small">
-					El país es obligatorio.
-				</div>
+			</div>
+			<div *ngIf="formGroup.get('country')?.invalid && formGroup.get('country')?.touched" class="invalid-feedback d-block small">
+				El país es obligatorio.
 			</div>
 		</div>
+	</div>
 </div>
 <!-- ...existing code from original location will be moved here... -->

@@ -7,17 +7,17 @@
   --color-primary-lightest: #f5f8f4;
 
   /* === SECUNDARIOS === */
-  --color-secondary: #A69646;
-  --color-secondary-dark: #7c7134;
-  --color-secondary-light: #d1c68a;
-  --color-secondary-lighter: #ece6c6;
-  --color-secondary-lightest: #faf8ee;
+  --color-secondary: #58c2ab;
+  --color-secondary-dark: #399b87;
+  --color-secondary-light: #8be0ce;
+  --color-secondary-lighter: #c6f3ea;
+  --color-secondary-lightest: #eafaf7;
 
   /* === ACENTO === */
-  --color-accent: #593825;
-  --color-accent-dark: #3d2619;
-  --color-accent-light: #bf9e75;
-  --color-accent-lighter: #e8d8c5;
+  --color-accent: #c07621;
+  --color-accent-dark: #8a570f;
+  --color-accent-light: #e6b36a;
+  --color-accent-lighter: #f7e3c2;
 
   /* === ESTADO === */
   --color-success: #22c55e;
