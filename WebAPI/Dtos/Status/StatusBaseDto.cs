@@ -2,13 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Dtos.Status
 {
-    public class StatusDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-    }
-    public class CreateStatusDto
+    public class StatusBaseDto
     {
         [Required]
         [StringLength(48, MinimumLength = 1)]
