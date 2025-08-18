@@ -5,13 +5,16 @@
 		<div class="col-md-4 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="districtId">Distrito</label>
 			<div class="position-relative">
-				<input id="districtId" type="text" class="form-control form-control-sm ps-2" formControlName="districtId" placeholder="Escriba o seleccione un distrito"
+				<input id="districtId" type="text" class="form-control form-control-sm ps-2" formControlName="districtId" placeholder="Escriba para buscar un distrito"
 					autocomplete="off"
 					(input)="onDistrictInput(getInputValue($event))"
 					[ngClass]="{'is-invalid': formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty), 'is-valid': formGroup.get('districtId')?.valid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)}">
 			</div>
 			<ul *ngIf="(filteredDistricts ?? []).length > 0 && showDistrictList" class="list-group position-absolute w-100 z-3 shadow" style="top:100%;">
-				<li *ngFor="let district of filteredDistricts" class="list-group-item list-group-item-action" (click)="selectDistrict(district)">{{district}}</li>
+				<li *ngFor="let district of filteredDistricts" class="list-group-item list-group-item-action" (click)="selectDistrict(district)">
+					<div class="fw-semibold">{{district.name}}</div>
+					<small class="text-muted">{{district.zipCode}} - {{district.city}}, {{district.country}}</small>
+				</li>
 			</ul>
 			<div *ngIf="formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)" class="invalid-feedback d-block small">
 				El distrito es obligatorio.
