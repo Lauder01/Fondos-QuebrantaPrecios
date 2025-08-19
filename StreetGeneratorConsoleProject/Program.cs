@@ -343,11 +343,16 @@ namespace StreetGeneratorConsoleProject
                 WriteError("Nombre no válido.");
                 return;
             }
-            Console.Write("Código postal (ZipCode): ");
-            var zipCode = Console.ReadLine()?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(zipCode) || zipCode.Length < 2 || zipCode.Length > 20)
+            Console.Write("Códigos postales (ZipCode), separados por coma: ");
+            var zipCodesInput = Console.ReadLine()?.Trim() ?? string.Empty;
+            var zipCodes = zipCodesInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(z => z.Trim())
+                .Where(z => !string.IsNullOrWhiteSpace(z))
+                .Distinct()
+                .ToList();
+            if (zipCodes.Count == 0 || zipCodes.Any(z => z.Length < 2 || z.Length > 20))
             {
-                WriteError("Código postal no válido.");
+                WriteError("Al menos un código postal no es válido (debe tener entre 2 y 20 caracteres).");
                 return;
             }
             Console.Write("Código del distrito: ");
@@ -369,11 +374,14 @@ namespace StreetGeneratorConsoleProject
                 WriteWarning($"Ya existe un distrito con ese nombre: {name}");
                 return;
             }
-            // Validar que no exista ya un distrito con ese código postal
-            if (context.Districts.Any(d => d.Zipcode.Any(z => z.Code == zipCode)))
+            // Validar que no exista ya un distrito con alguno de los códigos postales
+            foreach (var zc in zipCodes)
             {
-                WriteWarning($"Ya existe un distrito con ese código postal: {zipCode}");
-                return;
+                if (context.Districts.Any(d => d.Zipcode.Any(z => z.Code == zc)))
+                {
+                    WriteWarning($"Ya existe un distrito con ese código postal: {zc}");
+                    return;
+                }
             }
             if (context.Districts.Any(d => d.Code == code))
             {
@@ -389,9 +397,12 @@ namespace StreetGeneratorConsoleProject
                 City = city,
                 BuildingCount = 0
             };
-            // Asociar el código postal
-            var zipcodeEntity = context.Zipcode.FirstOrDefault(z => z.Code == zipCode) ?? new Zipcode { Id = Guid.NewGuid().ToString(), Code = zipCode };
-            district.Zipcode.Add(zipcodeEntity);
+            // Asociar los códigos postales
+            foreach (var zc in zipCodes)
+            {
+                var zipcodeEntity = context.Zipcode.FirstOrDefault(z => z.Code == zc) ?? new Zipcode { Id = Guid.NewGuid().ToString(), Code = zc };
+                district.Zipcode.Add(zipcodeEntity);
+            }
             context.Districts.Add(district);
             context.SaveChanges();
             WriteSuccess($"Distrito insertado correctamente: {district.Name} (Códigos postales: {string.Join(", ", district.Zipcode.Select(z => z.Code))}, Código: {district.Code})");
