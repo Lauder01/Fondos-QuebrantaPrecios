@@ -44,6 +44,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Street> Streets { get; set; }
 
+    public virtual DbSet<Zipcode> Zipcode { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=devdemoserverbbdd.database.windows.net,1433;Initial Catalog=devdemobbdd;Persist Security Info=True;User ID=admsql;Password=P@ssw0rd;Encrypt=True");
 
@@ -277,8 +279,6 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable(tb => tb.HasTrigger("TrgDistrictUpdateUpdatedAt"));
 
-            entity.HasIndex(e => e.ZipCode, "District_ZipCode").IsUnique();
-
             entity.HasIndex(e => e.Name, "UQ__District__737584F657C378C6").IsUnique();
 
             entity.Property(e => e.Id)
@@ -293,10 +293,6 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.ZipCode)
                 .IsRequired()
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -324,6 +320,27 @@ public partial class AppDbContext : DbContext
                             .HasMaxLength(36)
                             .IsUnicode(false);
                     });
+            entity.HasMany(d => d.Zipcode).WithMany(p => p.District)
+    .UsingEntity<Dictionary<string, object>>(
+        "DistrictZipcode",
+        r => r.HasOne<Zipcode>().WithMany()
+            .HasForeignKey("ZipcodeId")
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_DistrictZipcode_Zipcode"),
+        l => l.HasOne<District>().WithMany()
+            .HasForeignKey("DistrictId")
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_DistrictZipcode_District"),
+        j =>
+        {
+            j.HasKey("DistrictId", "ZipcodeId");
+            j.IndexerProperty<string>("DistrictId")
+                .HasMaxLength(36)
+                .IsUnicode(false);
+            j.IndexerProperty<string>("ZipcodeId")
+                .HasMaxLength(36)
+                .IsUnicode(false);
+        });
         });
 
         modelBuilder.Entity<Floor>(entity =>
@@ -489,6 +506,21 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
         });
+
+        modelBuilder.Entity<Zipcode>(entity =>
+{
+    entity.HasKey(e => e.Id).HasName("PK__Zipcode__3214EC07B3F7E0D6");
+
+    entity.Property(e => e.Id)
+        .HasMaxLength(36)
+        .IsUnicode(false);
+    entity.Property(e => e.Code)
+        .IsRequired()
+        .HasMaxLength(50)
+        .IsUnicode(false);
+    entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+    entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+});
 
         OnModelCreatingPartial(modelBuilder);
     }
