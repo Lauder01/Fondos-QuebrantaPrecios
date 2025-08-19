@@ -19,19 +19,6 @@ namespace WebAPI.Controllers
             var dtos = mapper.Map<IEnumerable<DistrictGetterDto>>(districts);
             return Ok(dtos);
         }
-
-        [HttpGet("{Code}")]
-        public ActionResult<DistrictGetterDto> GetByZipCode(string Code)
-        {
-            if (string.IsNullOrEmpty(Code))
-                return BadRequest("El código postal no puede estar vacío.");
-
-            var district = districtService.GetByCode(Code);
-            if (district == null)
-                return NotFound($"Distrito con código postal {Code} no encontrado.");
-
-            var dto = mapper.Map<DistrictGetterDto>(district);
-            return Ok(dto);
         }
 
         [HttpGet("name/{name}")]
