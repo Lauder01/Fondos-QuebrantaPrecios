@@ -10,20 +10,18 @@ namespace WebAPI.Dtos.District
         public string Name { get; set; } = string.Empty;
         [Required]
         [StringLength(255, MinimumLength = 2)]
-        public string ZipCode { get; set; } = string.Empty;
-        [Required]
-        [StringLength(255, MinimumLength = 2)]
         public string Code { get; set; } = string.Empty;
         [StringLength(255)]
         public string? Country { get; set; }
         [StringLength(255)]
         public string? City { get; set; }
+        public List<string>? ZipCodes { get; set; } // Nueva propiedad para exponer los códigos postales
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(ZipCode) && Name == ZipCode)
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Code) && Name == Code)
             {
-                yield return new ValidationResult("El nombre y el código postal no pueden ser iguales.", [nameof(Name), nameof(ZipCode)]);
+                yield return new ValidationResult("El nombre y el código no pueden ser iguales.", new[] { nameof(Name), nameof(Code) });
             }
         }
     }

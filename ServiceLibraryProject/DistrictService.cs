@@ -34,7 +34,8 @@ namespace ServiceLibraryProject
         {
             if (string.IsNullOrWhiteSpace(code))
                 return null;
-            return _districtRepository.Find(d => d.Code == code);
+            // Buscar por el primer código postal asociado
+            return _districtRepository.GetAll().FirstOrDefault(d => d.Zipcode.Any(z => z.Code == code));
         }
 
         public void Add(District entity)
@@ -42,14 +43,12 @@ namespace ServiceLibraryProject
             if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
                 throw new ArgumentException("El nombre del distrito es obligatorio y debe tener entre 2 y 255 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(entity.ZipCode) || entity.ZipCode.Length < 2 || entity.ZipCode.Length > 255)
-                throw new ArgumentException("El código postal es obligatorio y debe tener entre 2 y 255 caracteres.");
+            // No validamos ZipCode aquí, ya que ahora es una colección
 
             if (_districtRepository.GetAll().Any(d => d.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe un distrito con ese nombre.");
 
-            if (_districtRepository.GetAll().Any(d => d.ZipCode == entity.ZipCode))
-                throw new InvalidOperationException("Ya existe un distrito con ese código postal.");
+            // No validamos duplicados de ZipCode aquí, ya que ahora es una colección
 
             if (entity.BuildingCount < 0)
                 throw new ArgumentException("El número de edificios no puede ser negativo.");

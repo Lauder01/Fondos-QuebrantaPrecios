@@ -208,7 +208,8 @@ namespace StreetGeneratorConsoleProject
             for (int i = 0; i < districts.Count; i++)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"{i + 1}. {districts[i].Name} (Código postal: {districts[i].ZipCode})");
+                var zipcodes = string.Join(", ", districts[i].Zipcode.Select(z => z.Code));
+                Console.WriteLine($"{i + 1}. {districts[i].Name} (Códigos postales: {zipcodes})");
                 Console.ResetColor();
             }
             int[] selectedIndexes;
@@ -368,7 +369,8 @@ namespace StreetGeneratorConsoleProject
                 WriteWarning($"Ya existe un distrito con ese nombre: {name}");
                 return;
             }
-            if (context.Districts.Any(d => d.ZipCode == zipCode))
+            // Validar que no exista ya un distrito con ese código postal
+            if (context.Districts.Any(d => d.Zipcode.Any(z => z.Code == zipCode)))
             {
                 WriteWarning($"Ya existe un distrito con ese código postal: {zipCode}");
                 return;
@@ -382,15 +384,17 @@ namespace StreetGeneratorConsoleProject
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
-                ZipCode = zipCode,
                 Code = code,
                 Country = "España",
                 City = city,
                 BuildingCount = 0
             };
+            // Asociar el código postal
+            var zipcodeEntity = context.Zipcode.FirstOrDefault(z => z.Code == zipCode) ?? new Zipcode { Id = Guid.NewGuid().ToString(), Code = zipCode };
+            district.Zipcode.Add(zipcodeEntity);
             context.Districts.Add(district);
             context.SaveChanges();
-            WriteSuccess($"Distrito insertado correctamente: {district.Name} (Código postal: {district.ZipCode}, Código: {district.Code})");
+            WriteSuccess($"Distrito insertado correctamente: {district.Name} (Códigos postales: {string.Join(", ", district.Zipcode.Select(z => z.Code))}, Código: {district.Code})");
         }
 
         static void ListDistricts(AppDbContext context)
@@ -406,7 +410,7 @@ namespace StreetGeneratorConsoleProject
             foreach (var d in districts)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"- {d.Name} (Código: {d.ZipCode})");
+                Console.WriteLine($"- {d.Name} (Códigos postales: {string.Join(", ", d.Zipcode.Select(z => z.Code))})");
                 Console.ResetColor();
             }
         }

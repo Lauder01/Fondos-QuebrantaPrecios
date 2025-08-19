@@ -8,7 +8,8 @@ namespace WebAPI.AutoMapperProfiles
     {
         public DistrictProfile()
         {
-            CreateMap<District, DistrictGetterDto>();
+            CreateMap<District, DistrictGetterDto>()
+                .ForMember(dest => dest.ZipCodes, opt => opt.MapFrom(src => src.GetZipCodes()));
             CreateMap<DistrictGetterDto, District>();
         }
     }

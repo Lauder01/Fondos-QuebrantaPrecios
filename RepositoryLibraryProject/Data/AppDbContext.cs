@@ -508,19 +508,19 @@ public partial class AppDbContext : DbContext
         });
 
         modelBuilder.Entity<Zipcode>(entity =>
-{
-    entity.HasKey(e => e.Id).HasName("PK__Zipcode__3214EC07B3F7E0D6");
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Zipcode__3214EC07B3F7E0D6");
 
-    entity.Property(e => e.Id)
-        .HasMaxLength(36)
-        .IsUnicode(false);
-    entity.Property(e => e.Code)
-        .IsRequired()
-        .HasMaxLength(50)
-        .IsUnicode(false);
-    entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-    entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-});
+            entity.Property(e => e.Id)
+                .HasMaxLength(36)
+                .IsUnicode(false);
+            entity.Property(e => e.Code)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -16,5 +16,10 @@ namespace ClassLibraryProject.Entities
 #pragma warning disable CS8618
         public District() { }
 #pragma warning restore CS8618
+
+        public List<string> GetZipCodes()
+        {
+            return Zipcode?.Select(z => z.Code).ToList() ?? new List<string>();
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using ClassLibraryProject.Enums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ClassLibraryProject.Entities
 {
@@ -37,7 +38,8 @@ namespace ClassLibraryProject.Entities
 
         public string BuildBuildingCode()
         {
-            var zipCode = District?.ZipCode ?? "ZZZ";
+            // Usar el primer código postal asociado al distrito, si existe
+            var zipCode = District?.Zipcode?.FirstOrDefault()?.Code ?? "ZZZ";
             var streetCode = Street?.Code ?? "000";
             var doorway = Doorway ?? "0";
             return $"{zipCode}-{streetCode}-{doorway}";
