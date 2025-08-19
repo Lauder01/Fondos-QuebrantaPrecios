@@ -281,14 +281,13 @@ namespace StreetGeneratorConsoleProject
                 WriteWarning($"Ya existe una calle con ese código: {street.Code}");
                 return;
             }
-            context.Streets.Add(street);
-            context.SaveChanges();
-
-            // Relacionar con distritos en DistrictStreet
+            // Relacionar con distritos usando EF
             foreach (var district in selectedDistricts)
             {
-                context.Database.ExecuteSql($"INSERT INTO DistrictStreet (DistrictId, StreetId) VALUES ('{district.Id}', '{street.Id}')");
+                street.District.Add(district);
             }
+            context.Streets.Add(street);
+            context.SaveChanges();
             WriteSuccess($"Calle insertada correctamente: {street.Name} (Código: {street.Code}) y relacionada con distrito(s).");
         }
 
