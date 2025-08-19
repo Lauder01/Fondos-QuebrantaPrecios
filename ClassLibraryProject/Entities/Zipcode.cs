@@ -11,10 +11,6 @@ public partial class Zipcode
 
     public string Code { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
-
     public virtual ICollection<District> District { get; set; } = new List<District>();
 }
 

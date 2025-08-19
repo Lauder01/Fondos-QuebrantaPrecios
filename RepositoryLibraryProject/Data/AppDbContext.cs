@@ -518,8 +518,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
         });
 
         OnModelCreatingPartial(modelBuilder);
