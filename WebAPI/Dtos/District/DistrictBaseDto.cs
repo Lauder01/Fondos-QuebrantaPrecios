@@ -15,7 +15,7 @@ namespace WebAPI.Dtos.District
         public string? Country { get; set; }
         [StringLength(255)]
         public string? City { get; set; }
-        public virtual ICollection<Zipcode> Zipcode { get; set; } = new List<Zipcode>();
+        public List<string> Zipcodes { get; set; } = new List<string>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

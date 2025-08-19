@@ -19,7 +19,6 @@ namespace WebAPI.Controllers
             var dtos = mapper.Map<IEnumerable<DistrictGetterDto>>(districts);
             return Ok(dtos);
         }
-        }
 
         [HttpGet("name/{name}")]
         public ActionResult<DistrictGetterDto> GetByName(string name)
