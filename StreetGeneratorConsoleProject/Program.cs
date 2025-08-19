@@ -380,11 +380,7 @@ namespace StreetGeneratorConsoleProject
             var words = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var initials = string.Join("", words.Select(w => RemoveDiacritics(w.Substring(0, Math.Min(2, w.Length))).ToUpper()));
             var code = $"{initials}-{zipCodes[0]}";
-            if (context.Districts.Any(d => d.Code == code))
-            {
-                WriteWarning($"Ya existe un distrito con ese código: {code}");
-                return;
-            }
+            
             var district = new District
             {
                 Id = Guid.NewGuid().ToString(),
