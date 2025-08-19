@@ -368,14 +368,7 @@ namespace StreetGeneratorConsoleProject
                 return;
             }
             // Validar que no exista ya un distrito con alguno de los códigos postales
-            foreach (var zc in zipCodes)
-            {
-                if (context.Districts.Any(d => d.Zipcode.Any(z => z.Code == zc)))
-                {
-                    WriteWarning($"Ya existe un distrito con ese código postal: {zc}");
-                    return;
-                }
-            }
+           
             // Generar el código automáticamente
             var words = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var initials = string.Join("", words.Select(w => RemoveDiacritics(w.Substring(0, Math.Min(2, w.Length))).ToUpper()));
