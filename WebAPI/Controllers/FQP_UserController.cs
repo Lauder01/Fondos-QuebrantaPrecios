@@ -21,22 +21,22 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<FQPUserDto>> GetAll()
+        public ActionResult<IEnumerable<FQPUserBaseDto>> GetAll()
         {
             var users = _userRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<FQPUserDto>>(users);
+            var dtos = _mapper.Map<IEnumerable<FQPUserBaseDto>>(users);
             return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult<FQPUserDto> Create(CreateFQPUserDto dto)
+        public ActionResult<FQPUserBaseDto> Create(FQPUserCreatorDto dto)
         {
             var user = _mapper.Map<FQP_User>(dto);
             user.Id = Guid.NewGuid().ToString();
             user.IsActive = true;
             // Aquí deberías hashear la contraseña si es necesario
             _userRepository.Add(user);
-            var result = _mapper.Map<FQPUserDto>(user);
+            var result = _mapper.Map<FQPUserBaseDto>(user);
             return CreatedAtAction(nameof(GetAll), new { id = user.Id }, result);
         }
     }

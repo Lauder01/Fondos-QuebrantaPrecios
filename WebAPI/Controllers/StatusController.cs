@@ -21,21 +21,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StatusDto>> GetAll()
+        public ActionResult<IEnumerable<StatusBaseDto>> GetAll()
         {
             var statuses = _statusRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<StatusDto>>(statuses);
+            var dtos = _mapper.Map<IEnumerable<StatusBaseDto>>(statuses);
             return Ok(dtos);
-        }
-
-        [HttpPost]
-        public ActionResult<StatusDto> Create(CreateStatusDto dto)
-        {
-            var status = _mapper.Map<Status>(dto);
-            status.Id = Guid.NewGuid().ToString();
-            _statusRepository.Add(status);
-            var result = _mapper.Map<StatusDto>(status);
-            return CreatedAtAction(nameof(GetAll), new { id = status.Id }, result);
         }
     }
 }
