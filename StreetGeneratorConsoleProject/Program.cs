@@ -355,13 +355,6 @@ namespace StreetGeneratorConsoleProject
                 WriteError("Al menos un código postal no es válido (debe tener entre 2 y 20 caracteres).");
                 return;
             }
-            Console.Write("Código del distrito: ");
-            var code = Console.ReadLine()?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(code) || code.Length < 2 || code.Length > 20 || !System.Text.RegularExpressions.Regex.IsMatch(code, "^[a-zA-Z0-9-]+$"))
-            {
-                WriteError("Código no válido. Debe tener entre 2 y 20 caracteres y solo puede contener letras, números y guiones.");
-                return;
-            }
             Console.Write("Ciudad: ");
             var city = Console.ReadLine()?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(city) || city.Length < 2 || city.Length > 255)
@@ -383,6 +376,10 @@ namespace StreetGeneratorConsoleProject
                     return;
                 }
             }
+            // Generar el código automáticamente
+            var words = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var initials = string.Join("", words.Select(w => RemoveDiacritics(w.Substring(0, Math.Min(2, w.Length))).ToUpper()));
+            var code = $"{initials}-{zipCodes[0]}";
             if (context.Districts.Any(d => d.Code == code))
             {
                 WriteWarning($"Ya existe un distrito con ese código: {code}");
