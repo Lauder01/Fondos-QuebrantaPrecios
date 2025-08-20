@@ -60,6 +60,13 @@ namespace ServiceLibraryProject
             return _streetRepository.Find(s => s.Code == code);
         }
 
+        public Street? GetByName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+            return _streetRepository.Find(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
         public void Update(Street entity)
         {
             if (entity == null)

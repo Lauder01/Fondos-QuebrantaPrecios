@@ -15,6 +15,10 @@ namespace WebAPI.AutoMapperProfiles
                     src.Zipcode != null && src.Zipcode.Any() 
                         ? src.Zipcode.Select(z => z.Code).ToList() 
                         : new List<string>()))
+                .ForMember(dest => dest.Streets, opt => opt.MapFrom(src => 
+                    src.Street != null && src.Street.Any() 
+                        ? src.Street.Select(s => s.Name).ToList() 
+                        : new List<string>()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.Parse(src.Id)))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))

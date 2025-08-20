@@ -16,6 +16,7 @@ namespace WebAPI.Dtos.District
         [StringLength(255)]
         public string? City { get; set; }
         public List<string> Zipcodes { get; set; } = new List<string>();
+        public List<string> Streets { get; set; } = new List<string>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
