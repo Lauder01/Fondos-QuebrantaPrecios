@@ -10,7 +10,7 @@ import { DistrictGetterDto } from '../../core/api.service';
 		<h2>Distritos</h2>
 		<ul>
 			<li *ngFor="let district of districts">
-				<strong>{{ district.name }}</strong> ({{ district.zipCode }})<br>
+				<strong>{{ district.name }}</strong> ({{ district.zipcodes?.join(', ') || 'Sin códigos postales' }})<br>
 				<span>{{ district.city }}, {{ district.country }}</span>
 			</li>
 		</ul>

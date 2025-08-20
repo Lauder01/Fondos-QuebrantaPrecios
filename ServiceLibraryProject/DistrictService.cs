@@ -4,30 +4,39 @@ using System.Linq;
 using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using ServiceLibraryProject.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using RepositoryLibraryProject.Data;
 
 namespace ServiceLibraryProject
 {
-    public class DistrictService(IRepository<District> districtRepository) : IService<District>
+    public class DistrictService(IRepository<District> districtRepository, AppDbContext context) : IService<District>
     {
         private readonly IRepository<District> _districtRepository = districtRepository;
+        private readonly AppDbContext _context = context;
 
         public IEnumerable<District> GetAll()
         {
-            return _districtRepository.GetAll();
+            return _context.Set<District>()
+                .Include(d => d.Zipcode)
+                .ToList();
         }
 
         public District? GetById(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
-            return _districtRepository.GetById(id);
+            return _context.Set<District>()
+                .Include(d => d.Zipcode)
+                .FirstOrDefault(d => d.Id == id);
         }
 
         public District? GetByName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return null;
-            return _districtRepository.Find(d => d.Name == name);
+            return _context.Set<District>()
+                .Include(d => d.Zipcode)
+                .FirstOrDefault(d => d.Name == name);
         }
 
         public District? GetByCode(string code)
@@ -35,7 +44,9 @@ namespace ServiceLibraryProject
             if (string.IsNullOrWhiteSpace(code))
                 return null;
             // Buscar por el primer código postal asociado
-            return _districtRepository.GetAll().FirstOrDefault(d => d.Zipcode.Any(z => z.Code == code));
+            return _context.Set<District>()
+                .Include(d => d.Zipcode)
+                .FirstOrDefault(d => d.Zipcode.Any(z => z.Code == code));
         }
 
         public void Add(District entity)

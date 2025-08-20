@@ -37,6 +37,7 @@ builder.Services.AddScoped<FloorService>();
 builder.Services.AddScoped<AdressService>();
 builder.Services.AddScoped<BuildingCompanyService>();
 builder.Services.AddScoped<RequestService>();
+builder.Services.AddScoped<ZipcodeService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

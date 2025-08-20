@@ -5,9 +5,21 @@ import { Observable } from 'rxjs';
 export interface DistrictGetterDto {
 	id: string;
 	name?: string;
-	zipCode?: string;
+	code?: string;
+	zipcodes?: string[];
 	country?: string;
 	city?: string;
+}
+
+export interface ZipcodeGetterDto {
+	id: string;
+	code: string;
+}
+
+export interface StatusGetterDto {
+	id: string;
+	name: string;
+	description?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -19,5 +31,31 @@ export class ApiService {
 	getDistricts(): Observable<DistrictGetterDto[]> {
 		return this.http.get<DistrictGetterDto[]>(`${this.baseUrl}/District`);
 	}
+
+	getZipcodes(): Observable<ZipcodeGetterDto[]> {
+		return this.http.get<ZipcodeGetterDto[]>(`${this.baseUrl}/Zipcode`);
+	}
+
+	getZipcodesByDistrict(districtId: string): Observable<ZipcodeGetterDto[]> {
+		return this.http.get<ZipcodeGetterDto[]>(`${this.baseUrl}/Zipcode/by-district/${districtId}`);
+	}
+
+	getDistrictsByZipcode(zipcodeId: string): Observable<DistrictGetterDto[]> {
+		return this.http.get<DistrictGetterDto[]>(`${this.baseUrl}/District/by-zipcode/${zipcodeId}`);
+	}
+
+	// Status methods
+	getStatuses(): Observable<StatusGetterDto[]> {
+		return this.http.get<StatusGetterDto[]>(`${this.baseUrl}/Status`);
+	}
+
+	getStatusByName(name: string): Observable<StatusGetterDto | null> {
+		return new Observable(observer => {
+			this.getStatuses().subscribe(statuses => {
+				const status = statuses.find(s => s.name.toLowerCase() === name.toLowerCase());
+				observer.next(status || null);
+				observer.complete();
+			});
+		});
+	}
 }
-// ...existing code from original location will be moved here...

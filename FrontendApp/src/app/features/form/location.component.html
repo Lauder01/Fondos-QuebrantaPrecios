@@ -1,91 +1,161 @@
 <link rel="stylesheet" href="./form-fields-custom.css">
 <div [formGroup]="formGroup">
-	<div class="row g-2">
-		<!-- Distrito -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="districtId">Distrito</label>
-			<div class="position-relative">
-				<input id="districtId" type="text" class="form-control form-control-sm ps-2" formControlName="districtId" placeholder="Escriba para buscar un distrito"
-					autocomplete="off"
-					(input)="onDistrictInput(getInputValue($event))"
-					[ngClass]="{'is-invalid': formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty), 'is-valid': formGroup.get('districtId')?.valid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)}">
-			</div>
-			<ul *ngIf="(filteredDistricts ?? []).length > 0 && showDistrictList" class="list-group position-absolute w-100 z-3 shadow" style="top:100%;">
-				<li *ngFor="let district of filteredDistricts" class="list-group-item list-group-item-action" (click)="selectDistrict(district)">
-					<div class="fw-semibold">{{district.name}}</div>
-					<small class="text-muted">{{district.zipCode}} - {{district.city}}, {{district.country}}</small>
-				</li>
-			</ul>
-			<div *ngIf="formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty)" class="invalid-feedback d-block small">
-				El distrito es obligatorio.
-			</div>
-		</div>
+    <div class="row g-2">
+        <!-- Distrito -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="districtId">Distrito</label>
+            <div class="position-relative">
+                <!-- Input mode para distrito -->
+                <input
+                    *ngIf="districtMode === 'input'"
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="!districtValid && districtErrorMessage"
+                    id="districtId"
+                    formControlName="districtId"
+                    placeholder="Buscar distrito..."
+                    (input)="onDistrictInput(getInputValue($event))"
+                    (focus)="onDistrictInput(getInputValue($event))"
+                    (blur)="showDistrictList = false"
+                    autocomplete="off">
 
-		<!-- Calle -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
-			<div class="position-relative">
-				<input id="streetId" type="text" class="form-control form-control-sm ps-2" formControlName="streetId" placeholder="Calle Mayor"
-					[ngClass]="{'is-invalid': formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched, 'is-valid': formGroup.get('streetId')?.valid && formGroup.get('streetId')?.touched}">
-			</div>
-			<div *ngIf="formGroup.get('streetId')?.invalid && formGroup.get('streetId')?.touched" class="invalid-feedback d-block small">
-				La calle es obligatoria.
-			</div>
-		</div>
+                <!-- Dropdown mode para distrito -->
+                <select
+                    *ngIf="districtMode === 'dropdown'"
+                    class="form-control"
+                    id="districtId"
+                    formControlName="districtId"
+                    (change)="onDistrictDropdownChange($event)">
+                    <option value="">Selecciona un distrito...</option>
+                    <option *ngFor="let district of filteredDistricts" [value]="district.name">
+                        {{ district.name }} ({{ district.zipcodes?.join(', ') }})
+                    </option>
+                </select>
 
-		<!-- Portal/Edificio -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="doorway">Portal/Edificio</label>
-			<div class="position-relative">
-				<input id="doorway" type="text" class="form-control form-control-sm ps-2" formControlName="doorway" placeholder="15"
-					[ngClass]="{'is-invalid': formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty), 'is-valid': formGroup.get('doorway')?.valid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)}">
-			</div>
-			<div *ngIf="formGroup.get('doorway')?.invalid && (formGroup.get('doorway')?.touched || formGroup.get('doorway')?.dirty)" class="invalid-feedback d-block small">
-				El portal/edificio es obligatorio.
-			</div>
-		</div>
-    <div class="mb-2"></div>
+                <!-- Lista desplegable para input mode -->
+                <ul *ngIf="districtMode === 'input' && (filteredDistricts ?? []).length > 0 && showDistrictList"
+                    class="list-group position-absolute w-100 z-3 shadow"
+                    style="top:100%; max-height: 200px; overflow-y: auto;">
+                    <li *ngFor="let district of filteredDistricts"
+                        class="list-group-item list-group-item-action d-flex flex-column align-items-start p-2"
+                        (mousedown)="selectDistrict(district)"
+                        style="cursor: pointer;">
+                        <div class="fw-semibold">{{ district.name }}</div>
+                        <small class="text-muted">{{ district.zipcodes?.join(', ') || 'Sin códigos postales' }} - {{ district.city }}, {{ district.country }}</small>
+                    </li>
+                </ul>
+            </div>
 
-		<!-- Código Postal -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="apartmentId">Código Postal</label>
-			<div class="position-relative">
-				<input id="apartmentId" type="text" class="form-control form-control-sm ps-2" formControlName="apartmentId" placeholder="28001"
-					[ngClass]="{'is-invalid': formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched, 'is-valid': formGroup.get('apartmentId')?.valid && formGroup.get('apartmentId')?.touched}">
-			</div>
-			<div *ngIf="formGroup.get('apartmentId')?.invalid && formGroup.get('apartmentId')?.touched" class="invalid-feedback d-block small">
-				El código postal es obligatorio.
-			</div>
-		</div>
+            <!-- Mensajes de error para distrito -->
+            <div *ngIf="!districtValid && districtErrorMessage" class="invalid-feedback d-block small">
+                {{ districtErrorMessage }}
+            </div>
+            <div *ngIf="formGroup.get('districtId')?.invalid && (formGroup.get('districtId')?.touched || formGroup.get('districtId')?.dirty) && districtValid"
+                class="invalid-feedback d-block small">
+                El distrito es obligatorio
+            </div>
+        </div>
 
-		<!-- Ciudad -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="city">Ciudad</label>
-			<div class="position-relative">
-				<input id="city" type="text" class="form-control form-control-sm ps-2" formControlName="city" placeholder="Madrid"
-					[ngClass]="{'is-invalid': formGroup.get('city')?.invalid && formGroup.get('city')?.touched, 'is-valid': formGroup.get('city')?.valid && formGroup.get('city')?.touched}">
-			</div>
-			<div *ngIf="formGroup.get('city')?.invalid && formGroup.get('city')?.touched" class="invalid-feedback d-block small">
-				La ciudad es obligatoria.
-			</div>
-		</div>
+        <!-- Código Postal -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="zipCode">Código Postal</label>
+            <div class="position-relative">
+                <!-- Input mode para código postal -->
+                <input
+                    *ngIf="zipcodeMode === 'input'"
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="!zipcodeValid && zipcodeErrorMessage"
+                    id="zipCode"
+                    formControlName="zipCode"
+                    placeholder="Buscar código postal..."
+                    (input)="onZipcodeInput(getInputValue($event))"
+                    (focus)="onZipcodeInput(getInputValue($event))"
+                    (blur)="showZipcodeList = false"
+                    autocomplete="off">
 
-		<!-- País -->
-		<div class="col-md-4 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="country">País</label>
-			<div class="position-relative">
-				<select id="country" class="form-select form-select-sm ps-2" formControlName="country"
-					[ngClass]="{'is-invalid': formGroup.get('country')?.invalid && formGroup.get('country')?.touched, 'is-valid': formGroup.get('country')?.valid && formGroup.get('country')?.touched}">
-					<option value="">Seleccione un país</option>
-					<option value="España">España</option>
-					<option value="Portugal">Portugal</option>
-					<option value="Francia">Francia</option>
-				</select>
-			</div>
-			<div *ngIf="formGroup.get('country')?.invalid && formGroup.get('country')?.touched" class="invalid-feedback d-block small">
-				El país es obligatorio.
-			</div>
-		</div>
-	</div>
+                <!-- Dropdown mode para código postal -->
+                <select
+                    *ngIf="zipcodeMode === 'dropdown'"
+                    class="form-control"
+                    id="zipCode"
+                    formControlName="zipCode"
+                    (change)="onZipcodeDropdownChange($event)">
+                    <option value="">Selecciona un código postal...</option>
+                    <option *ngFor="let zipcode of filteredZipcodes" [value]="zipcode.code">
+                        {{ zipcode.code }}
+                    </option>
+                </select>
+
+                <!-- Lista desplegable para input mode -->
+                <ul *ngIf="zipcodeMode === 'input' && (filteredZipcodes ?? []).length > 0 && showZipcodeList"
+                    class="list-group position-absolute w-100 z-3 shadow"
+                    style="top:100%; max-height: 200px; overflow-y: auto;">
+                    <li *ngFor="let zipcode of filteredZipcodes"
+                        class="list-group-item list-group-item-action p-2"
+                        (mousedown)="selectZipcode(zipcode)"
+                        style="cursor: pointer;">
+                        <div class="fw-semibold">{{ zipcode.code }}</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Mensajes de error para código postal -->
+            <div *ngIf="!zipcodeValid && zipcodeErrorMessage" class="invalid-feedback d-block small">
+                {{ zipcodeErrorMessage }}
+            </div>
+            <div *ngIf="formGroup.get('zipCode')?.invalid && (formGroup.get('zipCode')?.touched || formGroup.get('zipCode')?.dirty) && zipcodeValid"
+                class="invalid-feedback d-block small">
+                El código postal es obligatorio
+            </div>
+        </div>
+
+        <!-- Calle -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
+            <div class="position-relative">
+                <input
+                    type="text"
+                    class="form-control"
+                    id="streetId"
+                    formControlName="streetId"
+                    placeholder="Buscar calle...">
+            </div>
+        </div>
+    </div>
+    <div class="mb-3"></div>
+    <div class="row g-2">
+        <!-- Portal/Edificio -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="buildingNumber">Portal/Edificio</label>
+            <input
+                type="text"
+                class="form-control"
+                id="buildingNumber"
+                formControlName="buildingNumber"
+                placeholder="Número de portal">
+        </div>
+
+        <!-- Ciudad -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="city">Ciudad</label>
+            <input
+                type="text"
+                class="form-control"
+                id="city"
+                formControlName="city"
+                placeholder="Ciudad">
+        </div>
+
+        <!-- País -->
+        <div class="col-md-4 position-relative">
+            <label class="form-label fw-semibold small text-primary-dark" for="country">País</label>
+            <input
+                type="text"
+                class="form-control"
+                id="country"
+                formControlName="country"
+                placeholder="País">
+        </div>
+    </div>
 </div>
-<!-- ...existing code from original location will be moved here... -->
