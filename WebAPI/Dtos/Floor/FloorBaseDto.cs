@@ -12,7 +12,10 @@ namespace WebAPI.Dtos.Floor
         [Required]
         public bool HasLift { get; set; }
         [Required]
+        [Range(0, 36)]
         public string Id { get; set; } = string.Empty;
+        [Required]  
+        [Range(0, 36)]
         public string BuildingId { get; set; } = string.Empty;
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
