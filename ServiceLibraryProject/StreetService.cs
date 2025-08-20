@@ -90,6 +90,11 @@ namespace ServiceLibraryProject
             return _streetRepository.Find(s => s.Code == code);
         }
 
+        /// <summary>
+        /// Obtiene una calle por su nombre.
+        /// Realiza una búsqueda en el repositorio de calles utilizando una comparación que no distingue mayúsculas ni minúsculas.
+        /// Si el nombre proporcionado es nulo o está vacío, retorna null.
+        /// </summary>
         public Street? GetByName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
