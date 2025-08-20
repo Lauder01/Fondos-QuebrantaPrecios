@@ -13,7 +13,7 @@ namespace WebAPI.Dtos.Address
         [Range(0, 36)]
         public bool? IsApartment { get; set; }
         [Required]
-        [Range(0,50)]
+        [StringLength(50, MinimumLength = 1)]
         public string ZipcodeId { get; set; } = string.Empty;
         [Required]
         [Range(0,36)]
