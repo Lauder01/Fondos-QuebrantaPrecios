@@ -12,8 +12,10 @@ namespace WebAPI.Dtos.Apartment
         [StringLength(24, MinimumLength = 1)]
         public string Door { get; set; } = string.Empty;
         [Required]
+        [Range(0,36)]
         public string FloorId { get; set; } = string.Empty;
         [Required]
+        [Range(0,36)]
         public string BuildingId { get; set; } = string.Empty;
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

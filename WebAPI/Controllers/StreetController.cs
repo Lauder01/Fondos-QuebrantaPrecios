@@ -3,6 +3,7 @@ using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
 using WebAPI.Dtos.Street;
+using System.Linq;
 
 namespace WebAPI.Controllers
 {
@@ -30,6 +31,15 @@ namespace WebAPI.Controllers
         public ActionResult<StreetGetterDto> GetById(string id)
         {
             var street = _streetService.GetById(id);
+            if (street == null) return NotFound();
+            var dto = _mapper.Map<StreetGetterDto>(street);
+            return Ok(dto);
+        }
+
+        [HttpGet("name/{name}")]
+        public ActionResult<StreetGetterDto> GetByName(string name)
+        {
+            var street = _streetService.GetAll().FirstOrDefault(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (street == null) return NotFound();
             var dto = _mapper.Map<StreetGetterDto>(street);
             return Ok(dto);

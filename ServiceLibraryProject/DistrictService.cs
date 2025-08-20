@@ -43,6 +43,7 @@ namespace ServiceLibraryProject
         {
             return _context.Set<District>()
                 .Include(d => d.Zipcode)
+                .Include(d => d.Street)
                 .ToList();
         }
 
@@ -57,6 +58,7 @@ namespace ServiceLibraryProject
                 throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _context.Set<District>()
                 .Include(d => d.Zipcode)
+                .Include(d => d.Street)
                 .FirstOrDefault(d => d.Id == id);
         }
 
@@ -71,6 +73,7 @@ namespace ServiceLibraryProject
                 return null;
             return _context.Set<District>()
                 .Include(d => d.Zipcode)
+                .Include(d => d.Street)
                 .FirstOrDefault(d => d.Name == name);
         }
 
@@ -85,6 +88,7 @@ namespace ServiceLibraryProject
                 return null;
             return _context.Set<District>()
                 .Include(d => d.Zipcode)
+                .Include(d => d.Street)
                 .FirstOrDefault(d => d.Zipcode.Any(z => z.Code == code));
         }
 
