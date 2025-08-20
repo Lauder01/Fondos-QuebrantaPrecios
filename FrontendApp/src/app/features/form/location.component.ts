@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ApiService, DistrictGetterDto, ZipcodeGetterDto } from '../../core/api.service';
+import { ApiService, DistrictGetterDto, ZipcodeGetterDto, StreetGetterDto } from '../../core/api.service';
 
 @Component({
     selector: 'app-location',
@@ -15,29 +15,37 @@ export class LocationComponent implements OnInit {
 
     allDistricts: DistrictGetterDto[] = [];
     allZipcodes: ZipcodeGetterDto[] = [];
+    allStreets: StreetGetterDto[] = [];
 
     filteredDistricts: DistrictGetterDto[] = [];
     filteredZipcodes: ZipcodeGetterDto[] = [];
+    filteredStreets: StreetGetterDto[] = [];
 
     showDistrictList = false;
     showZipcodeList = false;
+    showStreetList = false;
 
     selectedDistrict: DistrictGetterDto | null = null;
     selectedZipcode: ZipcodeGetterDto | null = null;
+    selectedStreet: StreetGetterDto | null = null;
 
     // Nuevas propiedades para controlar el modo de los campos
     districtMode: 'input' | 'dropdown' = 'input';
     zipcodeMode: 'input' | 'dropdown' = 'input';
+    streetMode: 'input' | 'dropdown' = 'input';
 
     // Banderas para evitar bucles infinitos
     private isUpdatingDistrict = false;
     private isUpdatingZipcode = false;
+    private isUpdatingStreet = false;
 
     // Estados de validación
     districtValid = true;
     zipcodeValid = true;
+    streetValid = true;
     districtErrorMessage = '';
     zipcodeErrorMessage = '';
+    streetErrorMessage = '';
 
     constructor(private api: ApiService) {}
 
@@ -49,6 +57,10 @@ export class LocationComponent implements OnInit {
         this.api.getZipcodes().subscribe(zipcodes => {
             this.allZipcodes = zipcodes;
             this.filteredZipcodes = [...this.allZipcodes];
+        });
+        this.api.getStreets().subscribe(streets => {
+            this.allStreets = streets;
+            this.filteredStreets = [...this.allStreets];
         });
     }
 
@@ -111,6 +123,14 @@ export class LocationComponent implements OnInit {
         if (district.country) {
             this.formGroup.get('country')?.setValue(district.country);
         }
+
+        // Filtrar calles relacionadas con el distrito seleccionado
+        console.log('Distrito seleccionado:', district);
+        console.log('Calles disponibles:', this.allStreets);
+        this.filteredStreets = this.allStreets.filter(street =>
+            street.districts?.some(d => d.id === district.id)
+        );
+        console.log('Calles filtradas:', this.filteredStreets);
 
         // Lógica inteligente para códigos postales
         this.handleDistrictSelection(district);
@@ -238,6 +258,27 @@ export class LocationComponent implements OnInit {
             this.filteredZipcodes = this.getZipcodesForDistrict(this.selectedDistrict);
             this.filteredDistricts = [this.selectedDistrict]; // Solo mostrar el distrito seleccionado
         }
+    }
+
+    onStreetInput(value: string) {
+        if (!value) {
+            this.filteredStreets = [];
+            this.showStreetList = false;
+            return;
+        }
+
+        // Filtrar calles disponibles basándose en el valor ingresado
+        this.filteredStreets = this.allStreets.filter(street =>
+            street.name.toLowerCase().includes(value.toLowerCase())
+        );
+
+        this.showStreetList = this.filteredStreets.length > 0;
+    }
+
+    selectStreet(street: StreetGetterDto) {
+        this.selectedStreet = street;
+        this.formGroup.get('streetId')?.setValue(street.name);
+        this.showStreetList = false;
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

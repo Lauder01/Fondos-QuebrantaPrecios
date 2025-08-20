@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace WebAPI.Dtos.Apartment
 {
     public class ApartmentGetterDto : ApartmentBaseDto

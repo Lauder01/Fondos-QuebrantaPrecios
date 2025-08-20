@@ -16,6 +16,12 @@ export interface ZipcodeGetterDto {
 	code: string;
 }
 
+export interface StreetGetterDto {
+  id: string;
+  name: string;
+  districts?: DistrictGetterDto[]; // Relación con distritos
+}
+
 export interface StatusGetterDto {
 	id: string;
 	name: string;
@@ -42,6 +48,14 @@ export class ApiService {
 
 	getDistrictsByZipcode(zipcodeId: string): Observable<DistrictGetterDto[]> {
 		return this.http.get<DistrictGetterDto[]>(`${this.baseUrl}/District/by-zipcode/${zipcodeId}`);
+	}
+
+	getStreets(): Observable<StreetGetterDto[]> {
+		return this.http.get<StreetGetterDto[]>(`${this.baseUrl}/Street`);
+	}
+
+	getStreetsByDistrict(districtId: string): Observable<StreetGetterDto[]> {
+		return this.http.get<StreetGetterDto[]>(`${this.baseUrl}/Street/by-district/${districtId}`);
 	}
 
 	// Status methods
