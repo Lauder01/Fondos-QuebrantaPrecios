@@ -11,7 +11,7 @@ namespace WebAPI.Dtos.Building
         [StringLength(1024)]
         public string? Description { get; set; }
         [Required]
-        [StringLength(255, MinimumLength = 2)]
+        [StringLength(30, MinimumLength = 2)]
         public string Code { get; set; } = string.Empty;
         [StringLength(6, MinimumLength = 1)]
         public string Doorway { get; set; } = string.Empty;
@@ -19,13 +19,18 @@ namespace WebAPI.Dtos.Building
         public int? FloorCount { get; set; }
         [Range(1800, 2100)]
         public int? YearBuilt { get; set; }
-        [Range(0, double.MaxValue)]
+        [Range(typeof(decimal), "0.00", "9999999999.99")]
         public double? Price { get; set; }
+        [Range(0, 36)]
         public string? DistrictId { get; set; }
+        [Range(0, 36)]
         public string? StreetId { get; set; }
-        public string? BuildingCompanyId { get; set; } // Nueva propiedad
-        public bool HasElevator { get; set; } // Nueva propiedad
-
+        [Range(0, 36)]
+        public string? BuildingCompanyId { get; set; } 
+        public bool HasElevator { get; set; }
+        /// <summary>
+        /// Valida que el nombre y el código no sean iguales.
+        /// </summary>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Code) && Name == Code)
