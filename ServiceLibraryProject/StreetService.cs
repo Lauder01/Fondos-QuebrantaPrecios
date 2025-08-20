@@ -10,17 +10,29 @@ using ServiceLibraryProject.Interfaces;
 namespace ServiceLibraryProject
 {
     /// <summary>
-    /// Servicio para operaciones de negocio relacionadas con Street.
+    /// Servicio para operaciones de negocio relacionadas con calles (Street).
+    /// Proporciona métodos para obtener, agregar, actualizar y eliminar calles en la base de datos, así como para generar códigos únicos de calle.
     /// </summary>
     public class StreetService : IService<Street>
     {
+        /// <summary>
+        /// Repositorio de calles utilizado para acceder a la base de datos.
+        /// </summary>
         private readonly IRepository<Street> _streetRepository;
 
+        /// <summary>
+        /// Inicializa una nueva instancia del servicio de calles.
+        /// </summary>
+        /// <param name="streetRepository">Repositorio de calles.</param>
         public StreetService(IRepository<Street> streetRepository)
         {
             _streetRepository = streetRepository;
         }
-        // Implementación requerida por la interfaz
+
+        /// <summary>
+        /// Agrega una nueva calle tras validar sus datos.
+        /// </summary>
+        /// <param name="entity">Entidad Street a agregar.</param>
         public void Add(Street entity)
         {
             // Validación: Nombre compuesto requerido y longitud
@@ -35,17 +47,30 @@ namespace ServiceLibraryProject
             _streetRepository.Add(entity);
         }
 
+        /// <summary>
+        /// Elimina una calle por su identificador.
+        /// </summary>
+        /// <param name="id">Identificador de la calle a eliminar.</param>
         public void Delete(string id)
         {
             _ = _streetRepository.GetById(id) ?? throw new ArgumentException("La calle no existe.", nameof(id));
             _streetRepository.Delete(id);
         }
 
+        /// <summary>
+        /// Obtiene todas las calles.
+        /// </summary>
+        /// <returns>Una colección de calles.</returns>
         public IEnumerable<Street> GetAll()
         {
             return _streetRepository.GetAll();
         }
 
+        /// <summary>
+        /// Obtiene una calle por su identificador.
+        /// </summary>
+        /// <param name="id">Identificador de la calle.</param>
+        /// <returns>La calle encontrada o null si no existe.</returns>
         public Street? GetById(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -53,6 +78,11 @@ namespace ServiceLibraryProject
             return _streetRepository.GetById(id);
         }
 
+        /// <summary>
+        /// Obtiene una calle por su código.
+        /// </summary>
+        /// <param name="code">Código de la calle.</param>
+        /// <returns>La calle encontrada o null si no existe.</returns>
         public Street? GetByCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
@@ -60,6 +90,10 @@ namespace ServiceLibraryProject
             return _streetRepository.Find(s => s.Code == code);
         }
 
+        /// <summary>
+        /// Actualiza una calle existente.
+        /// </summary>
+        /// <param name="entity">Entidad Street a actualizar.</param>
         public void Update(Street entity)
         {
             if (entity == null)
@@ -67,6 +101,12 @@ namespace ServiceLibraryProject
             _streetRepository.Update(entity);
         }
 
+        /// <summary>
+        /// Genera un código único para una calle basado en su nombre y tipo.
+        /// </summary>
+        /// <param name="baseName">Nombre base de la calle.</param>
+        /// <param name="type">Tipo de calle.</param>
+        /// <returns>Código único generado o null si no se puede generar.</returns>
         public string? GetUniqueStreetCode(string baseName, StreetTypeEnum type)
         {
             var existingCodes = new HashSet<string>(_streetRepository.GetAll().Select(s => s.Code));
