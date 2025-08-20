@@ -8,7 +8,9 @@ namespace WebAPI.AutoMapperProfiles
     {
         public AddressProfile()
         {
-            CreateMap<Address, AddressGetterDto>();
+            CreateMap<Address, AddressGetterDto>()
+                .ForMember(dest => dest.Zipcode, opt => opt.MapFrom(src => src.ZipcodeId))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.StreetId));
             CreateMap<AddressCreatorDto, Address>();
             CreateMap<AddressUpdaterDto, Address>();
         }
