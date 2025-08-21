@@ -47,6 +47,9 @@ export class LocationComponent implements OnInit {
     zipcodeErrorMessage = '';
     streetErrorMessage = '';
 
+    constructedAddress = '';
+    showConstructedAddress = false;
+
     constructor(private api: ApiService) {}
 
     ngOnInit() {
@@ -63,6 +66,10 @@ export class LocationComponent implements OnInit {
             this.filteredStreets = [...this.allStreets];
         });
         this.updateStreetFieldState();
+
+        this.formGroup.valueChanges.subscribe(() => {
+            this.updateConstructedAddress();
+        });
     }
 
     private updateStreetFieldState() {
@@ -72,6 +79,17 @@ export class LocationComponent implements OnInit {
         } else {
             streetControl?.disable();
         }
+    }
+
+    private updateConstructedAddress() {
+        const street = this.formGroup.get('streetId')?.value || '';
+        const number = this.formGroup.get('buildingNumber')?.value || '';
+        const zipcode = this.formGroup.get('zipCode')?.value || '';
+        const city = this.formGroup.get('city')?.value || '';
+        const country = this.formGroup.get('country')?.value || '';
+
+        this.constructedAddress = `${street} ${number}, ${zipcode} ${city}, ${country}`.trim();
+        this.showConstructedAddress = street && number && zipcode && city && country ? true : false;
     }
 
     onDistrictInput(value: string) {
@@ -276,6 +294,8 @@ export class LocationComponent implements OnInit {
         if (!value) {
             this.filteredStreets = [];
             this.showStreetList = false;
+            this.streetValid = true;
+            this.streetErrorMessage = '';
             return;
         }
 
@@ -283,6 +303,15 @@ export class LocationComponent implements OnInit {
         this.filteredStreets = this.allStreets.filter(street =>
             street.name.toLowerCase().includes(value.toLowerCase())
         );
+
+        // Validar si hay coincidencias
+        if (this.filteredStreets.length === 0) {
+            this.streetValid = false;
+            this.streetErrorMessage = 'No se encontraron calles que coincidan';
+        } else {
+            this.streetValid = true;
+            this.streetErrorMessage = '';
+        }
 
         this.showStreetList = this.filteredStreets.length > 0;
     }
