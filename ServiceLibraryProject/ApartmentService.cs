@@ -47,9 +47,6 @@ namespace ServiceLibraryProject
         {
             if (_apartmentRepository.GetAll().Any(a => a.Code == entity.Code))
                 throw new InvalidOperationException("Ya existe un apartamento con ese código.");
-
-            if (entity.Floor == null || !_floorRepository.GetAll().Any(f => f.Id == entity.Floor.Id))
-                throw new ArgumentException("El piso asociado no existe.");
             _apartmentRepository.Add(entity);
         }
 
@@ -79,8 +76,6 @@ namespace ServiceLibraryProject
         /// <returns>El apartamento encontrado o null si no existe.</returns>
         public Apartment? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _apartmentRepository.GetById(id);
         }
 
@@ -91,8 +86,6 @@ namespace ServiceLibraryProject
         /// <returns>El apartamento encontrado o null si no existe.</returns>
         public Apartment? GetByCode(string code)
         {
-            if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentException("El código proporcionado no puede estar vacío.", nameof(code));
             return _apartmentRepository.Find(a => a.Code == code);
         }
 
@@ -102,8 +95,7 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Apartment a actualizar.</param>
         public void Update(Apartment entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "El apartamento no puede ser nulo.");
+
             _apartmentRepository.Update(entity);
         }
     }

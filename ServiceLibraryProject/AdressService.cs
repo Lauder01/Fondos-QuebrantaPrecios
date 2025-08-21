@@ -43,8 +43,6 @@ namespace ServiceLibraryProject
         /// <returns>La dirección encontrada o null si no existe.</returns>
         public Address? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _addressRepository.GetById(id);
         }
 
@@ -63,8 +61,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Address a actualizar.</param>
         public void Update(Address entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
             _addressRepository.Update(entity);
         }
 
