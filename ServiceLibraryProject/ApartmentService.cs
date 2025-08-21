@@ -45,13 +45,8 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Apartment a agregar.</param>
         public void Add(Apartment entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.Code) || entity.Code.Length > 50)
-                throw new ArgumentException("El código del apartamento es obligatorio y debe tener como máximo 50 caracteres.");
             if (_apartmentRepository.GetAll().Any(a => a.Code == entity.Code))
                 throw new InvalidOperationException("Ya existe un apartamento con ese código.");
-
-            if (string.IsNullOrWhiteSpace(entity.Door) || entity.Door.Length > 24)
-                throw new ArgumentException("La puerta es obligatoria y debe tener como máximo 24 caracteres.");
 
             if (entity.Floor == null || !_floorRepository.GetAll().Any(f => f.Id == entity.Floor.Id))
                 throw new ArgumentException("El piso asociado no existe.");
@@ -97,7 +92,7 @@ namespace ServiceLibraryProject
         public Apartment? GetByCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                return null;
+                throw new ArgumentException("El código proporcionado no puede estar vacío.", nameof(code));
             return _apartmentRepository.Find(a => a.Code == code);
         }
 
