@@ -6,7 +6,7 @@
 			<label class="form-label fw-semibold small text-primary-dark" for="floorCount">Número de Plantas</label>
 			<div class="position-relative">
 				<input id="floorCount" type="number" class="form-control form-control-sm ps-4-5" formControlName="floorCount" placeholder="1"
-					[ngClass]="{'is-invalid': formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched, 'is-valid': formGroup.get('floorCount')?.valid && formGroup.get('floorCount')?.touched}">
+					[ngClass]="{'is-invalid': formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched}">
 				<i class="bi bi-layers position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
 			</div>
 			<div *ngIf="formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched" class="invalid-feedback d-block small">
@@ -19,7 +19,7 @@
 			<label class="form-label fw-semibold small text-primary-dark" for="yearBuilt">Año de Construcción</label>
 			<div class="position-relative">
 				<input id="yearBuilt" type="number" class="form-control form-control-sm ps-4-5" formControlName="yearBuilt" placeholder="2025"
-					[ngClass]="{'is-invalid': formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched, 'is-valid': formGroup.get('yearBuilt')?.valid && formGroup.get('yearBuilt')?.touched}">
+					[ngClass]="{'is-invalid': formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched}">
 				<i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
 			</div>
 			<div *ngIf="formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched" class="invalid-feedback d-block small">
@@ -32,7 +32,7 @@
 			<label class="form-label fw-semibold small text-primary-dark" for="price">Precio</label>
 			<div class="position-relative">
 				<input id="price" type="number" class="form-control form-control-sm ps-4-5" formControlName="price" placeholder="0"
-					[ngClass]="{'is-invalid': formGroup.get('price')?.invalid && formGroup.get('price')?.touched, 'is-valid': formGroup.get('price')?.valid && formGroup.get('price')?.touched}">
+					[ngClass]="{'is-invalid': formGroup.get('price')?.invalid && formGroup.get('price')?.touched}">
 				<i class="bi bi-currency-euro position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
 			</div>
 			<div *ngIf="formGroup.get('price')?.invalid && formGroup.get('price')?.touched" class="invalid-feedback d-block small">
@@ -40,26 +40,64 @@
 			</div>
 		</div>
 
-		<!-- Apartamentos por Planta -->
+		<!-- Certificado Energético -->
 		<div class="col-md-3 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="apartmentsPerFloor">Nº de apartamentos por planta</label>
-			<div class="position-relative">
-				<input id="apartmentsPerFloor" type="number" class="form-control form-control-sm ps-4-5" formControlName="apartmentsPerFloor" placeholder="4"
-					[ngClass]="{'is-invalid': formGroup.get('apartmentsPerFloor')?.invalid && formGroup.get('apartmentsPerFloor')?.touched, 'is-valid': formGroup.get('apartmentsPerFloor')?.valid && formGroup.get('apartmentsPerFloor')?.touched}">
-				<i class="bi bi-door-open position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
-			</div>
-			<div *ngIf="formGroup.get('apartmentsPerFloor')?.invalid && formGroup.get('apartmentsPerFloor')?.touched" class="invalid-feedback d-block small">
-				Debe indicar un número válido de apartamentos por planta.
+			<label class="form-label fw-semibold small text-primary-dark" for="energyCertificate">Certificado Energético</label>
+			<div class="d-flex align-items-center">
+				<div class="position-relative flex-grow-1 me-2">
+					<select id="energyCertificate" class="form-control form-control-sm ps-4-5" formControlName="energyCertificate">
+						<option value="">Seleccione...</option>
+						<option value="A">A</option>
+						<option value="B">B</option>
+						<option value="C">C</option>
+						<option value="D">D</option>
+						<option value="E">E</option>
+						<option value="F">F</option>
+						<option value="G">G</option>
+					</select>
+					<i class="bi bi-lightning-charge position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+				</div>
+				<div class="energy-indicator" [ngClass]="getEnergyClass(formGroup.get('energyCertificate')?.value)">
+				</div>
 			</div>
 		</div>
+
     <div class="mb-2"></div>
 		<!-- Ascensor -->
 		<div class="col-md-4 position-relative mt-2">
 			<label class="form-label fw-semibold small text-primary-dark" for="hasElevator">¿Tiene ascensor?</label>
 			<div class="form-check form-switch mt-1">
 				<input class="form-check-input" type="checkbox" formControlName="hasElevator" id="hasElevator">
-				<label class="form-check-label small" for="hasElevator">Sí</label>
+				<label class="form-check-label small" for="hasElevator">
+					<span *ngIf="!formGroup.get('hasElevator')?.value">NO</span>
+					<span *ngIf="formGroup.get('hasElevator')?.value">SÍ</span>
+				</label>
 			</div>
 		</div>
 	</div>
 </div>
+
+<style>
+.energy-indicator {
+	width: 30px;
+	height: 30px;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 14px;
+	color: white;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	border: 1px solid rgba(0,0,0,0.1);
+}
+
+.energy-a { background-color: #00b04f; }
+.energy-b { background-color: #8cc63f; }
+.energy-c { background-color: #ffed00; color: #333 !important; text-shadow: none; }
+.energy-d { background-color: #ffc627; color: #333 !important; text-shadow: none; }
+.energy-e { background-color: #ff9a26; }
+.energy-f { background-color: #f15a24; }
+.energy-g { background-color: #e6001a; }
+.energy-default { background-color: #6c757d; }
+</style>
