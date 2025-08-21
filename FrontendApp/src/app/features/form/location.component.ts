@@ -62,6 +62,16 @@ export class LocationComponent implements OnInit {
             this.allStreets = streets;
             this.filteredStreets = [...this.allStreets];
         });
+        this.updateStreetFieldState();
+    }
+
+    private updateStreetFieldState() {
+        const streetControl = this.formGroup.get('streetId');
+        if (this.selectedDistrict) {
+            streetControl?.enable();
+        } else {
+            streetControl?.disable();
+        }
     }
 
     onDistrictInput(value: string) {
@@ -134,6 +144,7 @@ export class LocationComponent implements OnInit {
 
         // Lógica inteligente para códigos postales
         this.handleDistrictSelection(district);
+        this.updateStreetFieldState();
     }
 
     resetDistrictSelection() {
@@ -168,6 +179,7 @@ export class LocationComponent implements OnInit {
             this.filteredDistricts = this.getDistrictsForZipcode(this.selectedZipcode.code);
             this.filteredZipcodes = [this.selectedZipcode]; // Solo mostrar el zipcode seleccionado
         }
+        this.updateStreetFieldState();
     }
 
     onZipcodeInput(value: string) {

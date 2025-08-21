@@ -111,16 +111,16 @@
         </div>
 
         <!-- Calle -->
-        <div class="col-md-4 position-relative" *ngIf="selectedDistrict">
+        <div class="col-md-4 position-relative">
             <label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
             <div class="position-relative">
                 <input
-                    *ngIf="streetMode === 'input'"
                     type="text"
                     class="form-control"
                     id="streetId"
                     formControlName="streetId"
-                    placeholder="Buscar calle..."
+                    [placeholder]="selectedDistrict ? 'Buscar calle...' : 'Selecciona un distrito primero'"
+                    [disabled]="!selectedDistrict"
                     (input)="onStreetInput(getInputValue($event))"
                     (focus)="onStreetInput(getInputValue($event))"
                     (blur)="showStreetList = false"
