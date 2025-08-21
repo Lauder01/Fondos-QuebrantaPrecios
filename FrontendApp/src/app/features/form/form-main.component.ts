@@ -18,9 +18,8 @@ export class FormMainComponent {
 	constructor(private fb: FormBuilder, private api: ApiService) {
 		this.form = this.fb.group({
 			generalInfo: this.fb.group({
-				name: ['', [Validators.required, Validators.minLength(3)]],
-				description: ['', [Validators.required, Validators.minLength(10)]],
-				code: ['', [Validators.required, Validators.pattern(/^([A-Z0-9]{8,12})$/)]],
+				name: [''],
+				description: [''],
 				buildingCompanyId: ['', Validators.required]
 			}),
 
@@ -37,9 +36,8 @@ export class FormMainComponent {
 				floorCount: [1, [Validators.required, Validators.min(1)]],
 				yearBuilt: [2025, [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear()+1)]],
 				price: [0, [Validators.required, Validators.min(0)]],
-				apartmentsPerFloor: [1, [Validators.required, Validators.min(1)]],
-				hasElevator: [false],
-				energyCertificate: ['']
+        energyCertificate: ['', Validators.required],
+				hasElevator: [false]
 			})
 		});
 	}

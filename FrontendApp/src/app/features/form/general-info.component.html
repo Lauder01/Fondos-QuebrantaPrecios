@@ -5,11 +5,8 @@
 			<label class="form-label fw-semibold small text-primary-dark" for="name">Nombre del Edificio</label>
 			<div class="position-relative">
 				<input id="name" type="text" class="form-control form-control-sm ps-4-5" formControlName="name" placeholder="Torre de los Jardines"
-					[ngClass]="{'is-invalid': formGroup.get('name')?.invalid && formGroup.get('name')?.touched, 'is-valid': formGroup.get('name')?.valid && formGroup.get('name')?.touched}">
+					[ngClass]="{'is-valid': formGroup.get('name')?.valid && formGroup.get('name')?.touched && formGroup.get('name')?.value}">
         <i class="bi bi-building position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
-			</div>
-			<div *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="invalid-feedback d-block small">
-				El nombre es obligatorio y debe tener al menos 3 caracteres.
 			</div>
 		</div>
 		<div class="col-md-6 position-relative">
@@ -25,27 +22,11 @@
       <div class="mb-2"></div>
 		</div>
 		<div class="col-12 position-relative">
-			<label class="form-label fw-semibold small text-primary-dark" for="code">CIF/NIF</label>
-			<div class="position-relative">
-				<input id="code" type="text" class="form-control form-control-sm ps-4-5" formControlName="code" placeholder="B12345678"
-					[ngClass]="{'is-invalid': formGroup.get('code')?.invalid && formGroup.get('code')?.touched, 'is-valid': formGroup.get('code')?.valid && formGroup.get('code')?.touched}">
-				<i class="bi bi-credit-card-2-front position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
-			</div>
-			<div class="form-text small">Introduzca el CIF de la empresa o NIF del constructor</div>
-			<div *ngIf="formGroup.get('code')?.invalid && formGroup.get('code')?.touched" class="invalid-feedback d-block small">
-				El CIF/NIF es obligatorio y debe tener entre 8 y 12 caracteres alfanuméricos.
-			</div>
-      <div class="mb-2"></div>
-		</div>
-		<div class="col-12 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="description">Descripción Detallada</label>
 			<div class="position-relative">
-				<textarea id="description" rows="2" class="form-control form-control-sm ps-2" formControlName="description" placeholder="Describa las características principales del edificio, servicios incluidos, acabados..." [ngClass]="{'is-invalid': formGroup.get('description')?.invalid && formGroup.get('description')?.touched, 'is-valid': formGroup.get('description')?.valid && formGroup.get('description')?.touched}"></textarea>
+				<textarea id="description" rows="2" class="form-control form-control-sm ps-2" formControlName="description" placeholder="Describa las características principales del edificio, servicios incluidos, acabados..." [ngClass]="{'is-valid': formGroup.get('description')?.valid && formGroup.get('description')?.touched && formGroup.get('description')?.value}"></textarea>
 			</div>
-			<div class="form-text small">Mínimo 10 caracteres</div>
-			<div *ngIf="formGroup.get('description')?.invalid && formGroup.get('description')?.touched" class="invalid-feedback d-block small">
-				La descripción es obligatoria y debe tener al menos 10 caracteres.
-			</div>
+			<div class="form-text small">Campo opcional</div>
 		</div>
 	</div>
 </div>
