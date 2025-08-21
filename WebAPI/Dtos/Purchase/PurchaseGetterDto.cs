@@ -13,6 +13,6 @@ namespace WebAPI.Dtos.Purchase
         [Range(0, 255)]
         public string? BuildingCompanyName { get; set; }
         public string? RequestDescription { get; set; }
-        // No se duplican los campos del base
+        
     }
 }
