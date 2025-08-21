@@ -12,14 +12,74 @@
 		<div class="col-md-6 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="buildingCompanyId">Empresa Constructora</label>
 			<div class="position-relative">
-				<input id="buildingCompanyId" type="text" class="form-control form-control-sm ps-4-5" formControlName="buildingCompanyId" placeholder="Constructora ABC S.L."
-					[ngClass]="{'is-invalid': formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched, 'is-valid': formGroup.get('buildingCompanyId')?.valid && formGroup.get('buildingCompanyId')?.touched}">
+				<!-- Input mode -->
+				<input
+					*ngIf="buildingCompanyMode === 'input'"
+					id="buildingCompanyId"
+					type="text"
+					class="form-control form-control-sm ps-4-5"
+					[value]="selectedBuildingCompany ? selectedBuildingCompany.name : ''"
+					(input)="onBuildingCompanyInput(getInputValue($event))"
+					placeholder="Escriba el nombre de la constructora"
+					[ngClass]="{
+						'is-invalid': (!buildingCompanyValid && buildingCompanyErrorMessage) || (formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched && buildingCompanyValid),
+						'is-valid': formGroup.get('buildingCompanyId')?.valid && formGroup.get('buildingCompanyId')?.touched && selectedBuildingCompany
+					}">
+
+				<!-- Dropdown mode -->
+				<select
+					*ngIf="buildingCompanyMode === 'dropdown'"
+					id="buildingCompanyIdSelect"
+					class="form-control form-control-sm ps-4-5"
+					(change)="onBuildingCompanyDropdownChange($event)"
+					[ngClass]="{
+						'is-invalid': formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched,
+						'is-valid': formGroup.get('buildingCompanyId')?.valid && formGroup.get('buildingCompanyId')?.touched && selectedBuildingCompany
+					}">
+					<option value="">Seleccione una constructora</option>
+					<option *ngFor="let company of filteredBuildingCompanies" [value]="company.id">
+						{{company.name}} - {{company.cif}}
+					</option>
+				</select>
+
 				<i class="bi bi-person-badge position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+
+				<!-- Botón para limpiar selección -->
+				<button
+					*ngIf="selectedBuildingCompany && buildingCompanyMode === 'input'"
+					type="button"
+					class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2 p-1"
+					(click)="resetBuildingCompanySelection()"
+					style="background: none; border: none; color: #6c757d;">
+					<i class="bi bi-x-circle"></i>
+				</button>
+
+				<!-- Lista desplegable de sugerencias -->
+				<ul
+					*ngIf="showBuildingCompanyList && buildingCompanyMode === 'input'"
+					class="list-group position-absolute w-100 shadow-sm border border-top-0"
+					style="z-index: 1000; max-height: 200px; overflow-y: auto; top: 100%;">
+					<li
+						*ngFor="let company of filteredBuildingCompanies"
+						class="list-group-item list-group-item-action small py-2 px-3"
+						(click)="selectBuildingCompany(company)"
+						style="cursor: pointer;">
+						<div class="fw-semibold">{{company.name}}</div>
+						<div class="text-muted small">CIF: {{company.cif}}</div>
+						<div *ngIf="company.website" class="text-muted small">{{company.website}}</div>
+					</li>
+				</ul>
 			</div>
-			<div *ngIf="formGroup.get('buildingCompanyId')?.invalid && formGroup.get('buildingCompanyId')?.touched" class="invalid-feedback d-block small">
+
+			<!-- Mensajes de error para constructora -->
+			<div *ngIf="!buildingCompanyValid && buildingCompanyErrorMessage" class="invalid-feedback d-block small">
+				{{buildingCompanyErrorMessage}}
+			</div>
+			<div *ngIf="formGroup.get('buildingCompanyId')?.invalid && (formGroup.get('buildingCompanyId')?.touched || formGroup.get('buildingCompanyId')?.dirty) && buildingCompanyValid"
+				class="invalid-feedback d-block small">
 				La empresa constructora es obligatoria.
 			</div>
-      <div class="mb-2"></div>
+			<div class="mb-2"></div>
 		</div>
 		<div class="col-12 position-relative">
 			<label class="form-label fw-semibold small text-primary-dark" for="description">Descripción Detallada</label>

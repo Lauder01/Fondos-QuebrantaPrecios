@@ -88,7 +88,7 @@ export class LocationComponent implements OnInit {
         const city = this.formGroup.get('city')?.value || '';
         const country = this.formGroup.get('country')?.value || '';
 
-        this.constructedAddress = `${street} ${number}, ${zipcode} ${city}, ${country}`.trim();
+        this.constructedAddress = `${street}, ${number}, ${zipcode} ${city}, ${country}`.trim();
         this.showConstructedAddress = street && number && zipcode && city && country ? true : false;
     }
 
