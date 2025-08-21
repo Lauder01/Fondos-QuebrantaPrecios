@@ -6,7 +6,7 @@ namespace WebAPI.Dtos.Zipcode
     public class ZipcodeBaseDto : IValidatableObject
     {
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [Range(0,50)]
         public string Code { get; set; } = string.Empty;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

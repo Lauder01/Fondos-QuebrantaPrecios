@@ -20,20 +20,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PurchaseDto>> GetAll()
+        public ActionResult<IEnumerable<PurchaseBaseDto>> GetAll()
         {
             var purchases = _purchaseRepository.GetAll();
-            var dtos = _mapper.Map<IEnumerable<PurchaseDto>>(purchases);
+            var dtos = _mapper.Map<IEnumerable<PurchaseBaseDto>>(purchases);
             return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult<PurchaseDto> Create(CreatePurchaseDto dto)
+        public ActionResult<PurchaseBaseDto> Create(PurchaseCreatorDto dto)
         {
             var purchase = _mapper.Map<Purchase>(dto);
             purchase.Id = Guid.NewGuid().ToString();
             _purchaseRepository.Add(purchase);
-            var result = _mapper.Map<PurchaseDto>(purchase);
+            var result = _mapper.Map<PurchaseBaseDto>(purchase);
             return CreatedAtAction(nameof(GetAll), new { id = purchase.Id }, result);
         }
     }

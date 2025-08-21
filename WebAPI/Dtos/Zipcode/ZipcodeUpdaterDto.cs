@@ -6,6 +6,7 @@ namespace WebAPI.Dtos.Zipcode
     public class ZipcodeUpdaterDto : ZipcodeBaseDto
     {
         [Required]
-        public Guid Id { get; set; }
+        [Range(0,36)]
+        public string Id { get; set; }
     }
 }

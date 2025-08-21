@@ -19,11 +19,32 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BuildingGetterDto>> GetAll()
+        /// <summary>
+        /// Obtiene una lista paginada y filtrada de edificios.
+        /// </summary>
+        /// <param name="page">Página actual (por defecto 1)</param>
+        /// <param name="pageSize">Tamaño de página (por defecto 10)</param>
+        /// <param name="name">Filtro por nombre</param>
+        /// <param name="districtId">Filtro por distrito</param>
+        /// <param name="companyId">Filtro por empresa constructora</param>
+        /// <returns>Lista paginada de edificios</returns>
+        [HttpGet("paged")]
+        public ActionResult<WebAPI.Dtos.Building.BuildingListResultDto> GetPaged(
+            int page = 1,
+            int pageSize = 10,
+            string? name = null,
+            string? districtId = null,
+            string? companyId = null)
         {
-            var buildings = _buildingService.GetAll();
-            var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(buildings);
-            return Ok(dtos);
+            var result = _buildingService.GetPagedAndFiltered(page, pageSize, name, districtId, companyId);
+            var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(result.Items);
+            return Ok(new WebAPI.Dtos.Building.BuildingListResultDto
+            {
+                Items = dtos,
+                TotalCount = result.TotalCount,
+                Page = page,
+                PageSize = pageSize
+            });
         }
 
         [HttpGet("{id}")]
