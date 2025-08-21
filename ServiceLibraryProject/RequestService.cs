@@ -42,8 +42,6 @@ namespace ServiceLibraryProject
         /// <returns>La solicitud encontrada o null si no existe.</returns>
         public Request? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _requestRepository.GetById(id);
         }
 
@@ -62,8 +60,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Request a actualizar.</param>
         public void Update(Request entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "La solicitud no puede ser nula.");
             _requestRepository.Update(entity);
         }
 

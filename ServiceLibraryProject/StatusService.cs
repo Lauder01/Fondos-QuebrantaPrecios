@@ -33,9 +33,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Status a agregar.</param>
         public void Add(Status entity)
         {
-            // Validación: Nombre requerido y longitud
-            if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length > 48)
-                throw new ArgumentException("El nombre del estado es obligatorio y debe tener como máximo 48 caracteres.");
             // Validación: Unicidad de nombre
             if (_statusRepository.GetAll().Any(s => s.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe un estado con ese nombre.");

@@ -39,9 +39,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Floor a agregar.</param>
         public void Add(Floor entity)
         {
-            // Validación: FloorNumber >= -12
-            if (entity.FloorNumber < -12)
-                throw new ArgumentException("El número de piso no puede ser menor que -12.");
             // Validación: BuildingId requerido y existencia
             if (entity.Building == null || !_buildingRepository.GetAll().Any(b => b.Id == entity.Building.Id))
                 throw new ArgumentException("El edificio asociado no existe.");
@@ -74,8 +71,6 @@ namespace ServiceLibraryProject
         /// <returns>La planta encontrada o null si no existe.</returns>
         public Floor? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _floorRepository.GetById(id);
         }
 
@@ -85,8 +80,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Floor a actualizar.</param>
         public void Update(Floor entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "El piso no puede ser nulo.");
             _floorRepository.Update(entity);
         }
     }
