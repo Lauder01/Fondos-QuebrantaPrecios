@@ -65,17 +65,6 @@ namespace ServiceLibraryProject
             // Validación: Code único
             if (_buildingRepository.GetAll().Any(b => b.Code == entity.Code))
                 throw new InvalidOperationException("Ya existe un edificio con ese código.");
-            // Validación: Doorway requerido y longitud
-            if (string.IsNullOrWhiteSpace(entity.Doorway) || entity.Doorway.Length > 6)
-                throw new ArgumentException("El portal es obligatorio y debe tener como máximo 6 caracteres.");
-            // Validación: FloorCount >= 0
-            if (entity.FloorCount < 0)
-                throw new ArgumentException("El número de plantas no puede ser negativo.");
-            // Validación: YearBuilt >= 1800 y <= año actual
-            var year = entity.YearBuilt;
-            var currentYear = DateTime.Now.Year;
-            if (year < 1800 || year > currentYear)
-                throw new ArgumentException($"El año de construcción debe estar entre 1800 y {currentYear}.");
             // Validación: Price >= 0
             if (entity.Price < 0)
                 throw new ArgumentException("El precio no puede ser negativo.");
