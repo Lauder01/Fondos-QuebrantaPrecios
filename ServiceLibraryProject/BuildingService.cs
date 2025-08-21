@@ -11,49 +11,83 @@ namespace ServiceLibraryProject
     /// Servicio para operaciones de negocio relacionadas con edificios (Building).
     /// Proporciona métodos para obtener, agregar, actualizar y eliminar edificios en la base de datos.
     /// </summary>
-    public class BuildingService : IService<Building>
-    {
-        /// <summary>
-        /// Repositorio de edificios utilizado para acceder a la base de datos.
-        /// </summary>
-        private readonly IRepository<Building> _buildingRepository;
-        /// <summary>
-        /// Repositorio de distritos utilizado para validaciones y relaciones.
-        /// </summary>
-        private readonly IRepository<District> _districtRepository;
-        /// <summary>
-        /// Repositorio de calles utilizado para validaciones y relaciones.
-        /// </summary>
-        private readonly IRepository<Street> _streetRepository;
-        /// <summary>
-        /// Repositorio de empresas constructoras utilizado para validaciones y relaciones.
-        /// </summary>
-        private readonly IRepository<BuildingCompany> _companyRepository;
-        /// <summary>
-        /// Repositorio de estados utilizado para validaciones y relaciones.
-        /// </summary>
-        private readonly IRepository<Status> _statusRepository;
-
-        /// <summary>
-        /// Inicializa una nueva instancia del servicio de edificios.
-        /// </summary>
-        /// <param name="buildingRepository">Repositorio de edificios.</param>
-        /// <param name="districtRepository">Repositorio de distritos.</param>
-        /// <param name="streetRepository">Repositorio de calles.</param>
-        /// <param name="companyRepository">Repositorio de empresas constructoras.</param>
-        /// <param name="statusRepository">Repositorio de estados.</param>
-        public BuildingService(
-            IRepository<Building> buildingRepository,
-            IRepository<District> districtRepository,
-            IRepository<Street> streetRepository,
-            IRepository<BuildingCompany> companyRepository,
-            IRepository<Status> statusRepository)
+        public class BuildingService : IService<Building>
         {
-            _buildingRepository = buildingRepository;
-            _districtRepository = districtRepository;
-            _streetRepository = streetRepository;
-            _companyRepository = companyRepository;
-            _statusRepository = statusRepository;
+            /// <summary>
+            /// Repositorio de edificios utilizado para acceder a la base de datos.
+            /// </summary>
+            private readonly IRepository<Building> _buildingRepository;
+            /// <summary>
+            /// Repositorio de distritos utilizado para validaciones y relaciones.
+            /// </summary>
+            private readonly IRepository<District> _districtRepository;
+            /// <summary>
+            /// Repositorio de calles utilizado para validaciones y relaciones.
+            /// </summary>
+            private readonly IRepository<Street> _streetRepository;
+            /// <summary>
+            /// Repositorio de empresas constructoras utilizado para validaciones y relaciones.
+            /// </summary>
+            private readonly IRepository<BuildingCompany> _companyRepository;
+            /// <summary>
+            /// Repositorio de estados utilizado para validaciones y relaciones.
+            /// </summary>
+            private readonly IRepository<Status> _statusRepository;
+
+            /// <summary>
+            /// Inicializa una nueva instancia del servicio de edificios.
+            /// </summary>
+            /// <param name="buildingRepository">Repositorio de edificios.</param>
+            /// <param name="districtRepository">Repositorio de distritos.</param>
+            /// <param name="streetRepository">Repositorio de calles.</param>
+            /// <param name="companyRepository">Repositorio de empresas constructoras.</param>
+            /// <param name="statusRepository">Repositorio de estados.</param>
+            public BuildingService(
+                IRepository<Building> buildingRepository,
+                IRepository<District> districtRepository,
+                IRepository<Street> streetRepository,
+                IRepository<BuildingCompany> companyRepository,
+                IRepository<Status> statusRepository)
+            {
+                _buildingRepository = buildingRepository;
+                _districtRepository = districtRepository;
+                _streetRepository = streetRepository;
+                _companyRepository = companyRepository;
+                _statusRepository = statusRepository;
+            }
+
+            /// <summary>
+            /// Obtiene una lista paginada y filtrada de edificios.
+            /// </summary>
+            /// <param name="page">Página actual</param>
+            /// <param name="pageSize">Tamaño de página</param>
+            /// <param name="name">Filtro por nombre</param>
+            /// <param name="districtId">Filtro por distrito</param>
+            /// <param name="companyId">Filtro por empresa constructora</param>
+            /// <returns>Tupla con la lista de edificios y el total</returns>
+
+    // ...existing code for fields and constructor...
+        /// <summary>
+        /// Obtiene una lista paginada y filtrada de edificios.
+        /// </summary>
+        /// <param name="page">Página actual</param>
+        /// <param name="pageSize">Tamaño de página</param>
+        /// <param name="name">Filtro por nombre</param>
+        /// <param name="districtId">Filtro por distrito</param>
+        /// <param name="companyId">Filtro por empresa constructora</param>
+        /// <returns>Tupla con la lista de edificios y el total</returns>
+        public (IEnumerable<Building> Items, int TotalCount) GetPagedAndFiltered(int page, int pageSize, string? name, string? districtId, string? companyId)
+        {
+            var query = _buildingRepository.GetAll().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(b => b.Name != null && b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(districtId))
+                query = query.Where(b => b.DistrictId == districtId);
+            if (!string.IsNullOrWhiteSpace(companyId))
+                query = query.Where(b => b.BuildingCompanyId == companyId);
+            var total = query.Count();
+            var items = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return (items, total);
         }
 
         /// <summary>
