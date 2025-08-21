@@ -13,6 +13,7 @@ namespace WebAPI.Dtos.Building
         [Required]
         [StringLength(30, MinimumLength = 2)]
         public string Code { get; set; } = string.Empty;
+        [Required]
         [StringLength(6, MinimumLength = 1)]
         public string Doorway { get; set; } = string.Empty;
         [Range(0, 100)]
