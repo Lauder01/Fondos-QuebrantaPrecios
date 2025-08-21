@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ApiService, DistrictGetterDto, ZipcodeGetterDto } from '../../core/api.service';
+import { ApiService, DistrictGetterDto, ZipcodeGetterDto, StreetGetterDto } from '../../core/api.service';
 
 @Component({
     selector: 'app-location',
@@ -15,29 +15,40 @@ export class LocationComponent implements OnInit {
 
     allDistricts: DistrictGetterDto[] = [];
     allZipcodes: ZipcodeGetterDto[] = [];
+    allStreets: StreetGetterDto[] = [];
 
     filteredDistricts: DistrictGetterDto[] = [];
     filteredZipcodes: ZipcodeGetterDto[] = [];
+    filteredStreets: StreetGetterDto[] = [];
 
     showDistrictList = false;
     showZipcodeList = false;
+    showStreetList = false;
 
     selectedDistrict: DistrictGetterDto | null = null;
     selectedZipcode: ZipcodeGetterDto | null = null;
+    selectedStreet: StreetGetterDto | null = null;
 
     // Nuevas propiedades para controlar el modo de los campos
     districtMode: 'input' | 'dropdown' = 'input';
     zipcodeMode: 'input' | 'dropdown' = 'input';
+    streetMode: 'input' | 'dropdown' = 'input';
 
     // Banderas para evitar bucles infinitos
     private isUpdatingDistrict = false;
     private isUpdatingZipcode = false;
+    private isUpdatingStreet = false;
 
     // Estados de validación
     districtValid = true;
     zipcodeValid = true;
+    streetValid = true;
     districtErrorMessage = '';
     zipcodeErrorMessage = '';
+    streetErrorMessage = '';
+
+    constructedAddress = '';
+    showConstructedAddress = false;
 
     constructor(private api: ApiService) {}
 
@@ -50,6 +61,35 @@ export class LocationComponent implements OnInit {
             this.allZipcodes = zipcodes;
             this.filteredZipcodes = [...this.allZipcodes];
         });
+        this.api.getStreets().subscribe(streets => {
+            this.allStreets = streets;
+            this.filteredStreets = [...this.allStreets];
+        });
+        this.updateStreetFieldState();
+
+        this.formGroup.valueChanges.subscribe(() => {
+            this.updateConstructedAddress();
+        });
+    }
+
+    private updateStreetFieldState() {
+        const streetControl = this.formGroup.get('streetId');
+        if (this.selectedDistrict) {
+            streetControl?.enable();
+        } else {
+            streetControl?.disable();
+        }
+    }
+
+    private updateConstructedAddress() {
+        const street = this.formGroup.get('streetId')?.value || '';
+        const number = this.formGroup.get('buildingNumber')?.value || '';
+        const zipcode = this.formGroup.get('zipCode')?.value || '';
+        const city = this.formGroup.get('city')?.value || '';
+        const country = this.formGroup.get('country')?.value || '';
+
+        this.constructedAddress = `${street} ${number}, ${zipcode} ${city}, ${country}`.trim();
+        this.showConstructedAddress = street && number && zipcode && city && country ? true : false;
     }
 
     onDistrictInput(value: string) {
@@ -112,8 +152,17 @@ export class LocationComponent implements OnInit {
             this.formGroup.get('country')?.setValue(district.country);
         }
 
+        // Filtrar calles relacionadas con el distrito seleccionado
+        console.log('Distrito seleccionado:', district);
+        console.log('Calles disponibles:', this.allStreets);
+        this.filteredStreets = this.allStreets.filter(street =>
+            street.districts?.some(d => d.id === district.id)
+        );
+        console.log('Calles filtradas:', this.filteredStreets);
+
         // Lógica inteligente para códigos postales
         this.handleDistrictSelection(district);
+        this.updateStreetFieldState();
     }
 
     resetDistrictSelection() {
@@ -148,6 +197,7 @@ export class LocationComponent implements OnInit {
             this.filteredDistricts = this.getDistrictsForZipcode(this.selectedZipcode.code);
             this.filteredZipcodes = [this.selectedZipcode]; // Solo mostrar el zipcode seleccionado
         }
+        this.updateStreetFieldState();
     }
 
     onZipcodeInput(value: string) {
@@ -238,6 +288,38 @@ export class LocationComponent implements OnInit {
             this.filteredZipcodes = this.getZipcodesForDistrict(this.selectedDistrict);
             this.filteredDistricts = [this.selectedDistrict]; // Solo mostrar el distrito seleccionado
         }
+    }
+
+    onStreetInput(value: string) {
+        if (!value) {
+            this.filteredStreets = [];
+            this.showStreetList = false;
+            this.streetValid = true;
+            this.streetErrorMessage = '';
+            return;
+        }
+
+        // Filtrar calles disponibles basándose en el valor ingresado
+        this.filteredStreets = this.allStreets.filter(street =>
+            street.name.toLowerCase().includes(value.toLowerCase())
+        );
+
+        // Validar si hay coincidencias
+        if (this.filteredStreets.length === 0) {
+            this.streetValid = false;
+            this.streetErrorMessage = 'No se encontraron calles que coincidan';
+        } else {
+            this.streetValid = true;
+            this.streetErrorMessage = '';
+        }
+
+        this.showStreetList = this.filteredStreets.length > 0;
+    }
+
+    selectStreet(street: StreetGetterDto) {
+        this.selectedStreet = street;
+        this.formGroup.get('streetId')?.setValue(street.name);
+        this.showStreetList = false;
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

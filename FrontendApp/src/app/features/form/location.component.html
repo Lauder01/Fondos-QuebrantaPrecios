@@ -117,9 +117,35 @@
                 <input
                     type="text"
                     class="form-control"
+                    [class.is-invalid]="!streetValid && streetErrorMessage"
                     id="streetId"
                     formControlName="streetId"
-                    placeholder="Buscar calle...">
+                    placeholder="Buscar calle..."
+                    (input)="onStreetInput(getInputValue($event))"
+                    (focus)="onStreetInput(getInputValue($event))"
+                    (blur)="showStreetList = false"
+                    autocomplete="off">
+
+                <!-- Lista desplegable para input mode -->
+                <ul *ngIf="streetMode === 'input' && (filteredStreets ?? []).length > 0 && showStreetList"
+                    class="list-group position-absolute w-100 z-3 shadow"
+                    style="top:100%; max-height: 200px; overflow-y: auto;">
+                    <li *ngFor="let street of filteredStreets"
+                        class="list-group-item list-group-item-action p-2"
+                        (mousedown)="selectStreet(street)"
+                        style="cursor: pointer;">
+                        <div>{{ street.name }}</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Mensajes de error para calle -->
+            <div *ngIf="!streetValid && streetErrorMessage" class="invalid-feedback d-block small">
+                {{ streetErrorMessage }}
+            </div>
+            <div *ngIf="formGroup.get('streetId')?.invalid && (formGroup.get('streetId')?.touched || formGroup.get('streetId')?.dirty) && streetValid"
+                class="invalid-feedback d-block small">
+                La calle es obligatoria
             </div>
         </div>
     </div>
@@ -158,4 +184,54 @@
                 placeholder="País">
         </div>
     </div>
+
+    <!-- Dirección Construida -->
+    <div class="row g-2 mt-3" [class.expanded]="showConstructedAddress" [class.collapsed]="!showConstructedAddress">
+        <div class="col-12">
+            <label class="form-label fw-semibold small text-primary-dark">Dirección</label>
+            <input
+                type="text"
+                class="form-control"
+                [value]="constructedAddress"
+                readonly>
+        </div>
+    </div>
 </div>
+
+<style>
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    pointer-events: auto;
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.expand {
+    height: auto;
+    transition: height 0.5s ease;
+}
+
+.collapse {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease;
+}
+
+.expanded {
+    max-height: 100px;
+    opacity: 1;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.collapsed {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+</style>

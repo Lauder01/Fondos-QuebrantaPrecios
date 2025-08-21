@@ -3,6 +3,6 @@ namespace WebAPI.Dtos.Status
     public class StatusGetterDto : StatusBaseDto
     {
         // Hereda todos los campos del base, incluido Id
-        public Guid Id { get; set; }
+        public string Id { get; set; }
     }
 }

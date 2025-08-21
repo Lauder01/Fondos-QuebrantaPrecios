@@ -9,7 +9,7 @@ namespace WebAPI.Dtos.District
         [StringLength(255, MinimumLength = 2)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        [StringLength(255, MinimumLength = 2)]
+        [StringLength(50, MinimumLength = 2)]
         public string Code { get; set; } = string.Empty;
         [StringLength(255)]
         public string? Country { get; set; }
