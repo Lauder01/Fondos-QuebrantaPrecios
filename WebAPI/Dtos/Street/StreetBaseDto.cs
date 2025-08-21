@@ -6,10 +6,10 @@ namespace WebAPI.Dtos.Street
     public class StreetBaseDto : IValidatableObject
     {
         [Required]
-        [StringLength(255, MinimumLength = 2)]
+        [Range(0,255)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        [StringLength(255, MinimumLength = 2)]
+        [Range(0,24)]
         public string Code { get; set; } = string.Empty;
         [Required]
         public int StreetType { get; set; }
