@@ -1,0 +1,18 @@
+
+/* Cards uniformes y responsivas */
+.building-card {
+	min-height: 320px;
+	max-width: 400px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+.building-card .card-body {
+	flex: 1 1 auto;
+}
+.building-card .card-footer {
+	background: var(--color-primary-lightest, #f5f8f4);
+}
+.text-accent {
+	color: var(--color-accent, #c07621) !important;
+}
