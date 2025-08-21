@@ -47,15 +47,11 @@ namespace ServiceLibraryProject
 
         public BuildingCompany? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _companyRepository.GetById(id);
         }
 
         public void Update(BuildingCompany entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "La empresa no puede ser nula.");
             _companyRepository.Update(entity);
         }
     }

@@ -141,8 +141,6 @@ namespace ServiceLibraryProject
         /// <returns>El edificio encontrado o null si no existe.</returns>
         public Building? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _buildingRepository.GetById(id);
         }
 
@@ -153,8 +151,6 @@ namespace ServiceLibraryProject
         /// <returns>El edificio encontrado o null si no existe.</returns>
         public Building? GetByCode(string code)
         {
-            if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentException("El código proporcionado no puede estar vacío.", nameof(code));
             return _buildingRepository.Find(b => b.Code == code);
         }
 
@@ -164,8 +160,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Building a actualizar.</param>
         public void Update(Building entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "El edificio no puede ser nulo.");
             _buildingRepository.Update(entity);
         }
     }
