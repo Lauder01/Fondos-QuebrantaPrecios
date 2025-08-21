@@ -17,6 +17,9 @@ import { RouterModule } from '@angular/router';
             <li class="nav-item">
               <a class="nav-link" routerLink="/form" routerLinkActive="active">Formulario</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/buildings" routerLinkActive="active">Edificios</a>
+            </li>
           </ul>
         </div>
       </div>

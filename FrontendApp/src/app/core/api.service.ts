@@ -28,6 +28,13 @@ export interface StatusGetterDto {
 	description?: string;
 }
 
+export interface BuildingCompanyGetterDto {
+	id: string;
+	name: string;
+	cif: string;
+	website?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
 	private baseUrl = 'https://172.30.137.209:7124/api';
@@ -71,5 +78,14 @@ export class ApiService {
 				observer.complete();
 			});
 		});
+	}
+
+	// BuildingCompany methods
+	getBuildingCompanies(): Observable<BuildingCompanyGetterDto[]> {
+		return this.http.get<BuildingCompanyGetterDto[]>(`${this.baseUrl}/BuildingCompany`);
+	}
+
+	getBuildingCompanyById(id: string): Observable<BuildingCompanyGetterDto> {
+		return this.http.get<BuildingCompanyGetterDto>(`${this.baseUrl}/BuildingCompany/${id}`);
 	}
 }
