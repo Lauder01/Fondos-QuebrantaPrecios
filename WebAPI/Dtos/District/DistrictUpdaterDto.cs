@@ -5,7 +5,7 @@ namespace WebAPI.Dtos.District
 {
     public class DistrictUpdaterDto : DistrictBaseDto
     {
-        [Required]
+        [Required(ErrorMessage = "ERR008: El campo Id es obligatorio")]
         public Guid Id { get; set; }
     }
 }

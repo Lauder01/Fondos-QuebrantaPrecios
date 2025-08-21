@@ -5,12 +5,12 @@ namespace WebAPI.Dtos.Address
 {
     public class AddressGetterDto : AddressBaseDto
     {
-        [Required]
-        [Range(0, 36)]
+        [Required(ErrorMessage = "ERR009: El campo Id es obligatorio")]
+        [Range(0, 36, ErrorMessage = "ERR010: El Id debe estar entre 0 y 36")]
         public string Id { get; set; } = string.Empty;
-        [Range(0,50)]
+        [Range(0,50, ErrorMessage = "ERR011: El Zipcode debe estar entre 0 y 50")]
         public string? Zipcode { get; set; }
-        [Range(0,255)]
+        [Range(0,255, ErrorMessage = "ERR012: La calle debe estar entre 0 y 255")]
         public string? Street { get; set; }
     }
 }

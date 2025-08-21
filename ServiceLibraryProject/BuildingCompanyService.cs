@@ -18,18 +18,12 @@ namespace ServiceLibraryProject
 
         public void Add(BuildingCompany entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
-                throw new ArgumentException("El nombre de la empresa es obligatorio y debe tener entre 2 y 255 caracteres.");
             if (_companyRepository.GetAll().Any(c => c.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe una empresa con ese nombre.");
 
-            if (string.IsNullOrWhiteSpace(entity.Cif) || entity.Cif.Length != 9)
-                throw new ArgumentException("El CIF es obligatorio y debe tener 9 caracteres.");
             if (_companyRepository.GetAll().Any(c => c.Cif == entity.Cif))
                 throw new InvalidOperationException("Ya existe una empresa con ese CIF.");
 
-            if (!string.IsNullOrEmpty(entity.Website) && entity.Website.Length > 1024)
-                throw new ArgumentException("La web no puede superar los 1024 caracteres.");
             _companyRepository.Add(entity);
         }
 
@@ -47,7 +41,7 @@ namespace ServiceLibraryProject
         public BuildingCompany? GetByCif(string cif)
         {
             if (string.IsNullOrWhiteSpace(cif))
-                return null;
+                throw new ArgumentException("El CIF proporcionado no existe.", nameof(cif));
             return _companyRepository.Find(c => c.Cif == cif);
         }
 

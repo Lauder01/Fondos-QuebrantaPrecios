@@ -5,13 +5,13 @@ namespace WebAPI.Dtos.Street
 {
     public class StreetBaseDto : IValidatableObject
     {
-        [Required]
-        [Range(0,255)]
+        [Required(ErrorMessage = "ERR001: El campo Nombre es obligatorio")]
+        [Range(0,255, ErrorMessage = "ERR002: El nombre debe estar entre 0 y 255")]
         public string Name { get; set; } = string.Empty;
-        [Required]
-        [Range(0,24)]
+        [Required(ErrorMessage = "ERR003: El campo Código es obligatorio")]
+        [Range(0,24, ErrorMessage = "ERR004: El código debe estar entre 0 y 24")]
         public string Code { get; set; } = string.Empty;
-        [Required]
+        [Required(ErrorMessage = "ERR005: El campo StreetType es obligatorio")]
         public int StreetType { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

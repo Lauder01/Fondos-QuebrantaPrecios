@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace WebAPI.Dtos.Request
 {
     public class RequestGetterDto : RequestBaseDto
