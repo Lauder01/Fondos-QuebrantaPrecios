@@ -62,12 +62,13 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Building a agregar.</param>
         public void Add(Building entity)
         {
+            
             // Validación: Code único
             if (_buildingRepository.GetAll().Any(b => b.Code == entity.Code))
                 throw new InvalidOperationException("Ya existe un edificio con ese código.");
-            // Validación: Price >= 0
-            if (entity.Price < 0)
-                throw new ArgumentException("El precio no puede ser negativo.");
+            // Validación: Nombre único
+            if (_buildingRepository.GetAll().Any(b => b.Name == entity.Name))
+                throw new InvalidOperationException("Ya existe un edificio con ese nombre.");
             // Validación: District, Street, Company y Status existen
             if (entity.District == null || !_districtRepository.GetAll().Any(d => d.Id == entity.District.Id))
                 throw new ArgumentException("El distrito asociado no existe.");
@@ -119,7 +120,7 @@ namespace ServiceLibraryProject
         public Building? GetByCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                return null;
+                throw new ArgumentException("El código proporcionado no puede estar vacío.", nameof(code));
             return _buildingRepository.Find(b => b.Code == code);
         }
 
