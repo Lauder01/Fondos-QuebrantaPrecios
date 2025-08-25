@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Dtos.District
 {
     public class DistrictGetterDto : DistrictBaseDto
     {
-        public Guid Id { get; set; }
+        [Required(ErrorMessage = "ERR008: El campo Id es obligatorio")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El Id debe tener exactamente 36 caracteres")]
+        public string Id { get; set; }
         // Hereda Zipcodes del DistrictBaseDto
     }
 }
