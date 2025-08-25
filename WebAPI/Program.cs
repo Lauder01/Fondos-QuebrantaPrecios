@@ -24,7 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registro de repositorio genérico para DI
+// Registro de repositorio genï¿½rico para DI
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryLibraryProject.RepositoryIMP<>));
 
 // Registro de servicios de dominio para todas las entidades principales
@@ -38,6 +38,7 @@ builder.Services.AddScoped<AdressService>();
 builder.Services.AddScoped<BuildingCompanyService>();
 builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<ZipcodeService>();
+builder.Services.AddScoped<StatusService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -11,13 +11,16 @@
                     type="text"
                     class="form-control"
                     [class.is-invalid]="!districtValid && districtErrorMessage"
-                    id="districtId"
-                    formControlName="districtId"
+                    id="districtDisplay"
+                    formControlName="districtName"
                     placeholder="Buscar distrito..."
                     (input)="onDistrictInput(getInputValue($event))"
                     (focus)="onDistrictInput(getInputValue($event))"
                     (blur)="showDistrictList = false"
                     autocomplete="off">
+
+                <!-- Campo oculto para el ID del distrito -->
+                <input type="hidden" formControlName="districtId">
 
                 <!-- Dropdown mode para distrito -->
                 <select
@@ -27,7 +30,7 @@
                     formControlName="districtId"
                     (change)="onDistrictDropdownChange($event)">
                     <option value="">Selecciona un distrito...</option>
-                    <option *ngFor="let district of filteredDistricts" [value]="district.name">
+                    <option *ngFor="let district of filteredDistricts" [value]="district.id">
                         {{ district.name }} ({{ district.zipcodes?.join(', ') }})
                     </option>
                 </select>
@@ -112,19 +115,22 @@
 
         <!-- Calle -->
         <div class="col-md-4 position-relative">
-            <label class="form-label fw-semibold small text-primary-dark" for="streetId">Calle</label>
+            <label class="form-label fw-semibold small text-primary-dark" for="streetDisplay">Calle</label>
             <div class="position-relative">
                 <input
                     type="text"
                     class="form-control"
                     [class.is-invalid]="!streetValid && streetErrorMessage"
-                    id="streetId"
-                    formControlName="streetId"
+                    id="streetDisplay"
+                    formControlName="streetName"
                     placeholder="Buscar calle..."
                     (input)="onStreetInput(getInputValue($event))"
                     (focus)="onStreetInput(getInputValue($event))"
                     (blur)="showStreetList = false"
                     autocomplete="off">
+
+                <!-- Campo oculto para el ID de la calle -->
+                <input type="hidden" formControlName="streetId">
 
                 <!-- Lista desplegable para input mode -->
                 <ul *ngIf="streetMode === 'input' && (filteredStreets ?? []).length > 0 && showStreetList"
@@ -143,7 +149,7 @@
             <div *ngIf="!streetValid && streetErrorMessage" class="invalid-feedback d-block small">
                 {{ streetErrorMessage }}
             </div>
-            <div *ngIf="formGroup.get('streetId')?.invalid && (formGroup.get('streetId')?.touched || formGroup.get('streetId')?.dirty) && streetValid"
+            <div *ngIf="formGroup.get('streetId')?.invalid && (formGroup.get('streetName')?.touched || formGroup.get('streetName')?.dirty) && streetValid"
                 class="invalid-feedback d-block small">
                 La calle es obligatoria
             </div>

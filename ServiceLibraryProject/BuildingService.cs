@@ -100,17 +100,18 @@ namespace ServiceLibraryProject
             // Validación: Code único
             if (_buildingRepository.GetAll().Any(b => b.Code == entity.Code))
                 throw new InvalidOperationException("Ya existe un edificio con ese código.");
-            // Validación: Nombre único
-            if (_buildingRepository.GetAll().Any(b => b.Name == entity.Name))
+            // Validación: Nombre único (solo si se proporciona un nombre)
+            if (!string.IsNullOrEmpty(entity.Name) && _buildingRepository.GetAll().Any(b => b.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe un edificio con ese nombre.");
-            // Validación: District, Street, Company y Status existen
-            if (entity.District == null || !_districtRepository.GetAll().Any(d => d.Id == entity.District.Id))
+                
+            // Validación: District, Street, Company y Status existen (solo si se proporcionan)
+            if (!string.IsNullOrEmpty(entity.DistrictId) && !_districtRepository.GetAll().Any(d => d.Id == entity.DistrictId))
                 throw new ArgumentException("El distrito asociado no existe.");
-            if (entity.Street == null || !_streetRepository.GetAll().Any(s => s.Id == entity.Street.Id))
+            if (!string.IsNullOrEmpty(entity.StreetId) && !_streetRepository.GetAll().Any(s => s.Id == entity.StreetId))
                 throw new ArgumentException("La calle asociada no existe.");
-            if (entity.BuildingCompany == null || !_companyRepository.GetAll().Any(c => c.Id == entity.BuildingCompany.Id))
+            if (!string.IsNullOrEmpty(entity.BuildingCompanyId) && !_companyRepository.GetAll().Any(c => c.Id == entity.BuildingCompanyId))
                 throw new ArgumentException("La empresa constructora asociada no existe.");
-            if (entity.Status == null || !_statusRepository.GetAll().Any(s => s.Id == entity.Status.Id))
+            if (!string.IsNullOrEmpty(entity.StatusId) && !_statusRepository.GetAll().Any(s => s.Id == entity.StatusId))
                 throw new ArgumentException("El estado asociado no existe.");
             _buildingRepository.Add(entity);
         }

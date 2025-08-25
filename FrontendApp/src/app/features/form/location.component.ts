@@ -82,7 +82,7 @@ export class LocationComponent implements OnInit {
     }
 
     private updateConstructedAddress() {
-        const street = this.formGroup.get('streetId')?.value || '';
+        const street = this.formGroup.get('streetName')?.value || ''; // Usar el nombre de la calle
         const number = this.formGroup.get('buildingNumber')?.value || '';
         const zipcode = this.formGroup.get('zipCode')?.value || '';
         const city = this.formGroup.get('city')?.value || '';
@@ -101,7 +101,7 @@ export class LocationComponent implements OnInit {
         // Validar entrada: solo alfanuméricos y espacios, max 255 caracteres
         const sanitizedValue = this.sanitizeInput(value, 255);
         if (sanitizedValue !== value) {
-            this.formGroup.get('districtId')?.setValue(sanitizedValue);
+            this.formGroup.get('districtName')?.setValue(sanitizedValue); // Actualizar el campo de nombre
             return;
         }
 
@@ -116,6 +116,12 @@ export class LocationComponent implements OnInit {
             this.districtErrorMessage = '';
             this.selectDistrict(exactMatch);
             return;
+        }
+
+        // Si no hay coincidencia exacta, limpiar la selección actual
+        if (this.selectedDistrict) {
+            this.selectedDistrict = null;
+            this.formGroup.get('districtId')?.setValue('');
         }
 
         // Filtrar distritos disponibles (si hay zipcode seleccionado, solo los compatibles)
@@ -141,7 +147,8 @@ export class LocationComponent implements OnInit {
         if (this.isUpdatingDistrict) return; // Evitar bucles infinitos
 
         this.selectedDistrict = district;
-        this.formGroup.get('districtId')?.setValue(district.name);
+        this.formGroup.get('districtId')?.setValue(district.id); // ID para enviar al backend
+        this.formGroup.get('districtName')?.setValue(district.name); // Nombre para mostrar al usuario
         this.showDistrictList = false;
 
         // Auto-completar campos relacionados del distrito
@@ -179,6 +186,7 @@ export class LocationComponent implements OnInit {
 
         this.selectedDistrict = null;
         this.formGroup.get('districtId')?.setValue('');
+        this.formGroup.get('districtName')?.setValue(''); // Limpiar también el nombre
         this.showDistrictList = false;
         this.districtMode = 'input';
         this.districtValid = true;
@@ -292,12 +300,24 @@ export class LocationComponent implements OnInit {
 
     onStreetInput(value: string) {
         if (!value) {
+            this.selectedStreet = null;
+            this.formGroup.get('streetId')?.setValue(''); // Limpiar ID cuando no hay valor
             this.filteredStreets = [];
             this.showStreetList = false;
             this.streetValid = true;
             this.streetErrorMessage = '';
             return;
         }
+
+        // Verificar si el valor coincide exactamente con la calle seleccionada
+        if (this.selectedStreet && this.selectedStreet.name === value) {
+            // Si ya coincide, no hacer nada más
+            return;
+        }
+
+        // Si no coincide, limpiar la selección actual
+        this.selectedStreet = null;
+        this.formGroup.get('streetId')?.setValue('');
 
         // Filtrar calles disponibles basándose en el valor ingresado
         this.filteredStreets = this.allStreets.filter(street =>
@@ -318,7 +338,8 @@ export class LocationComponent implements OnInit {
 
     selectStreet(street: StreetGetterDto) {
         this.selectedStreet = street;
-        this.formGroup.get('streetId')?.setValue(street.name);
+        this.formGroup.get('streetId')?.setValue(street.id); // ID para enviar al backend
+        this.formGroup.get('streetName')?.setValue(street.name); // Nombre para mostrar al usuario
         this.showStreetList = false;
     }
 
@@ -384,7 +405,8 @@ export class LocationComponent implements OnInit {
             const district = availableDistricts[0];
             this.isUpdatingDistrict = true; // Evitar bucle
             this.selectedDistrict = district;
-            this.formGroup.get('districtId')?.setValue(district.name);
+            this.formGroup.get('districtId')?.setValue(district.id); // ID para enviar al backend
+            this.formGroup.get('districtName')?.setValue(district.name); // Nombre para mostrar al usuario
 
             // Auto-completar campos relacionados del distrito
             if (district.city) {
@@ -441,10 +463,10 @@ export class LocationComponent implements OnInit {
 
     onDistrictDropdownChange(event: Event) {
         const select = event.target as HTMLSelectElement;
-        const districtName = select.value;
+        const districtId = select.value; // Ahora recibimos el ID
 
-        if (districtName) {
-            const district = this.filteredDistricts.find(d => d.name === districtName);
+        if (districtId) {
+            const district = this.filteredDistricts.find(d => d.id === districtId); // Buscar por ID
             if (district) {
                 this.selectDistrict(district);
             }
