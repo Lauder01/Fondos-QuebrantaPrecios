@@ -54,8 +54,6 @@ namespace ServiceLibraryProject
         /// <returns>El distrito encontrado o null si no existe.</returns>
         public District? GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _context.Set<District>()
                 .Include(d => d.Zipcode)
                 .Include(d => d.Street)
@@ -98,12 +96,9 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad District a agregar.</param>
         public void Add(District entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.Name) || entity.Name.Length < 2 || entity.Name.Length > 255)
-                throw new ArgumentException("El nombre del distrito es obligatorio y debe tener entre 2 y 255 caracteres.");
+
             if (_districtRepository.GetAll().Any(d => d.Name == entity.Name))
                 throw new InvalidOperationException("Ya existe un distrito con ese nombre.");
-            if (entity.BuildingCount < 0)
-                throw new ArgumentException("El número de edificios no puede ser negativo.");
             _districtRepository.Add(entity);
         }
 
@@ -113,8 +108,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad District a actualizar.</param>
         public void Update(District entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "El distrito no puede ser nulo.");
             _districtRepository.Update(entity);
         }
 
