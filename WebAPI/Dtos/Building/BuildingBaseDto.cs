@@ -19,11 +19,11 @@ namespace WebAPI.Dtos.Building
         public int? YearBuilt { get; set; }
         [Range(0.0, 9999999999.99, ErrorMessage = "ERR010: El precio debe estar entre 0 y 9999999999.99")]
         public decimal? Price { get; set; }
-        [StringLength(36, MinimumLength = 1, ErrorMessage = "ERR011: El DistrictId debe tener entre 1 y 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El DistrictId debe tener exactamente 36 caracteres")]
         public string? DistrictId { get; set; }
-        [StringLength(36, MinimumLength = 1, ErrorMessage = "ERR012: El StreetId debe tener entre 1 y 36 caracteres")]
+         [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El StreetId debe tener exactamente 36 caracteres")]
         public string? StreetId { get; set; }
-        [StringLength(36, MinimumLength = 1, ErrorMessage = "ERR013: El BuildingCompanyId debe tener entre 1 y 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El BuildingCompanyId debe tener exactamente 36 caracteres")]
         public string? BuildingCompanyId { get; set; }
         [StringLength(10, ErrorMessage = "ERR015: El certificado energético no puede superar los 10 caracteres")]
         public string? EnergyCertificate { get; set; }
