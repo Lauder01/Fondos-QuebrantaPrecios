@@ -116,7 +116,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Building>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Building__3214EC07B415885B");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC079821C1C7");
 
             entity.ToTable(tb =>
                 {

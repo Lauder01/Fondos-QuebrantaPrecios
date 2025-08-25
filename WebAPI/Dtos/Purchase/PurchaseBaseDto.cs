@@ -17,7 +17,7 @@ namespace WebAPI.Dtos.Purchase
         [Required]
         public DateTime Date { get; set; }
         [Required]
-        [Range(typeof(decimal), "0.00", "9999999999.99")]
+        [Range(0.0, 9999999999.99)]
         public decimal Amount { get; set; }
     }
 }

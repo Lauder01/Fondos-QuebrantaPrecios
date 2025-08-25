@@ -7,12 +7,12 @@ namespace ClassLibraryProject.Entities
 {
     /// <summary>
     /// Representa un edificio, incluyendo sus datos principales y relaciones con otras entidades.
-    /// Los comentarios originales del desarrollador han sido integrados y mejorados para estandarizar la documentación.
+    /// Los comentarios originales del desarrollador han sido integrados y mejorados para estandarizar la documentaciï¿½n.
     /// </summary>
     public class Building
     {
         /// <summary>
-        /// Identificador único del edificio.
+        /// Identificador ï¿½nico del edificio.
         /// </summary>
         public string Id { get; set; }
         /// <summary>
@@ -32,76 +32,80 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Descripción del edificio.
+        /// Descripciï¿½n del edificio.
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// Código único del edificio.
+        /// Cï¿½digo ï¿½nico del edificio.
         /// </summary>
         public string Code { get; set; }
         /// <summary>
-        /// Portal o número de entrada del edificio.
+        /// Portal o nï¿½mero de entrada del edificio.
         /// </summary>
         public string Doorway { get; set; }
         /// <summary>
-        /// Número de plantas del edificio.
+        /// Nï¿½mero de plantas del edificio.
         /// </summary>
         public int FloorCount { get; set; }
         /// <summary>
-        /// Año de construcción del edificio.
+        /// Aï¿½o de construcciï¿½n del edificio.
         /// </summary>
         public int YearBuilt { get; set; }
         /// <summary>
         /// Precio del edificio.
         /// </summary>
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
         /// <summary>
-        /// Certificado energético del edificio.
+        /// Certificado energÃ©tico del edificio.
         /// </summary>
         public string EnergyCertificate { get; set; }
+        /// <summary>
+        /// Indica si el edificio tiene ascensor.
+        /// </summary>
+        public bool HasElevator { get; set; }
         /// <summary>
         /// Identificador del estado del edificio.
         /// </summary>
         public string StatusId { get; set; }
 
         /// <summary>
-        /// Distrito asociado al edificio (navegación).
+        /// Distrito asociado al edificio (navegaciÃ³n).
         /// </summary>
         public virtual District District { get; set; }
         /// <summary>
-        /// Calle asociada al edificio (navegación).
+        /// Calle asociada al edificio (navegaciÃ³n).
         /// </summary>
         public virtual Street Street { get; set; }
         /// <summary>
-        /// Empresa constructora asociada al edificio (navegación).
+        /// Empresa constructora asociada al edificio (navegaciÃ³n).
         /// </summary>
         public virtual BuildingCompany BuildingCompany { get; set; }
         /// <summary>
-        /// Estado asociado al edificio (navegación).
+        /// Estado asociado al edificio (navegaciÃ³n).
         /// </summary>
         public virtual Status Status { get; set; }
         /// <summary>
-        /// Colección de direcciones asociadas al edificio.
+        /// Colecciï¿½n de direcciones asociadas al edificio.
         /// </summary>
         public virtual ICollection<Address> Address { get; set; } = new List<Address>();
         /// <summary>
-        /// Colección de plantas del edificio.
+        /// Colecciï¿½n de plantas del edificio.
         /// </summary>
         public virtual ICollection<Floor> Floor { get; set; } = new List<Floor>();
         /// <summary>
-        /// Colección de imágenes del edificio.
+        /// Colecciï¿½n de imï¿½genes del edificio.
         /// </summary>
         public virtual ICollection<BuildingImage> BuildingImage { get; set; } = new List<BuildingImage>();
         /// <summary>
-        /// Colección de logs de estado del edificio.
+        /// Colecciï¿½n de logs de estado del edificio.
         /// </summary>
         public virtual ICollection<BuildingStatusLog> BuildingStatusLog { get; set; } = new List<BuildingStatusLog>();
         /// <summary>
-        /// Colección de compras asociadas al edificio.
+        /// Colecciï¿½n de compras asociadas al edificio.
         /// </summary>
         public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
         /// <summary>
-        /// Colección de solicitudes asociadas al edificio.
+        /// Colecciï¿½n de solicitudes asociadas al edificio.
         /// </summary>
         public virtual ICollection<Request> Request { get; set; } = new List<Request>();
 
@@ -111,9 +115,9 @@ namespace ClassLibraryProject.Entities
         public Building() { }
 
         /// <summary>
-        /// Construye el código único del edificio usando el primer código postal del distrito, el código de la calle y el portal.
+        /// Construye el cï¿½digo ï¿½nico del edificio usando el primer cï¿½digo postal del distrito, el cï¿½digo de la calle y el portal.
         /// </summary>
-        /// <returns>El código único generado para el edificio.</returns>
+        /// <returns>El cï¿½digo ï¿½nico generado para el edificio.</returns>
         public string BuildBuildingCode()
         {
             var zipCode = District?.Zipcode?.FirstOrDefault()?.Code ?? "ZZZ";
