@@ -67,23 +67,53 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Address__3214EC0786A824B4");
+            entity.HasKey(e => e.Id).HasName("PKtmp_ms_x3214EC07A798E539");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(36)
                 .IsUnicode(false);
             entity.Property(e => e.ApartmentId)
-                .IsRequired()
                 .HasMaxLength(36)
                 .IsUnicode(false);
             entity.Property(e => e.BuildingId)
                 .IsRequired()
                 .HasMaxLength(36)
                 .IsUnicode(false);
+            entity.Property(e => e.City)
+                .IsRequired()
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.ConstructedAddress)
+                .IsRequired()
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Country)
+                .IsRequired()
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.IsApartment)
                 .IsRequired()
                 .HasDefaultValueSql("((1))");
+            entity.Property(e => e.ZipcodeId)
+                .IsRequired()
+                .HasMaxLength(36)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Apartment).WithMany(p => p.Address)
+                .HasForeignKey(d => d.ApartmentId)
+                .HasConstraintName("FKAddress937616");
+
+            entity.HasOne(d => d.Building).WithMany(p => p.Address)
+                .HasForeignKey(d => d.BuildingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKAddress69853");
+
+            entity.HasOne(d => d.Zipcode).WithMany(p => p.Address)
+                .HasForeignKey(d => d.ZipcodeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKAddress66912");
         });
+
 
         modelBuilder.Entity<Apartment>(entity =>
         {
