@@ -35,6 +35,26 @@ export interface BuildingCompanyGetterDto {
 	website?: string;
 }
 
+export interface BuildingCreatorDto {
+	name?: string;
+	description?: string;
+	// code se genera automáticamente en el backend
+	doorway: string;
+	floorCount?: number;
+	yearBuilt?: number;
+	price?: number | string;
+	districtId?: string;
+	streetId?: string;
+	buildingCompanyId?: string;
+	statusId?: string;
+	energyCertificate?: string;
+	hasElevator: boolean;
+}
+
+export interface BuildingGetterDto extends BuildingCreatorDto {
+	id: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
 	private baseUrl = 'https://172.30.137.209:7124/api';
@@ -87,5 +107,14 @@ export class ApiService {
 
 	getBuildingCompanyById(id: string): Observable<BuildingCompanyGetterDto> {
 		return this.http.get<BuildingCompanyGetterDto>(`${this.baseUrl}/BuildingCompany/${id}`);
+	}
+
+	// Building methods
+	createBuilding(building: BuildingCreatorDto): Observable<BuildingGetterDto> {
+		return this.http.post<BuildingGetterDto>(`${this.baseUrl}/Building`, building);
+	}
+
+	getBuildingById(id: string): Observable<BuildingGetterDto> {
+		return this.http.get<BuildingGetterDto>(`${this.baseUrl}/Building/${id}`);
 	}
 }

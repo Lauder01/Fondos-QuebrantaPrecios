@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
 import { GeneralInfoComponent } from './general-info.component';
 import { LocationComponent } from './location.component';
 import { TechnicalDetailsComponent } from './technical-details.component';
-import { ApiService } from '../../core/api.service';
+import { ApiService, BuildingCreatorDto } from '../../core/api.service';
 
 @Component({
 	selector: 'app-form-main',
@@ -25,8 +25,10 @@ export class FormMainComponent {
 
 			location: this.fb.group({
 				districtId: ['', Validators.required],
+				districtName: [''], // Campo auxiliar para mostrar el nombre
 				zipCode: ['', Validators.required],
 				streetId: ['', Validators.required],
+				streetName: [''], // Campo auxiliar para mostrar el nombre
 				buildingNumber: ['', Validators.required],
 				city: ['', Validators.required],
 				country: ['', Validators.required]
@@ -56,30 +58,82 @@ export class FormMainComponent {
 
 	onSubmit() {
 		if (this.form.valid) {
-			// Buscar el status "registrado" por nombre
-			this.api.getStatusByName('registrado').subscribe(status => {
-				if (status) {
-					const formData = { ...this.form.value };
+			// No necesitamos buscar el status, se asigna automáticamente en el backend
+			const formData = this.form.value;
 
-					formData.generalInfo.statusId = status.id;
-					formData.registeredAt = new Date().toISOString();
+			const buildingData: BuildingCreatorDto = {
+				// Información General - name es opcional
+				...(formData.generalInfo.name && formData.generalInfo.name.trim() !== '' && { name: String(formData.generalInfo.name) }),
+				description: String(formData.generalInfo.description ?? ''),
+				buildingCompanyId: String(formData.generalInfo.buildingCompanyId ?? ''),
+				// statusId se asigna automáticamente en el backend
 
-					console.log('Edificio registrado:', formData);
-					console.log('Status aplicado:', status);
+				// Ubicación
+				districtId: String(formData.location.districtId ?? ''),
+				streetId: String(formData.location.streetId ?? ''),
+				doorway: String(formData.location.buildingNumber ?? ''),
 
-					alert('Edificio registrado exitosamente con status: ' + status.name);
-				} else {
-					console.error('No se encontró el status "registrado"');
-					alert('Error: No se pudo encontrar el status "registrado". Contacte al administrador.');
+				// Detalles Técnicos
+				floorCount: Number(formData.technicalDetails.floorCount ?? 1),
+				yearBuilt: Number(formData.technicalDetails.yearBuilt ?? 2025),
+				price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
+				energyCertificate: String(formData.technicalDetails.energyCertificate ?? ''),
+				hasElevator: !!formData.technicalDetails.hasElevator
+
+				// El código se genera automáticamente en el backend usando BuildBuildingCode()
+			};
+
+			// Eliminar campos undefined/null
+			Object.keys(buildingData).forEach(key => {
+				if (buildingData[key as keyof BuildingCreatorDto] === undefined || buildingData[key as keyof BuildingCreatorDto] === null) {
+					delete buildingData[key as keyof BuildingCreatorDto];
 				}
-			}, error => {
-				console.error('Error al obtener el status:', error);
-				alert('Error al obtener el status del edificio. Inténtelo de nuevo.');
+			});
+
+			console.log('Enviando edificio:', buildingData);
+
+			// Enviar a la API
+			this.api.createBuilding(buildingData).subscribe({
+				next: (result) => {
+					console.log('Edificio creado exitosamente:', result);
+					alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
+
+					// Opcional: Limpiar el formulario
+					this.resetForm();
+				},
+				error: (error) => {
+					console.error('Error al crear el edificio:', error);
+					let errorMessage = 'Error al registrar el edificio.';
+
+					if (error.error && error.error.errors) {
+						// Errores de validación del servidor
+						const validationErrors = Object.values(error.error.errors).flat();
+						errorMessage = `Errores de validación:\n${validationErrors.join('\n')}`;
+					} else if (error.error && error.error.message) {
+						errorMessage = error.error.message;
+					}
+
+					alert(errorMessage);
+				}
 			});
 		} else {
 			console.log('Formulario inválido');
 			this.markAllFieldsAsTouched();
+			alert('Por favor, complete todos los campos obligatorios.');
 		}
+	}
+
+	private resetForm() {
+		this.form.reset();
+		// Restablecer valores por defecto
+		this.form.patchValue({
+			technicalDetails: {
+				floorCount: 1,
+				yearBuilt: 2025,
+				price: 0,
+				hasElevator: false
+			}
+		});
 	}
 
 	private markAllFieldsAsTouched() {

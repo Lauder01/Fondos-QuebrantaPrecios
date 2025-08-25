@@ -8,7 +8,8 @@ namespace WebAPI.AutoMapperProfiles
     {
         public BuildingProfile()
         {
-            CreateMap<Building, BuildingGetterDto>();
+            CreateMap<Building, BuildingGetterDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<BuildingCreatorDto, Building>();
             CreateMap<BuildingUpdaterDto, Building>();
         }

@@ -48,7 +48,7 @@ namespace ServiceLibraryProject
         /// <param name="id">Identificador del estado a eliminar.</param>
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _statusRepository.Delete(id);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace ServiceLibraryProject
         /// <returns>Una colección de estados.</returns>
         public IEnumerable<Status> GetAll()
         {
-            throw new NotImplementedException();
+            return _statusRepository.GetAll();
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace ServiceLibraryProject
         /// <returns>El estado encontrado o null si no existe.</returns>
         public Status? GetById(string id)
         {
-            throw new NotImplementedException();
+            return _statusRepository.GetById(id);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Status a actualizar.</param>
         public void Update(Status entity)
         {
-            throw new NotImplementedException();
+            _statusRepository.Update(entity);
         }
     }
 }
