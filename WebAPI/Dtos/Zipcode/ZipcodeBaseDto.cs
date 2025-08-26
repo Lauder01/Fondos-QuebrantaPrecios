@@ -5,8 +5,8 @@ namespace WebAPI.Dtos.Zipcode
 {
     public class ZipcodeBaseDto : IValidatableObject
     {
-        [Required(ErrorMessage = "ERR001: El campo Código es obligatorio")]
-        [Range(0,50, ErrorMessage = "ERR002: El código debe estar entre 0 y 50")]
+        [Required(ErrorMessage = "ERR001: El campo Code es obligatorio")]
+        [Range(0,50, ErrorMessage = "ERR002: El campo Code debe estar entre 0 y 50")]
         public required string Code { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
