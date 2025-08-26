@@ -1,48 +1,5 @@
-<header class="landing-hero bg-primary-lightest py-5">
-	<div class="container d-flex flex-column align-items-center justify-content-center text-center">
-		<div class="icon-circle mb-4">
-			<i class="bi bi-buildings"></i>
-		</div>
-		<h1 class="fw-bold mb-3 text-primary">Bienvenido a Fondos QuebrantaPrecios</h1>
-		<p class="lead text-secondary mb-4">Gestiona tus distritos y edificios de forma sencilla, rápida y segura.</p>
-		<div class="filter-section bg-white shadow-sm rounded-4 p-4 mt-3 w-100">
-			<h5 class="mb-3 text-primary">Filtrar Edificios</h5>
-			<form class="row g-3 align-items-end">
-				<div class="col-12 col-md-6">
-					<label for="district" class="form-label text-secondary">Distrito</label>
-					<select id="district" class="form-select">
-						<option selected disabled>Selecciona un distrito</option>
-						<!-- Aquí se llenarán los distritos dinámicamente -->
-						<option>Centro</option>
-						<option>Norte</option>
-						<option>Sur</option>
-						<option>Este</option>
-						<option>Oeste</option>
-					</select>
-				</div>
-				<div class="col-12 col-md-6">
-					<label for="price" class="form-label text-secondary">Precio máximo (€)</label>
-					<input type="number" id="price" class="form-control" placeholder="Ej: 200000">
-				</div>
-				<div class="col-12 text-end">
-					<button type="submit" class="btn btn-accent px-4">Filtrar</button>
-				</div>
-			</form>
-		</div>
-		<div class="search-section bg-white shadow-sm rounded-4 p-4 mt-4 w-100">
-			<h5 class="mb-3 text-primary">Buscar Edificio por Dirección</h5>
-			<form class="row g-3 align-items-end">
-				<div class="col-12">
-					<label for="address" class="form-label text-secondary">Dirección</label>
-					<input type="text" id="address" class="form-control" placeholder="Ej: Calle Mayor 123, Madrid">
-				</div>
-				<div class="col-12 text-end">
-					<button type="submit" class="btn btn-accent px-4">Buscar</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</header>
+<app-header></app-header>
+<app-menu></app-menu>
 <main>
 	<section class="buildings-list-section mt-5 w-100">
 		<h5 class="mb-4 text-primary">Edificios destacados</h5>
@@ -80,3 +37,4 @@
 		</div>
 	</section>
 </main>
+<app-footer></app-footer>
