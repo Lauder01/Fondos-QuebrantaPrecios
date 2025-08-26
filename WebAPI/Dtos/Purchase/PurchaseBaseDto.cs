@@ -6,15 +6,15 @@ namespace WebAPI.Dtos.Purchase
     public class PurchaseBaseDto
     {
         [Required(ErrorMessage = "ERR001: El campo BuildingId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR002: El BuildingId debe tener exactamente 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR002: El campo BuildingId debe tener exactamente 36 caracteres")]
         public required string BuildingId { get; set; }
 
         [Required(ErrorMessage = "ERR003: El campo BuildingCompanyId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR004: El BuildingCompanyId debe tener exactamente 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR004: El campo BuildingCompanyId debe tener exactamente 36 caracteres")]
         public required string BuildingCompanyId { get; set; }
 
         [Required(ErrorMessage = "ERR005: El campo RequestId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR006: El RequestId debe tener exactamente 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR006: El campo RequestId debe tener exactamente 36 caracteres")]
         public required string RequestId { get; set; } 
 
         [Required(ErrorMessage = "ERR007: El campo Date es obligatorio")]
