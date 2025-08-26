@@ -33,6 +33,10 @@ namespace ServiceLibraryProject
             /// Repositorio de estados utilizado para validaciones y relaciones.
             /// </summary>
             private readonly IRepository<Status> _statusRepository;
+            /// <summary>
+            /// Repositorio de direcciones utilizado para crear direcciones automáticamente.
+            /// </summary>
+            private readonly IRepository<Address> _addressRepository;
 
             /// <summary>
             /// Inicializa una nueva instancia del servicio de edificios.
@@ -42,18 +46,21 @@ namespace ServiceLibraryProject
             /// <param name="streetRepository">Repositorio de calles.</param>
             /// <param name="companyRepository">Repositorio de empresas constructoras.</param>
             /// <param name="statusRepository">Repositorio de estados.</param>
+            /// <param name="addressRepository">Repositorio de direcciones.</param>
             public BuildingService(
                 IRepository<Building> buildingRepository,
                 IRepository<District> districtRepository,
                 IRepository<Street> streetRepository,
                 IRepository<BuildingCompany> companyRepository,
-                IRepository<Status> statusRepository)
+                IRepository<Status> statusRepository,
+                IRepository<Address> addressRepository)
             {
                 _buildingRepository = buildingRepository;
                 _districtRepository = districtRepository;
                 _streetRepository = streetRepository;
                 _companyRepository = companyRepository;
                 _statusRepository = statusRepository;
+                _addressRepository = addressRepository;
             }
 
             /// <summary>
@@ -123,7 +130,41 @@ namespace ServiceLibraryProject
                 throw new ArgumentException("La empresa constructora asociada no existe.");
             if (!string.IsNullOrEmpty(entity.StatusId) && !_statusRepository.GetAll().Any(s => s.Id == entity.StatusId))
                 throw new ArgumentException("El estado asociado no existe.");
+            
+            // Guardar el edificio primero
             _buildingRepository.Add(entity);
+            
+            // Crear automáticamente un registro de Address para el edificio
+            CreateAddressForBuilding(entity);
+        }
+
+        /// <summary>
+        /// Crea automáticamente un registro de Address para un edificio recién creado.
+        /// </summary>
+        /// <param name="building">El edificio para el cual crear la dirección.</param>
+        private void CreateAddressForBuilding(Building building)
+        {
+            // Obtener el primer zipcode del distrito para usar como referencia
+            var district = _districtRepository.GetById(building.DistrictId);
+            var zipcodeId = district?.Zipcode?.FirstOrDefault()?.Id ?? string.Empty;
+            
+            // Construir la dirección completa
+            var street = _streetRepository.GetById(building.StreetId);
+            var constructedAddress = $"{street?.Name ?? "Calle desconocida"} {building.Doorway}, {district?.City ?? "Ciudad desconocida"}, {district?.Country ?? "País desconocido"}";
+            
+            var address = new Address
+            {
+                Id = Guid.NewGuid().ToString(),
+                BuildingId = building.Id,
+                ApartmentId = string.Empty,
+                ZipcodeId = zipcodeId,
+                ConstructedAddress = constructedAddress,
+                IsApartment = false,
+                Country = district?.Country ?? string.Empty,
+                City = district?.City ?? string.Empty
+            };
+            
+            _addressRepository.Add(address);
         }
 
         /// <summary>
