@@ -1,0 +1,70 @@
+{
+  "hash": "7775af81",
+  "configHash": "d8588c08",
+  "lockfileHash": "dc2806b0",
+  "browserHash": "d8a93a7d",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "7589e174",
+      "needsInterop": false
+    },
+    "@angular/common/http": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "3a511534",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "67cd5bac",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "34acb769",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "76f41947",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "25d9e1b8",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "1c5061e8",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-72F72MOA": {
+      "file": "chunk-72F72MOA.js"
+    },
+    "chunk-ZQK56XOE": {
+      "file": "chunk-ZQK56XOE.js"
+    },
+    "chunk-UD2ZKO46": {
+      "file": "chunk-UD2ZKO46.js"
+    },
+    "chunk-NDZIWK7R": {
+      "file": "chunk-NDZIWK7R.js"
+    },
+    "chunk-F7QDG7Y7": {
+      "file": "chunk-F7QDG7Y7.js"
+    },
+    "chunk-SESUV4G6": {
+      "file": "chunk-SESUV4G6.js"
+    }
+  }
+}
