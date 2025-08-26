@@ -4,8 +4,8 @@ namespace WebAPI.Dtos.Floor
 {
     public class FloorUpdaterDto : FloorBaseDto
     {
-        [Required(ErrorMessage = "ERR008: El campo Code es obligatorio")]
-        [Range(2,50, ErrorMessage = "ERR009: El código debe estar entre 2 y 50")]
-        public string Code { get; set; } = string.Empty;
+        [Required(ErrorMessage = "ERR008: El campo Id es obligatorio")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El Id debe tener exactamente 36 caracteres")]
+        public string Id { get; set; }
     }
 }
