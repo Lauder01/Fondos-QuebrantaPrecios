@@ -5,8 +5,8 @@ namespace WebAPI.Dtos.Zipcode
 {
     public class ZipcodeUpdaterDto : ZipcodeBaseDto
     {
-        [Required]
-        [Range(0,36)]
-        public string Id { get; set; }
+        [Required(ErrorMessage = "ERR005: El campo Id es obligatorio")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR006: El Id debe tener exactamente 36 caracteres")]
+        public required string Id { get; set; }
     }
 }
