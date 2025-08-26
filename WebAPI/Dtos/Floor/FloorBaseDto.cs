@@ -13,11 +13,11 @@ namespace WebAPI.Dtos.Floor
         public bool HasLift { get; set; }
         
         [Required(ErrorMessage = "ERR004: El campo Id es obligatorio")]
-        [Range(0, 36, ErrorMessage = "ERR005: El Id debe estar entre 0 y 36")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El Id debe tener exactamente 36 caracteres")]
         public string Id { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "ERR006: El campo BuildingId es obligatorio")]
-        [Range(0, 36, ErrorMessage = "ERR007: El BuildingId debe estar entre 0 y 36")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El BuildingId debe tener exactamente 36 caracteres")]
         public string BuildingId { get; set; } = string.Empty;
         
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

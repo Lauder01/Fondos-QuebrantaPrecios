@@ -24,7 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registro de repositorio gen�rico para DI
+// Registro de repositorio genérico para DI
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryLibraryProject.RepositoryIMP<>));
 
 // Registro de servicios de dominio para todas las entidades principales
@@ -34,7 +34,7 @@ builder.Services.AddScoped<StreetService>();
 builder.Services.AddScoped<BuildingService>();
 builder.Services.AddScoped<ApartmentService>();
 builder.Services.AddScoped<FloorService>();
-builder.Services.AddScoped<AdressService>();
+builder.Services.AddScoped<AddressService>();
 builder.Services.AddScoped<BuildingCompanyService>();
 builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<ZipcodeService>();

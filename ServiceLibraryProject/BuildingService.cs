@@ -96,6 +96,16 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Building a agregar.</param>
         public void Add(Building entity)
         {
+            // Sanitizar strings nulos/undefined a string vacío
+            entity.Name = entity.Name ?? string.Empty;
+            entity.Description = entity.Description ?? string.Empty;
+            entity.Code = entity.Code ?? string.Empty;
+            entity.Doorway = entity.Doorway ?? string.Empty;
+            entity.DistrictId = entity.DistrictId ?? string.Empty;
+            entity.StreetId = entity.StreetId ?? string.Empty;
+            entity.BuildingCompanyId = entity.BuildingCompanyId ?? string.Empty;
+            entity.StatusId = entity.StatusId ?? string.Empty;
+            entity.EnergyCertificate = entity.EnergyCertificate ?? string.Empty;
             
             // Validación: Code único
             if (_buildingRepository.GetAll().Any(b => b.Code == entity.Code))
@@ -161,6 +171,17 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Building a actualizar.</param>
         public void Update(Building entity)
         {
+            // Sanitizar strings nulos/undefined a string vacío
+            entity.Name = entity.Name ?? string.Empty;
+            entity.Description = entity.Description ?? string.Empty;
+            entity.Code = entity.Code ?? string.Empty;
+            entity.Doorway = entity.Doorway ?? string.Empty;
+            entity.DistrictId = entity.DistrictId ?? string.Empty;
+            entity.StreetId = entity.StreetId ?? string.Empty;
+            entity.BuildingCompanyId = entity.BuildingCompanyId ?? string.Empty;
+            entity.StatusId = entity.StatusId ?? string.Empty;
+            entity.EnergyCertificate = entity.EnergyCertificate ?? string.Empty;
+            
             _buildingRepository.Update(entity);
         }
     }

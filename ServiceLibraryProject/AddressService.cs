@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClassLibraryProject.Entities;
@@ -11,7 +11,7 @@ namespace ServiceLibraryProject
     /// Servicio para operaciones de negocio relacionadas con direcciones (Address).
     /// Proporciona métodos para obtener, agregar, actualizar y eliminar direcciones en la base de datos.
     /// </summary>
-    public class AdressService : IService<Address>
+    public class AddressService : IService<Address>
     {
         /// <summary>
         /// Repositorio de direcciones utilizado para acceder a la base de datos.
@@ -22,7 +22,7 @@ namespace ServiceLibraryProject
         /// Inicializa una nueva instancia del servicio de direcciones.
         /// </summary>
         /// <param name="addressRepository">Repositorio de direcciones.</param>
-        public AdressService(IRepository<Address> addressRepository)
+        public AddressService(IRepository<Address> addressRepository)
         {
             _addressRepository = addressRepository;
         }
@@ -43,6 +43,8 @@ namespace ServiceLibraryProject
         /// <returns>La dirección encontrada o null si no existe.</returns>
         public Address? GetById(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _addressRepository.GetById(id);
         }
 
@@ -52,7 +54,17 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Address a agregar.</param>
         public void Add(Address entity)
         {
-            _ = 
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
+            
+            // Sanitizar strings nulos a string vacío
+            entity.BuildingId = entity.BuildingId ?? string.Empty;
+            entity.ApartmentId = entity.ApartmentId ?? string.Empty;
+            
+            // Validación simplificada para la nueva estructura
+            if (string.IsNullOrWhiteSpace(entity.BuildingId))
+                throw new ArgumentException("El BuildingId es obligatorio.", nameof(entity.BuildingId));
+            
             _addressRepository.Add(entity);
         }
 
@@ -62,6 +74,13 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Address a actualizar.</param>
         public void Update(Address entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
+
+            // Sanitizar strings nulos a string vacío
+            entity.BuildingId = entity.BuildingId ?? string.Empty;
+            entity.ApartmentId = entity.ApartmentId ?? string.Empty;
+            
             _addressRepository.Update(entity);
         }
 
