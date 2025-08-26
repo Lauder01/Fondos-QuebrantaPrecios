@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
@@ -8,11 +8,11 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AdressController : ControllerBase
+    public class AddressController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ServiceLibraryProject.AdressService _addressService;
-        public AdressController(ServiceLibraryProject.AdressService addressService, IMapper mapper)
+        private readonly ServiceLibraryProject.AddressService _addressService;
+        public AddressController(ServiceLibraryProject.AddressService addressService, IMapper mapper)
         {
             _addressService = addressService;
             _mapper = mapper;
@@ -42,7 +42,14 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState);
             var address = _mapper.Map<Address>(dto);
             address.Id = Guid.NewGuid().ToString();
-            _addressService.Add(address);
+            try
+            {
+                _addressService.Add(address);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             var result = _mapper.Map<AddressGetterDto>(address);
             return CreatedAtAction(nameof(GetById), new { id = address.Id }, result);
         }
@@ -54,14 +61,28 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState);
             var address = _mapper.Map<Address>(dto);
             address.Id = id;
-            _addressService.Update(address);
+            try
+            {
+                _addressService.Update(address);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            _addressService.Delete(id);
+            try
+            {
+                _addressService.Delete(id);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return NoContent();
         }
     }

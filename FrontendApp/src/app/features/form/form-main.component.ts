@@ -62,22 +62,22 @@ export class FormMainComponent {
 			const formData = this.form.value;
 
 			const buildingData: BuildingCreatorDto = {
-				// Información General - name es opcional
-				...(formData.generalInfo.name && formData.generalInfo.name.trim() !== '' && { name: String(formData.generalInfo.name) }),
-				description: String(formData.generalInfo.description ?? ''),
-				buildingCompanyId: String(formData.generalInfo.buildingCompanyId ?? ''),
+				// Información General - name siempre se envía, aunque esté vacío
+				name: (formData.generalInfo.name || '').trim(),
+				description: (formData.generalInfo.description || '').trim(),
+				buildingCompanyId: (formData.generalInfo.buildingCompanyId || '').trim(),
 				// statusId se asigna automáticamente en el backend
 
 				// Ubicación
-				districtId: String(formData.location.districtId ?? ''),
-				streetId: String(formData.location.streetId ?? ''),
-				doorway: String(formData.location.buildingNumber ?? ''),
+				districtId: (formData.location.districtId || '').trim(),
+				streetId: (formData.location.streetId || '').trim(),
+				doorway: (formData.location.buildingNumber || '').trim(),
 
 				// Detalles Técnicos
-				floorCount: Number(formData.technicalDetails.floorCount ?? 1),
-				yearBuilt: Number(formData.technicalDetails.yearBuilt ?? 2025),
+				floorCount: Number(formData.technicalDetails.floorCount) || 1,
+				yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
 				price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
-				energyCertificate: String(formData.technicalDetails.energyCertificate ?? ''),
+				energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
 				hasElevator: !!formData.technicalDetails.hasElevator
 
 				// El código se genera automáticamente en el backend usando BuildBuildingCode()

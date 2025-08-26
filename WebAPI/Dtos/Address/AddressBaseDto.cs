@@ -8,18 +8,29 @@ namespace WebAPI.Dtos.Address
         [Required(ErrorMessage = "ERR001: El campo BuildingId es obligatorio")]
         [Range(0, 36, ErrorMessage = "ERR002: El BuildingId debe estar entre 0 y 36")]
         public string BuildingId { get; set; } = string.Empty;
+
         [Range(0, 36, ErrorMessage = "ERR003: El ApartmentId debe estar entre 0 y 36")]
         public string? ApartmentId { get; set; }
-        [Range(0, 36, ErrorMessage = "ERR004: El IsApartment debe estar entre 0 y 36")]
-        public bool? IsApartment { get; set; }
-        [Required(ErrorMessage = "ERR005: El campo ZipcodeId es obligatorio")]
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR006: El ZipcodeId debe tener entre 1 y 50 caracteres")]
-        public string ZipcodeId { get; set; } = string.Empty;
-        [Required(ErrorMessage = "ERR007: El campo StreetId es obligatorio")]
-        [Range(0,36, ErrorMessage = "ERR008: El StreetId debe estar entre 0 y 36")]
-        public string StreetId { get; set; } = string.Empty;
 
-        //este método de momento está vacío, no sirve de nada
+        [Required(ErrorMessage = "ERR004: El campo ZipcodeId es obligatorio")]
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR005: El ZipcodeId debe tener entre 1 y 50 caracteres")]
+        public string ZipcodeId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "ERROR006: El campo ZipcodeId es obligatorio")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "ERR007: La dirección construida debe tener entre 1 y 255 caracteres")]
+        public string ConstructedAddress { get; set; } = string.Empty;
+
+        [Range(0, 36, ErrorMessage = "ERR008: El IsApartment debe estar entre 0 y 36")]
+        public bool? IsApartment { get; set; }
+
+        [Required(ErrorMessage = "ERROR09: El campo country es obligatorio")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "ERR010: El country debe tener entre 1 y 255 caracteres")]
+        public string Country { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "ERROR11: El campo state es obligatorio")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "ERR012: El state debe tener entre 1 y 255 caracteres")]
+        public string City { get; set; } = string.Empty;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             yield break;
