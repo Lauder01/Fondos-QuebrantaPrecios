@@ -1,0 +1,33 @@
+.nav {
+  width: 100vw;
+  background: var(--color-primary-light, #e3eaf2);
+  padding: 0.75rem 0;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(39,89,80,0.08);
+  margin-bottom: 0;
+}
+.nav-list {
+  display: flex;
+  width: 100vw;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-item {
+  flex: 1 1 0;
+  text-align: center;
+}
+.nav-list a {
+  display: block;
+  color: var(--color-primary, #2a4d69);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+}
+.nav-list a:hover {
+  text-decoration: underline;
+  color: var(--color-accent, #f76c6c);
+}
