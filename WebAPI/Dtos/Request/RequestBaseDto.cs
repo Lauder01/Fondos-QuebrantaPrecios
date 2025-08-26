@@ -6,11 +6,11 @@ namespace WebAPI.Dtos.Request
     public class RequestBaseDto : IValidatableObject
     {
         [Required(ErrorMessage = "ERR001: El campo BuildingId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR002: El BuildingId debe tener exactamente 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR002: El campo BuildingId debe tener exactamente 36 caracteres")]
         public required string BuildingId { get; set; }
 
         [Required(ErrorMessage = "ERR003: El campo StatusId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR004: El StatusId debe tener exactamente 36 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR004: El campo StatusId debe tener exactamente 36 caracteres")]
         public required string StatusId { get; set; }
 
         [Required(ErrorMessage = "ERR005: El campo Price es obligatorio")]
