@@ -5,18 +5,18 @@ namespace WebAPI.Dtos.Apartment
 {
     public class ApartmentBaseDto : IValidatableObject
     {
-        [Required(ErrorMessage = "ERR001: El campo Código es obligatorio")]
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR002: El código debe tener entre 1 y 50 caracteres")]
-        public string Code { get; set; } = string.Empty;
+        [Required(ErrorMessage = "ERR001: El campo Code es obligatorio")]
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR002: El campo Code debe tener entre 1 y 50 caracteres")]
+        public required string Code { get; set; }
+
         [Required(ErrorMessage = "ERR003: El campo Door es obligatorio")]
-        [StringLength(24, MinimumLength = 1, ErrorMessage = "ERR004: La puerta debe tener entre 1 y 24 caracteres")]
-        public string Door { get; set; } = string.Empty;
+        [StringLength(24, MinimumLength = 1, ErrorMessage = "ERR004: El campo Door debe tener entre 1 y 24 caracteres")]
+        public required string Door { get; set; }
+
         [Required(ErrorMessage = "ERR005: El campo FloorId es obligatorio")]
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El FloorId debe tener exactamente 36 caracteres")]
-        public string FloorId { get; set; } = string.Empty;
-        [Required(ErrorMessage = "ERR007: El campo BuildingId es obligatorio")]
-       [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El BuildingId debe tener exactamente 36 caracteres")]
-        public string BuildingId { get; set; } = string.Empty;
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR006: El campo FloorId debe tener exactamente 36 caracteres")]
+        public required string FloorId { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!string.IsNullOrEmpty(Code) && !string.IsNullOrEmpty(Door) && Code == Door)
