@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { GeneralInfoComponent } from './general-info.component';
 import { LocationComponent } from './location.component';
 import { TechnicalDetailsComponent } from './technical-details.component';
-import { ApiService, BuildingCreatorDto } from '../../core/api.service';
+import { ApiService, BuildingCreatorDto, ZipcodeGetterDto } from '../../core/api.service';
 
 @Component({
 	selector: 'app-form-main',
@@ -15,6 +15,7 @@ import { ApiService, BuildingCreatorDto } from '../../core/api.service';
 })
 export class FormMainComponent {
 	form: FormGroup;
+	allZipcodes: ZipcodeGetterDto[] = [];
 
 	constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
 		this.form = this.fb.group({
@@ -42,6 +43,11 @@ export class FormMainComponent {
         energyCertificate: ['', Validators.required],
 				hasElevator: [false]
 			})
+		});
+
+		// Cargar los zipcodes para poder obtener el ID basándose en el código
+		this.api.getZipcodes().subscribe(zipcodes => {
+			this.allZipcodes = zipcodes;
 		});
 	}
 
@@ -79,12 +85,24 @@ export class FormMainComponent {
 				yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
 				price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
 				energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
-				hasElevator: !!formData.technicalDetails.hasElevator
+				hasElevator: !!formData.technicalDetails.hasElevator,
 
-				// El código se genera automáticamente en el backend usando BuildBuildingCode()
-			};
+			// Campos adicionales para la creación automática del Address
+			zipcodeId: this.getZipcodeIdFromCode(formData.location.zipCode),
+			constructedAddress: this.buildConstructedAddress(formData),
+			country: (formData.location.country || '').trim(),
+			city: (formData.location.city || '').trim()
 
-			// Eliminar campos undefined/null
+			// El código se genera automáticamente en el backend usando BuildBuildingCode()
+		};
+
+		console.log('=== DEBUG buildingData ===');
+		console.log('zipcodeId enviado:', buildingData.zipcodeId);
+		console.log('zipCode del formulario:', formData.location.zipCode);
+		console.log('constructedAddress:', buildingData.constructedAddress);
+		console.log('country:', buildingData.country);
+		console.log('city:', buildingData.city);
+		console.log('buildingData completo:', buildingData);			// Eliminar campos undefined/null
 			Object.keys(buildingData).forEach(key => {
 				if (buildingData[key as keyof BuildingCreatorDto] === undefined || buildingData[key as keyof BuildingCreatorDto] === null) {
 					delete buildingData[key as keyof BuildingCreatorDto];
@@ -142,7 +160,44 @@ export class FormMainComponent {
 		});
 	}
 
-	private markAllFieldsAsTouched() {
+	private buildConstructedAddress(formData: any): string {
+		const street = formData.location.streetName || '';
+		const number = formData.location.buildingNumber || '';
+		const zipcode = formData.location.zipCode || '';
+		const city = formData.location.city || '';
+		const country = formData.location.country || '';
+
+		return `${street}, ${number}, ${zipcode} ${city}, ${country}`.trim();
+	}
+
+	private getZipcodeIdFromCode(zipcodeCode: string): string {
+		if (!zipcodeCode) {
+			console.log('getZipcodeIdFromCode: zipcodeCode está vacío');
+			return '';
+		}
+
+		if (!this.allZipcodes || this.allZipcodes.length === 0) {
+			console.error('getZipcodeIdFromCode: Array de zipcodes está vacío o no cargado');
+			return '';
+		}
+
+		console.log('getZipcodeIdFromCode: Buscando zipcode con código:', zipcodeCode);
+		console.log('getZipcodeIdFromCode: Total zipcodes disponibles:', this.allZipcodes.length);
+
+		const zipcode = this.allZipcodes.find(z => z.code === zipcodeCode);
+		const result = zipcode?.id || '';
+
+		if (zipcode) {
+			console.log('getZipcodeIdFromCode: Zipcode encontrado:', zipcode);
+		} else {
+			console.error('getZipcodeIdFromCode: No se encontró zipcode con código:', zipcodeCode);
+			console.log('getZipcodeIdFromCode: Códigos disponibles:', this.allZipcodes.map(z => z.code));
+		}
+
+		console.log('getZipcodeIdFromCode: ID retornado:', result);
+
+		return result;
+	}	private markAllFieldsAsTouched() {
 		Object.keys(this.form.controls).forEach(key => {
 			const control = this.form.get(key);
 			if (control instanceof FormGroup) {

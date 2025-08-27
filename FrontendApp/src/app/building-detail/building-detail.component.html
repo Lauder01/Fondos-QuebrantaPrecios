@@ -1,0 +1,54 @@
+
+<div style="width: 100%;">
+  <div class="px-4 mb-2" style="width: 100%;">
+    <h2 class="mb-0" style="font-weight: 600;">Detalle del edificio</h2>
+    <hr style="border-top: 2px solid #007bff; margin: 0; width: 100%;">
+  </div>
+  <div class="container py-5" style="max-width: 700px;">
+    <!-- TODO: Conectar con la API para obtener los datos reales del edificio -->
+    <div *ngIf="building; else notFound">
+      <h1 class="mb-3 text-primary">{{ building.name }}</h1>
+      <h3 class="mb-4 text-secondary">{{ building.description }}</h3>
+      <div class="row mb-3">
+        <div class="col-12 col-md-6 mb-2">
+          <strong>Dirección:</strong> {{ building.address }}
+        </div>
+        <div class="col-12 col-md-6 mb-2">
+          <strong>Distrito:</strong> {{ building.district }}
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-6 col-md-3 mb-2">
+          <strong>Año de construcción:</strong> {{ building.yearBuilt }}
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <strong>Plantas:</strong> {{ building.floorCount }}
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <strong>Ascensor:</strong> {{ building.hasElevator ? 'Sí' : 'No' }}
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <strong>Certificado energético:</strong>
+          <span [ngStyle]="{
+            'color': building.energyCertificate === 'A' ? '#2ecc40' :
+                     building.energyCertificate === 'B' ? '#0074d9' :
+                     building.energyCertificate === 'C' ? '#ffdc00' :
+                     building.energyCertificate === 'D' ? '#ff851b' :
+                     building.energyCertificate === 'E' ? '#ff4136' :
+                     building.energyCertificate === 'F' ? '#85144b' :
+                     building.energyCertificate === 'G' ? '#111111' : '#888'
+          }" class="fw-bold">
+            {{ building.energyCertificate }}
+          </span>
+        </div>
+      </div>
+      <div class="mb-4">
+        <strong class="fs-5">Precio:</strong>
+        <span class="fw-semibold fs-5">{{ building.price | currency:'EUR' }}</span>
+      </div>
+    </div>
+    <ng-template #notFound>
+      <div class="alert alert-warning">No se encontró el edificio.</div>
+    </ng-template>
+  </div>
+</div>

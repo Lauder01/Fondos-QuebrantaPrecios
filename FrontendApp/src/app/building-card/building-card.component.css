@@ -1,0 +1,11 @@
+.building-card {
+  background: var(--color-primary-lighter);
+  border: 1.5px solid var(--color-primary-light);
+  box-shadow: 0 2px 12px 0 rgba(39,89,80,0.10);
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+}
+.building-card:hover {
+  box-shadow: 0 6px 28px 0 rgba(39,89,80,0.16);
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--color-primary);
+}
