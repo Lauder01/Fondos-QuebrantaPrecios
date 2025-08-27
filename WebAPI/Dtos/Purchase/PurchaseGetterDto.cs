@@ -5,14 +5,9 @@ namespace WebAPI.Dtos.Purchase
 {
     public class PurchaseGetterDto : PurchaseBaseDto
     {
-        [Required]
-        [Range(0, 36)]  
-        public string Id { get; set; } = string.Empty;
-        [Range(0, 255)]
-        public string? BuildingName { get; set; }
-        [Range(0, 255)]
-        public string? BuildingCompanyName { get; set; }
-        public string? RequestDescription { get; set; }
+        [Required(ErrorMessage = "ERR009: El campo Identificador es obligatorio")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR010: El campo Identificador debe tener exactamente 36 caracteres")]
+        public required string Id { get; set; }
         
     }
 }
