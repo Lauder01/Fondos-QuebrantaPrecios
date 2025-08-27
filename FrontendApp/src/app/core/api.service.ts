@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface DistrictGetterDto {
 	id: string;
@@ -63,7 +64,7 @@ export interface BuildingGetterDto extends BuildingCreatorDto {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-	private baseUrl = 'https://172.30.137.209:7124/api';
+	private baseUrl = environment.apiUrl;
 
 	constructor(private http: HttpClient) {}
 
