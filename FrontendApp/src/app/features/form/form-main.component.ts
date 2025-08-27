@@ -1,6 +1,7 @@
 
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { GeneralInfoComponent } from './general-info.component';
 import { LocationComponent } from './location.component';
 import { TechnicalDetailsComponent } from './technical-details.component';
@@ -15,7 +16,7 @@ import { ApiService, BuildingCreatorDto } from '../../core/api.service';
 export class FormMainComponent {
 	form: FormGroup;
 
-	constructor(private fb: FormBuilder, private api: ApiService) {
+	constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
 		this.form = this.fb.group({
 			generalInfo: this.fb.group({
 				name: [''],
@@ -93,14 +94,19 @@ export class FormMainComponent {
 			console.log('Enviando edificio:', buildingData);
 
 			// Enviar a la API
-			this.api.createBuilding(buildingData).subscribe({
-				next: (result) => {
-					console.log('Edificio creado exitosamente:', result);
-					alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
+					this.api.createBuilding(buildingData).subscribe({
+						next: (result) => {
+							console.log('Edificio creado exitosamente:', result);
+							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
 
-					// Opcional: Limpiar el formulario
-					this.resetForm();
-				},
+							// Redirigir a la página de registro de apartamentos
+							if (result.id) {
+								this.router.navigate(['/apartments/register', result.id]);
+							}
+
+							// Opcional: Limpiar el formulario
+							this.resetForm();
+						},
 				error: (error) => {
 					console.error('Error al crear el edificio:', error);
 					let errorMessage = 'Error al registrar el edificio.';

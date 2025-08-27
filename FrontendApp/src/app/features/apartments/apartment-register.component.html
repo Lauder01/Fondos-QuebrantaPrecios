@@ -1,0 +1,35 @@
+<div class="container py-4">
+  <h2 class="mb-4">Registro de Apartamentos para el edificio {{ buildingId }}</h2>
+
+  <div *ngIf="step === 1">
+    <label for="apartmentsPerFloor" class="form-label">¿Cuántos apartamentos hay por planta? <span class="text-muted small">(Esto es sólo una estimación, luego podrás editar cada planta individualmente)</span></label>
+    <input id="apartmentsPerFloor" type="number" min="1" class="form-control w-auto d-inline-block" [(ngModel)]="apartmentsPerFloor" (keyup.enter)="confirmApartmentsPerFloor()" />
+    <button class="btn btn-primary ms-2" (click)="confirmApartmentsPerFloor()">Confirmar</button>
+  </div>
+
+  <div *ngIf="step === 2">
+    <nav>
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentFloor === 1">
+          <button class="page-link" (click)="prevFloor()">Anterior</button>
+        </li>
+        <li class="page-item" *ngFor="let floor of floors; let i = index" [class.active]="currentFloor === (i+1)">
+          <button class="page-link" (click)="goToFloor(i+1)">{{ i+1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentFloor === floors.length">
+          <button class="page-link" (click)="nextFloor()">Siguiente</button>
+        </li>
+      </ul>
+    </nav>
+    <h4 class="mb-3">Planta {{ currentFloor }}</h4>
+    <div class="row">
+      <div class="col-md-4 mb-3" *ngFor="let apt of apartmentsArray">
+        <div class="card p-3">
+          <strong>Apartamento {{ apt }}</strong>
+          <!-- Aquí puedes añadir campos para cada apartamento -->
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary mt-3" (click)="step = 1">Volver</button>
+  </div>
+</div>
