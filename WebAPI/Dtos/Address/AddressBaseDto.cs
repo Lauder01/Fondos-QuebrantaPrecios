@@ -6,22 +6,21 @@ namespace WebAPI.Dtos.Address
     public class AddressBaseDto : IValidatableObject
     {
         [Required(ErrorMessage = "ERR001: El campo BuildingId es obligatorio")]
-        [Range(0, 36, ErrorMessage = "ERR002: El BuildingId debe estar entre 0 y 36")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR002: El BuildingId debe ser un GUID válido de 36 caracteres")]
         public required string BuildingId { get; set; }
 
-        [Range(0, 36, ErrorMessage = "ERR003: El ApartmentId debe estar entre 0 y 36")]
-        public string? ApartmentId { get; set; } = string.Empty;
+        [StringLength(36, ErrorMessage = "ERR003: El ApartmentId debe ser un GUID válido de máximo 36 caracteres")]
+        public string? ApartmentId { get; set; } = null; // Cambiado a null por defecto
 
         [Required(ErrorMessage = "ERR004: El campo ZipcodeId es obligatorio")]
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR005: El ZipcodeId debe tener entre 1 y 50 caracteres")]
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR005: El ZipcodeId debe ser un GUID válido de 36 caracteres")]
         public required string ZipcodeId { get; set; }
 
         [Required(ErrorMessage = "ERROR006: El campo ZipcodeId es obligatorio")]
-        [StringLength(255, MinimumLength = 1, ErrorMessage = "ERR007: La direcci�n construida debe tener entre 1 y 255 caracteres")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "ERR007: La direcci�n construida debe tener entre 1 y 255 caracteres")]
         public required string ConstructedAddress { get; set; }
 
         [Required(ErrorMessage = "ERROR008: El campo IsApartment es obligatorio")]
-        [Range(0, 36, ErrorMessage = "ERR009: El IsApartment debe estar entre 0 y 36")]
         public required bool IsApartment { get; set; }
 
         [Required(ErrorMessage = "ERROR010: El campo country es obligatorio")]

@@ -57,9 +57,11 @@ namespace ServiceLibraryProject
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
             
-            // Sanitizar strings nulos a string vacío
+            // Sanitizar strings nulos a string vacío (excepto ApartmentId que puede ser null)
             entity.BuildingId = entity.BuildingId ?? string.Empty;
-            entity.ApartmentId = entity.ApartmentId ?? string.Empty;
+            // NO convertir ApartmentId de null a string vacío - mantener null si no hay apartamento
+            if (string.IsNullOrWhiteSpace(entity.ApartmentId))
+                entity.ApartmentId = null;
             
             // Validación simplificada para la nueva estructura
             if (string.IsNullOrWhiteSpace(entity.BuildingId))
@@ -77,9 +79,11 @@ namespace ServiceLibraryProject
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
 
-            // Sanitizar strings nulos a string vacío
+            // Sanitizar strings nulos a string vacío (excepto ApartmentId que puede ser null)
             entity.BuildingId = entity.BuildingId ?? string.Empty;
-            entity.ApartmentId = entity.ApartmentId ?? string.Empty;
+            // NO convertir ApartmentId de null a string vacío - mantener null si no hay apartamento
+            if (string.IsNullOrWhiteSpace(entity.ApartmentId))
+                entity.ApartmentId = null;
             
             _addressRepository.Update(entity);
         }

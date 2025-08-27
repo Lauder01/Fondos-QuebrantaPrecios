@@ -101,6 +101,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Apartment).WithMany(p => p.Address)
                 .HasForeignKey(d => d.ApartmentId)
+                .IsRequired(false)
                 .HasConstraintName("FKAddress937616");
 
             entity.HasOne(d => d.Building).WithMany(p => p.Address)

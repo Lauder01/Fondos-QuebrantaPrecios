@@ -49,6 +49,12 @@ export interface BuildingCreatorDto {
 	statusId?: string;
 	energyCertificate?: string;
 	hasElevator: boolean;
+
+	// Campos adicionales para la creación automática del Address
+	zipcodeId?: string;
+	constructedAddress?: string;
+	country?: string;
+	city?: string;
 }
 
 export interface BuildingGetterDto extends BuildingCreatorDto {
