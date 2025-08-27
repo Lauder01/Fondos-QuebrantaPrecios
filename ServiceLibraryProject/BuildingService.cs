@@ -135,7 +135,8 @@ namespace ServiceLibraryProject
             _buildingRepository.Add(entity);
             
             // Crear automáticamente un registro de Address para el edificio
-            CreateAddressForBuilding(entity);
+            // COMENTADO: Se maneja ahora desde el controller con datos del frontend
+            // CreateAddressForBuilding(entity);
         }
 
         /// <summary>
@@ -144,6 +145,11 @@ namespace ServiceLibraryProject
         /// <param name="building">El edificio para el cual crear la dirección.</param>
         private void CreateAddressForBuilding(Building building)
         {
+            // MÉTODO COMPLETAMENTE DESHABILITADO
+            // Se maneja desde BuildingController con datos del frontend
+            return;
+            
+            /*
             // Obtener el primer zipcode del distrito para usar como referencia
             var district = _districtRepository.GetById(building.DistrictId);
             var zipcodeId = district?.Zipcode?.FirstOrDefault()?.Id ?? string.Empty;
@@ -165,6 +171,7 @@ namespace ServiceLibraryProject
             };
             
             _addressRepository.Add(address);
+            */
         }
 
         /// <summary>

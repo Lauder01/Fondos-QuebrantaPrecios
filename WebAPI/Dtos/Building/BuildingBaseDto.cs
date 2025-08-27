@@ -39,6 +39,19 @@ namespace WebAPI.Dtos.Building
 
         public bool HasElevator { get; set; }
         
+        // Campos opcionales para la creación automática del Address
+        [StringLength(36, MinimumLength = 36, ErrorMessage = "El ZipcodeId debe tener exactamente 36 caracteres")]
+        public string? ZipcodeId { get; set; }
+        
+        [StringLength(255, ErrorMessage = "La dirección construida no puede superar los 255 caracteres")]
+        public string? ConstructedAddress { get; set; }
+        
+        [StringLength(255, ErrorMessage = "El país no puede superar los 255 caracteres")]
+        public string? Country { get; set; }
+        
+        [StringLength(255, ErrorMessage = "La ciudad no puede superar los 255 caracteres")]
+        public string? City { get; set; }
+        
         /// <summary>
         /// Validación personalizada para el DTO de Building.
         /// </summary>

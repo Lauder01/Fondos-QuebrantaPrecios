@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RepositoryLibraryProject.Data;
 using WebAPI.Dtos.Building;
+using WebAPI.Dtos.Address;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.Controllers
@@ -16,10 +17,17 @@ namespace WebAPI.Controllers
         private readonly IMapper _mapper;
         private readonly ServiceLibraryProject.BuildingService _buildingService;
         private readonly ServiceLibraryProject.StatusService _statusService;
-        public BuildingController(ServiceLibraryProject.BuildingService buildingService, ServiceLibraryProject.StatusService statusService, IMapper mapper)
+        private readonly ServiceLibraryProject.AddressService _addressService;
+        
+        public BuildingController(
+            ServiceLibraryProject.BuildingService buildingService, 
+            ServiceLibraryProject.StatusService statusService, 
+            ServiceLibraryProject.AddressService addressService,
+            IMapper mapper)
         {
             _buildingService = buildingService;
             _statusService = statusService;
+            _addressService = addressService;
             _mapper = mapper;
         }
 
@@ -62,7 +70,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<BuildingGetterDto> Create(BuildingCreatorDto dto)
+        public async Task<ActionResult<BuildingGetterDto>> Create(BuildingCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -109,6 +117,10 @@ namespace WebAPI.Controllers
             Console.WriteLine($"Código generado: {building.Code}");
             
             _buildingService.Add(building);
+            
+            // Crear automáticamente el Address si se proporcionaron los datos necesarios
+            await CreateAddressForBuilding(building.Id, dto);
+            
             var result = _mapper.Map<BuildingGetterDto>(building);
             return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
         }
@@ -232,6 +244,88 @@ namespace WebAPI.Controllers
             {
                 Console.WriteLine($"Error generando código: {ex.Message}");
                 return $"AUTO-{Guid.NewGuid().ToString()[..8]}";
+            }
+        }
+
+        /// <summary>
+        /// Crea automáticamente un Address para el Building recién creado
+        /// </summary>
+        private async Task CreateAddressForBuilding(string buildingId, BuildingCreatorDto dto)
+        {
+            try
+            {
+                Console.WriteLine($"=== DEBUG CreateAddressForBuilding ===");
+                Console.WriteLine($"BuildingId: {buildingId}");
+                Console.WriteLine($"ZipcodeId recibido: '{dto.ZipcodeId}'");
+                Console.WriteLine($"ConstructedAddress: '{dto.ConstructedAddress}'");
+                Console.WriteLine($"Country: '{dto.Country}'");
+                Console.WriteLine($"City: '{dto.City}'");
+                
+                // Solo crear Address si se proporcionaron los datos mínimos necesarios
+                if (string.IsNullOrWhiteSpace(dto.ZipcodeId) || 
+                    string.IsNullOrWhiteSpace(dto.ConstructedAddress) ||
+                    string.IsNullOrWhiteSpace(dto.Country) ||
+                    string.IsNullOrWhiteSpace(dto.City))
+                {
+                    Console.WriteLine("Datos insuficientes para crear Address automáticamente");
+                    Console.WriteLine($"ZipcodeId vacío: {string.IsNullOrWhiteSpace(dto.ZipcodeId)}");
+                    Console.WriteLine($"ConstructedAddress vacío: {string.IsNullOrWhiteSpace(dto.ConstructedAddress)}");
+                    Console.WriteLine($"Country vacío: {string.IsNullOrWhiteSpace(dto.Country)}");
+                    Console.WriteLine($"City vacío: {string.IsNullOrWhiteSpace(dto.City)}");
+                    return;
+                }
+
+                // Verificar que el ZipcodeId existe y obtener información para debug
+                using var scope = HttpContext.RequestServices.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                
+                // Primero, ver todos los zipcodes disponibles para debug
+                var allZipcodes = await context.Zipcode.Select(z => new { z.Id, z.Code }).ToListAsync();
+                Console.WriteLine($"=== Zipcodes disponibles en BD ===");
+                foreach (var z in allZipcodes.Take(5)) // Solo mostrar los primeros 5
+                {
+                    Console.WriteLine($"ID: {z.Id}, Code: {z.Code}");
+                }
+                
+                var zipcodeExists = await context.Zipcode.AnyAsync(z => z.Id == dto.ZipcodeId);
+                Console.WriteLine($"¿Existe el zipcode con ID '{dto.ZipcodeId}'?: {zipcodeExists}");
+                
+                if (!zipcodeExists)
+                {
+                    Console.WriteLine($"No se encontró zipcode con ID: {dto.ZipcodeId}");
+                    return;
+                }
+
+                // Crear la entidad Address directamente (sin AutoMapper para evitar problemas)
+                var address = new Address
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    BuildingId = buildingId,
+                    ApartmentId = null, // Mantener como null para direcciones de Building
+                    ZipcodeId = dto.ZipcodeId,
+                    ConstructedAddress = dto.ConstructedAddress,
+                    IsApartment = false,
+                    Country = dto.Country,
+                    City = dto.City
+                };
+
+                Console.WriteLine($"=== Address entity creado directamente ===");
+                Console.WriteLine($"Id: {address.Id}");
+                Console.WriteLine($"BuildingId: {address.BuildingId}");
+                Console.WriteLine($"ApartmentId: '{address.ApartmentId}' (is null: {address.ApartmentId == null})");
+                Console.WriteLine($"ZipcodeId: {address.ZipcodeId}");
+                Console.WriteLine($"IsApartment: {address.IsApartment}");
+
+                // Agregar el Address usando el servicio
+                _addressService.Add(address);
+                
+                Console.WriteLine($"Address creado automáticamente para Building {buildingId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creando Address automáticamente: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                // No fallar el proceso de creación del Building por un error en Address
             }
         }
     }
