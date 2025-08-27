@@ -1,10 +1,13 @@
 
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-apartment-register',
   standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './apartment-register.component.html'
 })
 export class ApartmentRegisterComponent {
