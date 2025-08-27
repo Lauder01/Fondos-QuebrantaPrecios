@@ -1,0 +1,8 @@
+<div class="card building-card shadow-sm border-0 rounded-4 h-100" (click)="goToDetail()" style="cursor:pointer">
+  <div class="card-body">
+    <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
+    <div class="text-secondary small mb-2">Distrito: {{ building.district }}</div>
+    <div class="mb-2">Dirección: {{ building.address }}</div>
+    <div class="fw-semibold">Precio: {{ building.price | currency:'EUR' }}</div>
+  </div>
+</div>

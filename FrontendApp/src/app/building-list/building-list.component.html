@@ -1,77 +1,19 @@
 <div class="card shadow-sm mb-4">
 	<div class="card-body">
-		<div class="d-flex flex-wrap align-items-center mb-3 gap-2">
+		<div class="mb-3">
 			<input
 				type="text"
-				class="form-control flex-grow-1"
-				placeholder="Buscar por nombre de edificio..."
-				[value]="name"
-				(input)="onSearchInput($event)"
-				aria-label="Buscar edificio"
-			/>
-			<button class="btn btn-accent ms-2" (click)="onCreateBuilding()">
-				<i class="bi bi-plus-lg"></i> Añadir Edificio
-			</button>
+				class="form-control"
+				placeholder="Buscar por nombre de edificio..." />
 		</div>
-		<div *ngIf="loading" class="text-center my-4">
-			<div class="spinner-border text-primary" role="status">
-				<span class="visually-hidden">Cargando...</span>
+		<div class="d-flex align-items-center mb-4" style="max-width: 300px;">
+			<label for="pageSizeSelect" class="form-label me-2 mb-0">Edificios por página:</label>
+			<select id="pageSizeSelect" class="form-select w-auto" [value]="pageSize" (change)="onPageSizeChange($event)">
+				<option *ngFor="let size of [3, 6, 9, 12]" [value]="size">{{ size }}</option>
+			</select>
+		</div>
+		<div class="row mt-2">
+			<div class="col-md-4 mb-3" *ngFor="let building of buildings">
+				<app-building-card [building]="building"></app-building-card>
 			</div>
 		</div>
-			<div *ngIf="!loading && (buildings.length === 0 || error)" class="alert alert-info">
-				No hay edificios disponibles con las características seleccionadas.
-			</div>
-				<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
-					<div>
-						<label for="pageSizeSelect" class="form-label me-2 mb-0">Edificios por página:</label>
-						<select id="pageSizeSelect" class="form-select d-inline-block w-auto" [(ngModel)]="pageSize" (change)="onPageChange(1)">
-							<option *ngFor="let size of [6, 9, 12, 24]" [value]="size">{{ size }}</option>
-						</select>
-					</div>
-				</div>
-				<div *ngIf="!loading && buildings.length > 0">
-				<div class="row g-4 justify-content-center">
-					<div class="col-12 col-md-6 col-lg-4" *ngFor="let b of buildings">
-						<div class="card building-card shadow-sm border-0 rounded-4 h-100 d-flex flex-column">
-							<div class="card-body flex-grow-1 d-flex flex-column">
-								<h6 class="card-title text-primary mb-2">{{ b.name }}</h6>
-								<div class="text-secondary small mb-2">Código: {{ b.code }}</div>
-								<div class="mb-2">Portal: {{ b.doorway }}</div>
-								<div class="mb-2">Plantas: {{ b.floorCount }}</div>
-								<div class="mb-2">Año: {{ b.yearBuilt }}</div>
-								<div class="fw-semibold">Precio: {{ b.price | currency:'EUR' }}</div>
-							</div>
-							<div class="card-footer bg-transparent border-0 text-end">
-								<a href="#" class="btn btn-link text-accent p-0">Ver detalle <i class="bi bi-arrow-right"></i></a>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
-					<div>
-						<label for="pageSizeSelect" class="form-label me-2 mb-0">Edificios por página:</label>
-						<select id="pageSizeSelect" class="form-select d-inline-block w-auto" [(ngModel)]="pageSize" (change)="onPageChange(1)">
-							<option *ngFor="let size of [6, 9, 12, 24]" [value]="size">{{ size }}</option>
-						</select>
-					</div>
-					<nav *ngIf="totalCount > pageSize" aria-label="Paginación de edificios">
-						<ul class="pagination justify-content-center mb-0">
-							<li class="page-item" [class.disabled]="page === 1">
-								<button class="page-link" (click)="onPageChange(page - 1)" [disabled]="page === 1" aria-label="Anterior">&laquo;</button>
-							</li>
-							<li
-								class="page-item"
-								*ngFor="let p of pages"
-								[class.active]="page === p"
-							>
-								<button class="page-link" (click)="onPageChange(p)">{{ p }}</button>
-							</li>
-							<li class="page-item" [class.disabled]="page === pages.length">
-								<button class="page-link" (click)="onPageChange(page + 1)" [disabled]="page === pages.length" aria-label="Siguiente">&raquo;</button>
-							</li>
-						</ul>
-					</nav>
-				</div>
-			</div>
-	</div>
-</div>

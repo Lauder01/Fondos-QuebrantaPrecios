@@ -3,40 +3,13 @@
 		<h1 class="text-center mb-4">Bienvenido a nuestra plataforma</h1>
 		<p class="text-center">Una plataforma ágil donde las constructoras registran sus proyectos
 			 y nuestra empresa encuentra nuevas oportunidades de inversión. Simple, claro y eficiente.</p>
-	</article>
-	<section class="buildings-list-section mt-5 w-100">
-		<h5 class="mb-4 text-primary">Edificios destacados</h5>
-		<div class="row g-4 justify-content-center">
-			<div class="col-12 col-md-6 col-lg-4">
-				<div class="card building-card shadow-sm border-0 rounded-4 h-100">
-					<div class="card-body">
-						<h6 class="card-title text-primary mb-2">Edificio Central</h6>
-						<div class="text-secondary small mb-2">Distrito: Centro</div>
-						<div class="mb-2">Dirección: Calle Mayor 123</div>
-						<div class="fw-semibold">Precio: 250.000 €</div>
-					</div>
+	<main>
+		<section class="buildings-list-section mt-5 w-100">
+			<h5 class="mb-4 text-primary">Edificios destacados</h5>
+			<div class="row g-4 justify-content-center">
+				<div class="col-12 col-md-6 col-lg-4" *ngFor="let b of buildings | slice:0:3">
+					<app-building-card [building]="b"></app-building-card>
 				</div>
 			</div>
-			<div class="col-12 col-md-6 col-lg-4">
-				<div class="card building-card shadow-sm border-0 rounded-4 h-100">
-					<div class="card-body">
-						<h6 class="card-title text-primary mb-2">Residencial Norte</h6>
-						<div class="text-secondary small mb-2">Distrito: Norte</div>
-						<div class="mb-2">Dirección: Av. Libertad 45</div>
-						<div class="fw-semibold">Precio: 180.000 €</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-12 col-md-6 col-lg-4">
-				<div class="card building-card shadow-sm border-0 rounded-4 h-100">
-					<div class="card-body">
-						<h6 class="card-title text-primary mb-2">Torre Sur</h6>
-						<div class="text-secondary small mb-2">Distrito: Sur</div>
-						<div class="mb-2">Dirección: Paseo del Prado 8</div>
-						<div class="fw-semibold">Precio: 320.000 €</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-</main>
+		</section>
+	</main>
