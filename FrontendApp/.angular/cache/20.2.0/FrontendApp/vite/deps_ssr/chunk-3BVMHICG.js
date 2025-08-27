@@ -1,14 +1,20 @@
 import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
+<<<<<<<< HEAD:FrontendApp/.angular/cache/20.1.4/FrontendApp/vite/deps_ssr/chunk-6MKW6PPP.js
+========
   withHttpTransferCache
 } from "./chunk-AUJ3JRON.js";
 import {
+>>>>>>>> b7ec4b9fcf03045c8452391f3199a419f1de87b1:FrontendApp/.angular/cache/20.1.4/FrontendApp/vite/deps_ssr/chunk-6DCDGRNL.js
   CommonModule,
   DomAdapter,
   PLATFORM_BROWSER_ID,
   getDOM,
   setRootDomAdapter
 } from "./chunk-R3PYIEAM.js";
+import {
+  withHttpTransferCache
+} from "./chunk-AUJ3JRON.js";
 import {
   XhrFactory,
   parseCookieValue
@@ -2076,4 +2082,12 @@ export {
    * License: MIT
    *)
 */
+<<<<<<<< HEAD:FrontendApp/.angular/cache/20.2.0/FrontendApp/vite/deps_ssr/chunk-3BVMHICG.js
 //# sourceMappingURL=chunk-3BVMHICG.js.map
+========
+<<<<<<<< HEAD:FrontendApp/.angular/cache/20.1.4/FrontendApp/vite/deps_ssr/chunk-6MKW6PPP.js
+//# sourceMappingURL=chunk-6MKW6PPP.js.map
+========
+//# sourceMappingURL=chunk-6DCDGRNL.js.map
+>>>>>>>> b7ec4b9fcf03045c8452391f3199a419f1de87b1:FrontendApp/.angular/cache/20.1.4/FrontendApp/vite/deps_ssr/chunk-6DCDGRNL.js
+>>>>>>>> ee3ce5a428ddbc4eafd50f1a3ab166ec796eec11:FrontendApp/.angular/cache/20.2.0/FrontendApp/vite/deps_ssr/chunk-6MKW6PPP.js
