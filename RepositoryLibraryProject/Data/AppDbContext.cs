@@ -139,7 +139,10 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(36)
                 .IsUnicode(false);
-
+            entity.Property(e => e.Area)
+                .IsRequired()
+                .HasDefaultValueSql("((0.00))")
+                .HasColumnType("decimal(12, 2)");
             entity.HasOne(d => d.Floor).WithMany(p => p.Apartment)
                 .HasForeignKey(d => d.FloorId)
                 .HasConstraintName("FKApartment152603");

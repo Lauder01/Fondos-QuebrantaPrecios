@@ -1,14 +1,14 @@
 import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
-  withHttpTransferCache
-} from "./chunk-5DSA3IY6.js";
-import {
   CommonModule,
   DomAdapter,
   PLATFORM_BROWSER_ID,
   getDOM,
   setRootDomAdapter
 } from "./chunk-EVUCWAHF.js";
+import {
+  withHttpTransferCache
+} from "./chunk-5DSA3IY6.js";
 import {
   XhrFactory,
   parseCookieValue
@@ -2013,9 +2013,9 @@ export {
 @angular/platform-browser/fesm2022/browser.mjs:
 @angular/platform-browser/fesm2022/platform-browser.mjs:
   (**
-   * @license Angular v20.2.0
+   * @license Angular v20.1.4
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-3BVMHICG.js.map
+//# sourceMappingURL=chunk-JIXROT6I.js.map
