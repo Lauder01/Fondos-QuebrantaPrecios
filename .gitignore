@@ -365,8 +365,23 @@ FodyWeavers.xsd
 *.vpp.*
 
 # Archivos generados por Vite
-FrontendApp/vite/deps/
-FrontendApp/vite/deps_ssr/
+
+# Ignorar todo el contenido generado por Vite
+FrontendApp/vite/
+
+# Ignorar caché de Angular
+FrontendApp/.angular/
+
+# Ignorar archivos de build de TypeScript
+FrontendApp/.angular/cache/**/*.tsbuildinfo
+
+# Configuración de VS Code (opcional)
+FrontendApp/.vscode/
+
+# Archivos de lock de npm (opcional)
+package-lock.json
+FrontendApp/package-lock.json
+WebAPI/package-lock.json
 FrontendApp/vite/
 
 /FrontendApp/.angular/cache/20.2.0/FrontendApp/vite/deps/@angular_common.js

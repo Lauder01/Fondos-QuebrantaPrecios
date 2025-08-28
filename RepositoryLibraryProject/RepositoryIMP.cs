@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLibraryProject.Data;
 using RepositoryLibraryProject.Interfaces;
+using ClassLibraryProject.Entities;
 
 namespace RepositoryLibraryProject
 {
@@ -82,6 +83,21 @@ namespace RepositoryLibraryProject
         public T? Find(Func<T, bool> predicate)
         {
             return _dbSet.AsNoTracking().FirstOrDefault(predicate);
+        }
+
+        // Métodos específicos para Building con Address
+        public IEnumerable<Building> GetAllWithAddress()
+        {
+            if (typeof(T) == typeof(Building))
+                return _context.Set<Building>().Include(b => b.Address).AsNoTracking().ToList() as IEnumerable<Building>;
+            throw new NotSupportedException("GetAllWithAddress solo es válido para Building.");
+        }
+
+        public Building? GetByIdWithAddress(string id)
+        {
+            if (typeof(T) == typeof(Building))
+                return _context.Set<Building>().Include(b => b.Address).AsNoTracking().FirstOrDefault(b => b.Id == id) as Building;
+            throw new NotSupportedException("GetByIdWithAddress solo es válido para Building.");
         }
     }
 }
