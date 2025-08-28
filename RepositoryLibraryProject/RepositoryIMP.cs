@@ -85,19 +85,27 @@ namespace RepositoryLibraryProject
             return _dbSet.AsNoTracking().FirstOrDefault(predicate);
         }
 
-        // Métodos específicos para Building con Address
-        public IEnumerable<Building> GetAllWithAddress()
+        // Métodos específicos para Building con Address y District
+        public IEnumerable<Building> GetAllWithAddressAndDistrict()
         {
             if (typeof(T) == typeof(Building))
-                return _context.Set<Building>().Include(b => b.Address).AsNoTracking().ToList() as IEnumerable<Building>;
-            throw new NotSupportedException("GetAllWithAddress solo es válido para Building.");
+                return _context.Set<Building>()
+                    .Include(b => b.Address)
+                    .Include(b => b.District)
+                    .AsNoTracking()
+                    .ToList() as IEnumerable<Building>;
+            throw new NotSupportedException("GetAllWithAddressAndDistrict solo es válido para Building.");
         }
 
-        public Building? GetByIdWithAddress(string id)
+        public Building? GetByIdWithAddressAndDistrict(string id)
         {
             if (typeof(T) == typeof(Building))
-                return _context.Set<Building>().Include(b => b.Address).AsNoTracking().FirstOrDefault(b => b.Id == id) as Building;
-            throw new NotSupportedException("GetByIdWithAddress solo es válido para Building.");
+                return _context.Set<Building>()
+                    .Include(b => b.Address)
+                    .Include(b => b.District)
+                    .AsNoTracking()
+                    .FirstOrDefault(b => b.Id == id) as Building;
+            throw new NotSupportedException("GetByIdWithAddressAndDistrict solo es válido para Building.");
         }
     }
 }

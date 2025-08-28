@@ -335,7 +335,7 @@ namespace WebAPI.Controllers
         [HttpPost("{id}/send-to-speculab")]
         public async Task<IActionResult> SendToSpecuLab(string id)
         {
-            var building = _buildingService.GetByIdWithAddress(id);
+            var building = _buildingService.GetByIdWithAddressAndDistrict(id);
             if (building == null)
                 return NotFound();
 
