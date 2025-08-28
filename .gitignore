@@ -364,3 +364,7 @@ FodyWeavers.xsd
 # Visual Paradigm
 *.vpp.*
 
+# Archivos generados por Vite
+FrontendApp/vite/deps/
+FrontendApp/vite/deps_ssr/
+
