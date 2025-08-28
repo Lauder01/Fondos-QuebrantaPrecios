@@ -2013,9 +2013,9 @@ export {
 @angular/platform-browser/fesm2022/browser.mjs:
 @angular/platform-browser/fesm2022/platform-browser.mjs:
   (**
-   * @license Angular v20.2.0
+   * @license Angular v20.1.4
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-3BVMHICG.js.map
+//# sourceMappingURL=chunk-6DCDGRNL.js.map
