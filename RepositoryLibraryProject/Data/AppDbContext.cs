@@ -388,9 +388,6 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(36)
                 .IsUnicode(false);
-            entity.Property(e => e.HasLift)
-                .IsRequired()
-                .HasDefaultValueSql("((1))");
             entity.Property(e => e.Code)
                 .IsRequired()
                 .HasMaxLength(30)
