@@ -231,20 +231,20 @@ namespace ServiceLibraryProject
             _buildingRepository.Update(entity);
         }
 
-        // Obtiene todos los edificios con Address incluido
-        public IEnumerable<Building> GetAllWithAddress()
+        // Obtiene todos los edificios con Address y District incluidos
+        public IEnumerable<Building> GetAllWithAddressAndDistrict()
         {
             if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
-                return repoImpl.GetAllWithAddress();
-            throw new NotSupportedException("El repositorio no soporta GetAllWithAddress.");
+                return repoImpl.GetAllWithAddressAndDistrict();
+            throw new NotSupportedException("El repositorio no soporta GetAllWithAddressAndDistrict.");
         }
 
-        // Obtiene un edificio por ID con Address incluido
-        public Building? GetByIdWithAddress(string id)
+        // Obtiene un edificio por ID con Address y District incluidos
+        public Building? GetByIdWithAddressAndDistrict(string id)
         {
             if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
-                return repoImpl.GetByIdWithAddress(id);
-            throw new NotSupportedException("El repositorio no soporta GetByIdWithAddress.");
+                return repoImpl.GetByIdWithAddressAndDistrict(id);
+            throw new NotSupportedException("El repositorio no soporta GetByIdWithAddressAndDistrict.");
         }
     }
 }
