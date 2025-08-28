@@ -72,8 +72,6 @@ namespace ServiceLibraryProject
             /// <param name="districtId">Filtro por distrito</param>
             /// <param name="companyId">Filtro por empresa constructora</param>
             /// <returns>Tupla con la lista de edificios y el total</returns>
-
-    // ...existing code for fields and constructor...
         /// <summary>
         /// Obtiene una lista paginada y filtrada de edificios.
         /// </summary>
@@ -231,6 +229,22 @@ namespace ServiceLibraryProject
             entity.EnergyCertificate = entity.EnergyCertificate ?? string.Empty;
             
             _buildingRepository.Update(entity);
+        }
+
+        // Obtiene todos los edificios con Address incluido
+        public IEnumerable<Building> GetAllWithAddress()
+        {
+            if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
+                return repoImpl.GetAllWithAddress();
+            throw new NotSupportedException("El repositorio no soporta GetAllWithAddress.");
+        }
+
+        // Obtiene un edificio por ID con Address incluido
+        public Building? GetByIdWithAddress(string id)
+        {
+            if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
+                return repoImpl.GetByIdWithAddress(id);
+            throw new NotSupportedException("El repositorio no soporta GetByIdWithAddress.");
         }
     }
 }
