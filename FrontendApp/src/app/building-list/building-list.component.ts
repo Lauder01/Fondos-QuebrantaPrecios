@@ -11,7 +11,7 @@ import { BuildingCardComponent } from '../building-card/building-card.component'
   templateUrl: './building-list.component.html',
   styleUrl: './building-list.component.css'
 })
-export class BuildingListComponent {
+export class BuildingListComponent implements OnInit {
   loading = false;
   allBuildings = [
     {
@@ -71,7 +71,9 @@ export class BuildingListComponent {
     return this.allBuildings.length;
   }
 
-  constructor() {
+  constructor() {}
+
+  ngOnInit(): void {
     this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
   }
 

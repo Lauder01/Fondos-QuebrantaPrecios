@@ -1,11 +1,11 @@
 <div class="bg-body-tertiary min-vh-100 py-4">
 	<div class="container d-flex flex-column align-items-center">
-		<div class="text-center mb-4" style="width:100%;">
+	<div class="text-center mb-4 w-100">
 			<i class="bi bi-buildings fs-1 text-primary"></i>
 			<h1 class="fw-bold mt-2">Registro de Edificios</h1>
 			<p class="lead text-gray-500">Complete la información del edificio para registrarlo en el sistema</p>
 		</div>
-		<form [formGroup]="form" (ngSubmit)="onSubmit()" style="max-width:70%;min-width:320px;width:100%;margin:auto;">
+	<form [formGroup]="form" (ngSubmit)="onSubmit()" class="mx-auto w-100" style="max-width:70%;min-width:320px;">
 			<div class="row g-4">
 				<div class="col-12">
 					<div class="card shadow-sm border-0 rounded-4 mb-4">
@@ -14,7 +14,7 @@
 								<i class="bi bi-person-lines-fill fs-4 text-primary me-2"></i>
 								<h3 class="fw-bold mb-0">Información General</h3>
 							</div>
-							<div class="text-gray-500 mb-4" style="margin-top:-8px;">Datos básicos del edificio y empresa constructora</div>
+							<div class="text-gray-500 mb-4 mt-n2">Datos básicos del edificio y empresa constructora</div>
 							<app-general-info [formGroup]="generalInfoGroup"></app-general-info>
 						</div>
 					</div>
@@ -26,7 +26,7 @@
 								<i class="bi bi-geo-alt-fill fs-4 text-primary me-2"></i>
 								<h3 class="fw-bold mb-0">Ubicación</h3>
 							</div>
-							<div class="text-gray-500 mb-4" style="margin-top:-8px;">Dirección completa del edificio</div>
+							<div class="text-gray-500 mb-4 mt-n2">Dirección completa del edificio</div>
 							<app-location [formGroup]="locationGroup"></app-location>
 						</div>
 					</div>
@@ -38,31 +38,21 @@
 								<i class="bi bi-gear-fill fs-4 text-primary me-2"></i>
 								<h3 class="fw-bold mb-0">Detalles Técnicos</h3>
 							</div>
-							<div class="text-gray-500 mb-4" style="margin-top:-8px;">Características físicas y técnicas del edificio</div>
+							<div class="text-gray-500 mb-4 mt-n2">Características físicas y técnicas del edificio</div>
 							<app-technical-details [formGroup]="technicalDetailsGroup"></app-technical-details>
-						</div>
-					</div>
-				</div>
-				<div class="col-12">
-					<div class="card shadow-sm border-0 rounded-4 mb-2">
-						<div class="card-body p-4">
 						</div>
 					</div>
 				</div>
 			</div>
 		</form>
-		<div class="fixed-bottom d-flex justify-content-center" style="z-index: 1050;">
-			<div class="bg-white shadow-lg border-top py-3 rounded-top-3" style="max-width:60%;min-width:320px;width:100%;">
-				<div class="d-flex justify-content-center">
-					<button type="button" class="btn btn-lg px-5 shadow rounded-3 fw-semibold"
-						style="background-color: var(--color-primary-dark); color: var(--color-white); border: 2px solid var(--color-primary); transition: background 0.2s, color 0.2s;"
-						onmouseover="this.style.backgroundColor='var(--color-primary)'"
-						onmouseout="this.style.backgroundColor='var(--color-primary-dark)'"
-						(click)="onSubmit()">
+    <div class="sticky-bottom d-flex justify-content-center w-100 h-50">
+	    <div class="bg-white shadow-lg border-top py-3 rounded-4 w-100 h-100">
+        <div class="d-flex justify-content-center">
+					<button type="button" class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary" style="background-color: var(--color-primary-dark);" (click)="onSubmit()">
 						Registrar Edificio
 					</button>
-				</div>
-			</div>
-		</div>
+        </div>
+      </div>
+    </div>
 	</div>
 </div>
