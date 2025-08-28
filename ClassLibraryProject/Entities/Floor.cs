@@ -21,10 +21,7 @@
         /// Número de la planta (puede ser negativo para sótanos).
         /// </summary>
         public int FloorNumber { get; set; }
-        /// <summary>
-        /// Indica si la planta tiene ascensor.
-        /// </summary>
-        public bool HasLift { get; set; }
+
         /// <summary>
         /// Edificio asociado a la planta (navegación).
         /// </summary>

@@ -24,11 +24,15 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public string FloorId { get; set; }
         /// <summary>
+        /// Superficie del apartamento en m^2.
+        /// </summary>
+        public decimal Area { get; set; }
+        /// <summary>
         /// Planta asociada al apartamento (navegación).
         /// </summary>
         public virtual Floor Floor { get; set; }
         /// <summary>
-        /// Colección de direcciones asociadas al apartamento.
+        /// Colección de direcciones asociada al apartamento (apartamento y edificio).
         /// </summary>
         public virtual ICollection<Address> Address { get; set; } = new List<Address>();
 
