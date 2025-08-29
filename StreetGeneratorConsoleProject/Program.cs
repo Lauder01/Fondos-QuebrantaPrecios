@@ -198,7 +198,7 @@ namespace StreetGeneratorConsoleProject
             var streetType = (StreetTypeEnum)typeInt;
 
             // Selección de distritos
-            var districts = context.Districts.OrderBy(d => d.Name).ToList();
+            var districts = context.District.OrderBy(d => d.Name).ToList();
             if (!districts.Any())
             {
                 WriteError("No hay distritos registrados. Inserta al menos uno antes de crear calles.");
@@ -238,7 +238,7 @@ namespace StreetGeneratorConsoleProject
             var selectedDistricts = selectedIndexes.Select(i => districts[i]).ToList();
 
             // Generación de código único para la calle
-            var existingCodes = context.Streets.Select(s => s.Code).ToHashSet();
+            var existingCodes = context.Street.Select(s => s.Code).ToHashSet();
             var words = baseName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             int[] lengths = Enumerable.Repeat(2, words.Length).ToArray();
             string uniqueCode = null;
@@ -272,12 +272,12 @@ namespace StreetGeneratorConsoleProject
             }
             var composedName = Street.GetComposedName(baseName, streetType);
             var street = new Street(baseName, streetType, uniqueCode);
-            if (context.Streets.Any(s => s.Name == street.Name))
+            if (context.Street.Any(s => s.Name == street.Name))
             {
                 WriteWarning($"Ya existe una calle con ese nombre compuesto: {street.Name}");
                 return;
             }
-            if (context.Streets.Any(s => s.Code == street.Code))
+            if (context.Street.Any(s => s.Code == street.Code))
             {
                 WriteWarning($"Ya existe una calle con ese código: {street.Code}");
                 return;
@@ -287,7 +287,7 @@ namespace StreetGeneratorConsoleProject
             {
                 street.District.Add(district);
             }
-            context.Streets.Add(street);
+            context.Street.Add(street);
             context.SaveChanges();
             WriteSuccess($"Calle insertada correctamente: {street.Name} (Código: {street.Code}) y relacionada con distrito(s).");
         }
@@ -295,7 +295,7 @@ namespace StreetGeneratorConsoleProject
         static void ListStreets(AppDbContext context)
         {
             WriteSeparator();
-            var streets = context.Streets.OrderBy(s => s.Name).ToList();
+            var streets = context.Street.OrderBy(s => s.Name).ToList();
             if (!streets.Any())
             {
                 WriteWarning("No hay calles registradas.");
@@ -315,7 +315,7 @@ namespace StreetGeneratorConsoleProject
             WriteSeparator();
             Console.Write("Introduce parte del nombre a buscar: ");
             var query = Console.ReadLine()?.Trim() ?? string.Empty;
-            var results = context.Streets
+            var results = context.Street
                 .Where(s => s.Name.Contains(query))
                 .OrderBy(s => s.Name)
                 .ToList();
@@ -362,7 +362,7 @@ namespace StreetGeneratorConsoleProject
                 WriteError("Ciudad no válida.");
                 return;
             }
-            if (context.Districts.Any(d => d.Name == name))
+            if (context.District.Any(d => d.Name == name))
             {
                 WriteWarning($"Ya existe un distrito con ese nombre: {name}");
                 return;
@@ -389,7 +389,7 @@ namespace StreetGeneratorConsoleProject
                 var zipcodeEntity = context.Zipcode.FirstOrDefault(z => z.Code == zc) ?? new Zipcode { Id = Guid.NewGuid().ToString(), Code = zc };
                 district.Zipcode.Add(zipcodeEntity);
             }
-            context.Districts.Add(district);
+            context.District.Add(district);
             context.SaveChanges();
             WriteSuccess($"Distrito insertado correctamente: {district.Name} (Códigos postales: {string.Join(", ", district.Zipcode.Select(z => z.Code))}, Código: {district.Code})");
         }
@@ -397,7 +397,7 @@ namespace StreetGeneratorConsoleProject
         static void ListDistricts(AppDbContext context)
         {
             WriteSeparator();
-            var districts = context.Districts.OrderBy(d => d.Name).ToList();
+            var districts = context.District.OrderBy(d => d.Name).ToList();
             if (!districts.Any())
             {
                 WriteWarning("No hay distritos registrados.");

@@ -18,31 +18,31 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Address> Addresses { get; set; }
+    public virtual DbSet<Address> Address { get; set; }
 
-    public virtual DbSet<Apartment> Apartments { get; set; }
+    public virtual DbSet<Apartment> Apartment { get; set; }
 
-    public virtual DbSet<Building> Buildings { get; set; }
+    public virtual DbSet<Building> Building { get; set; }
 
-    public virtual DbSet<BuildingCompany> BuildingCompanies { get; set; }
+    public virtual DbSet<BuildingCompany> BuildingCompany { get; set; }
 
-    public virtual DbSet<BuildingImage> BuildingImages { get; set; }
+    public virtual DbSet<BuildingImage> BuildingImage { get; set; }
 
-    public virtual DbSet<BuildingStatusLog> BuildingStatusLogs { get; set; }
+    public virtual DbSet<BuildingStatusLog> BuildingStatusLog { get; set; }
 
-    public virtual DbSet<District> Districts { get; set; }
+    public virtual DbSet<District> District { get; set; }
 
-    public virtual DbSet<Floor> Floors { get; set; }
+    public virtual DbSet<Floor> Floor { get; set; }
 
-    public virtual DbSet<Purchase> Purchases { get; set; }
+    public virtual DbSet<Purchase> Purchase { get; set; }
 
-    public virtual DbSet<Request> Requests { get; set; }
+    public virtual DbSet<Request> Request { get; set; }
 
-    public virtual DbSet<RequestStatusLog> RequestStatusLogs { get; set; }
+    public virtual DbSet<RequestStatusLog> RequestStatusLog { get; set; }
 
-    public virtual DbSet<Status> Statuses { get; set; }
+    public virtual DbSet<Status> Status { get; set; }
 
-    public virtual DbSet<Street> Streets { get; set; }
+    public virtual DbSet<Street> Street { get; set; }
 
     public virtual DbSet<Zipcode> Zipcode { get; set; }
 
@@ -51,289 +51,104 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Address>().ToTable("Address");
-        modelBuilder.Entity<Apartment>().ToTable("Apartment");
-        modelBuilder.Entity<Building>().ToTable("Building");
-        modelBuilder.Entity<BuildingCompany>().ToTable("BuildingCompany");
-        modelBuilder.Entity<BuildingImage>().ToTable("BuildingImage");
-        modelBuilder.Entity<BuildingStatusLog>().ToTable("BuildingStatusLog");
-        modelBuilder.Entity<District>().ToTable("District");
-        modelBuilder.Entity<Floor>().ToTable("Floor");
-        modelBuilder.Entity<Purchase>().ToTable("Purchase");
-        modelBuilder.Entity<Request>().ToTable("Request");
-        modelBuilder.Entity<RequestStatusLog>().ToTable("RequestStatusLog");
-        modelBuilder.Entity<Status>().ToTable("Status");
-        modelBuilder.Entity<Street>().ToTable("Street");
-
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PKtmp_ms_x3214EC07A798E539");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07A798E539");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.ApartmentId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.City)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.ConstructedAddress)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Country)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.IsApartment)
-                .IsRequired()
-                .HasDefaultValueSql("((1))");
-            entity.Property(e => e.ZipcodeId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
+            entity.Property(e => e.IsApartment).HasDefaultValueSql("((1))");
 
-            entity.HasOne(d => d.Apartment).WithMany(p => p.Address)
-                .HasForeignKey(d => d.ApartmentId)
-                .IsRequired(false)
-                .HasConstraintName("FKAddress937616");
+            entity.HasOne(d => d.Apartment).WithMany(p => p.Address).HasConstraintName("FKAddress937616");
 
             entity.HasOne(d => d.Building).WithMany(p => p.Address)
-                .HasForeignKey(d => d.BuildingId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKAddress69853");
 
             entity.HasOne(d => d.Zipcode).WithMany(p => p.Address)
-                .HasForeignKey(d => d.ZipcodeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKAddress66912");
         });
 
-
         modelBuilder.Entity<Apartment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Apartmen__3214EC073CCFFB56");
+            entity.HasKey(e => e.Id).HasName("PK__Apartmen__3214EC072BB504EA");
 
-            entity.ToTable(tb => tb.HasTrigger("TrgApartmentUpdateUpdatedAt"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("TrgApartmentDeleteBuildingCount");
+                    tb.HasTrigger("TrgApartmentInsertBuildingCount");
+                    tb.HasTrigger("TrgApartmentUpdateUpdatedAt");
+                });
 
-            entity.HasIndex(e => e.Code, "Apartment_Code").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Door)
-                .IsRequired()
-                .HasMaxLength(24)
-                .IsUnicode(false);
-            entity.Property(e => e.FloorId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Area)
-                .IsRequired()
-                .HasDefaultValueSql("((0.00))")
-                .HasColumnType("decimal(12, 2)");
-            entity.HasOne(d => d.Floor).WithMany(p => p.Apartment)
-                .HasForeignKey(d => d.FloorId)
-                .HasConstraintName("FKApartment152603");
+            entity.HasOne(d => d.Floor).WithMany(p => p.Apartment).HasConstraintName("FKApartment152603");
         });
 
         modelBuilder.Entity<Building>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC079821C1C7");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07FB8872D3");
 
             entity.ToTable(tb =>
                 {
+                    tb.HasTrigger("TrgBuildingDeleteDistrictCount");
+                    tb.HasTrigger("TrgBuildingInsertDistrictCount");
                     tb.HasTrigger("TrgBuildingStatusLogInsert");
                     tb.HasTrigger("TrgBuildingUpdateUpdatedAt");
                 });
 
-            entity.HasIndex(e => e.Code, "Building_Code").IsUnique();
-
-            entity.HasIndex(e => e.Doorway, "Building_Doorway");
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.DistrictId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.StreetId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.StatusId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingCompanyId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(30)
-                .IsUnicode(false);
-            entity.Property(e => e.Description).HasColumnType("text");
-            entity.Property(e => e.Doorway)
-                .IsRequired()
-                .HasMaxLength(6)
-                .IsUnicode(false);
-            entity.Property(e => e.EnergyCertificate)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength();
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Price)
-                .HasDefaultValueSql("((0.00))")
-                .HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.EnergyCertificate).IsFixedLength();
+            entity.Property(e => e.Price).HasDefaultValueSql("((0.00))");
             entity.Property(e => e.YearBuilt).HasDefaultValueSql("((1970))");
 
             entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Building)
-                .HasForeignKey(d => d.BuildingCompanyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKBuilding524337");
 
             entity.HasOne(d => d.District).WithMany(p => p.Building)
-                .HasForeignKey(d => d.DistrictId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKBuilding875021");
 
             entity.HasOne(d => d.Status).WithMany(p => p.Building)
-                .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKBuilding279633");
 
             entity.HasOne(d => d.Street).WithMany(p => p.Building)
-                .HasForeignKey(d => d.StreetId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKBuilding420566");
         });
 
         modelBuilder.Entity<BuildingCompany>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Building__3214EC07590C204D");
+            entity.HasKey(e => e.Id).HasName("PK__Building__3214EC0700C9B9F4");
 
             entity.ToTable(tb => tb.HasTrigger("TrgBuildingCompanyUpdateUpdatedAt"));
-
-            entity.HasIndex(e => e.Cif, "BuildingCompany_Cif").IsUnique();
-
-            entity.HasIndex(e => e.Name, "UQ__Building__737584F6AD123444").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Cif)
-                .IsRequired()
-                .HasMaxLength(9)
-                .IsUnicode(false);
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Website)
-                .HasMaxLength(1024)
-                .IsUnicode(false);
         });
 
         modelBuilder.Entity<BuildingImage>(entity =>
         {
-            entity.HasKey(e => e.BuildingImageId).HasName("PK__Building__D744291255EE6541");
+            entity.HasKey(e => e.BuildingImageId).HasName("PK__Building__D7442912C95376C0");
 
             entity.ToTable(tb => tb.HasTrigger("TrgBuildingImageUpdateUpdatedAt"));
 
-            entity.HasIndex(e => e.FilePath, "UQ__Building__48D910BDD67E794E").IsUnique();
-
-            entity.HasIndex(e => e.FileName, "UQ__Building__589E6EEC0815EC07").IsUnique();
-
-            entity.Property(e => e.BuildingImageId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.AltText)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.FileName)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.FilePath)
-                .IsRequired()
-                .HasMaxLength(1024)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Building).WithMany(p => p.BuildingImage)
-                .HasForeignKey(d => d.BuildingId)
-                .HasConstraintName("FKBuildingIm593721");
+            entity.HasOne(d => d.Building).WithMany(p => p.BuildingImage).HasConstraintName("FKBuildingIm593721");
         });
 
         modelBuilder.Entity<BuildingStatusLog>(entity =>
         {
-            entity.HasKey(e => new { e.BuildingId, e.StatusId, e.CreatedAt }).HasName("PK__Building__138872FF04D62561");
+            entity.HasKey(e => new { e.BuildingId, e.StatusId, e.CreatedAt }).HasName("PK__Building__138872FF6FE64B89");
 
-            entity.Property(e => e.BuildingId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.StatusId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.Building).WithMany(p => p.BuildingStatusLog)
-                .HasForeignKey(d => d.BuildingId)
-                .HasConstraintName("FKBuildingSt501021");
+            entity.HasOne(d => d.Building).WithMany(p => p.BuildingStatusLog).HasConstraintName("FKBuildingSt501021");
 
             entity.HasOne(d => d.Status).WithMany(p => p.BuildingStatusLog)
-                .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKBuildingSt885424");
         });
 
         modelBuilder.Entity<District>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__District__3214EC0732330B92");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC078E1215D5");
 
             entity.ToTable(tb => tb.HasTrigger("TrgDistrictUpdateUpdatedAt"));
-
-            entity.HasIndex(e => e.Name, "UQ__District__737584F657C378C6").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.City)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Country)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(24)
-                .IsUnicode(false);
 
             entity.HasMany(d => d.Street).WithMany(p => p.District)
                 .UsingEntity<Dictionary<string, object>>(
@@ -346,7 +161,7 @@ public partial class AppDbContext : DbContext
                         .HasConstraintName("FKDistrictSt746137"),
                     j =>
                     {
-                        j.HasKey("DistrictId", "StreetId").HasName("PK__District__33DAAA75642CE083");
+                        j.HasKey("DistrictId", "StreetId").HasName("PK__District__33DAAA75F47B7E26");
                         j.IndexerProperty<string>("DistrictId")
                             .HasMaxLength(36)
                             .IsUnicode(false);
@@ -354,95 +169,61 @@ public partial class AppDbContext : DbContext
                             .HasMaxLength(36)
                             .IsUnicode(false);
                     });
+
             entity.HasMany(d => d.Zipcode).WithMany(p => p.District)
-    .UsingEntity<Dictionary<string, object>>(
-        "DistrictZipcode",
-        r => r.HasOne<Zipcode>().WithMany()
-            .HasForeignKey("ZipcodeId")
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_DistrictZipcode_Zipcode"),
-        l => l.HasOne<District>().WithMany()
-            .HasForeignKey("DistrictId")
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_DistrictZipcode_District"),
-        j =>
-        {
-            j.HasKey("DistrictId", "ZipcodeId");
-            j.IndexerProperty<string>("DistrictId")
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            j.IndexerProperty<string>("ZipcodeId")
-                .HasMaxLength(36)
-                .IsUnicode(false);
-        });
+                .UsingEntity<Dictionary<string, object>>(
+                    "DistrictZipcode",
+                    r => r.HasOne<Zipcode>().WithMany()
+                        .HasForeignKey("ZipcodeId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_DistrictZipcode_Zipcode"),
+                    l => l.HasOne<District>().WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_DistrictZipcode_District"),
+                    j =>
+                    {
+                        j.HasKey("DistrictId", "ZipcodeId");
+                        j.IndexerProperty<string>("DistrictId")
+                            .HasMaxLength(36)
+                            .IsUnicode(false);
+                        j.IndexerProperty<string>("ZipcodeId")
+                            .HasMaxLength(36)
+                            .IsUnicode(false);
+                    });
         });
 
         modelBuilder.Entity<Floor>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Floor__3214EC07176607C0");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC077FD3A026");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(30)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Building).WithMany(p => p.Floor)
-                .HasForeignKey(d => d.BuildingId)
-                .HasConstraintName("FKFloor82292");
+            entity.HasOne(d => d.Building).WithMany(p => p.Floor).HasConstraintName("FKFloor82292");
         });
 
         modelBuilder.Entity<Purchase>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Purchase__3214EC07ADEAF173");
+            entity.HasKey(e => e.Id).HasName("PK__Purchase__3214EC079EECDF3F");
 
             entity.ToTable(tb => tb.HasTrigger("TrgPurchaseUpdateUpdatedAt"));
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Amount)
-                .HasDefaultValueSql("((0.00))")
-                .HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.BuildingCompanyId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.RequestId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
+            entity.Property(e => e.Amount).HasDefaultValueSql("((0.00))");
 
             entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Purchase)
-                .HasForeignKey(d => d.BuildingCompanyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPurchase526429");
 
             entity.HasOne(d => d.Building).WithMany(p => p.Purchase)
-                .HasForeignKey(d => d.BuildingId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPurchase78453");
 
             entity.HasOne(d => d.Request).WithMany(p => p.Purchase)
-                .HasForeignKey(d => d.RequestId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPurchase717750");
         });
 
         modelBuilder.Entity<Request>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Request__3214EC07D31EE00C");
+            entity.HasKey(e => e.Id).HasName("PK__Request__3214EC07927A47BE");
 
             entity.ToTable(tb =>
                 {
@@ -450,106 +231,45 @@ public partial class AppDbContext : DbContext
                     tb.HasTrigger("TrgRequestUpdateUpdatedAt");
                 });
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.BuildingId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Price).HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.StatusId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-
             entity.HasOne(d => d.Building).WithMany(p => p.Request)
-                .HasForeignKey(d => d.BuildingId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKRequest514507");
 
             entity.HasOne(d => d.Status).WithMany(p => p.Request)
-                .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKRequest898910");
         });
 
         modelBuilder.Entity<RequestStatusLog>(entity =>
         {
-            entity.HasKey(e => new { e.RequestId, e.StatusId, e.CreatedAt }).HasName("PK__RequestS__7443EE41D8C7BA45");
+            entity.HasKey(e => new { e.RequestId, e.StatusId, e.CreatedAt }).HasName("PK__RequestS__7443EE417A538CCF");
 
-            entity.Property(e => e.RequestId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.StatusId)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.RequestStatusLog)
-                .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("FKRequestSta565383");
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestStatusLog).HasConstraintName("FKRequestSta565383");
 
             entity.HasOne(d => d.Status).WithMany(p => p.RequestStatusLog)
-                .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKRequestSta994406");
         });
 
         modelBuilder.Entity<Status>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Status__3214EC07721A4E7C");
+            entity.HasKey(e => e.Id).HasName("PK__Status__3214EC075368BE62");
 
             entity.ToTable(tb => tb.HasTrigger("TrgStatusUpdateUpdatedAt"));
-
-            entity.HasIndex(e => e.Name, "UQ__Status__737584F6BD329A59").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Description).HasColumnType("text");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(48)
-                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Street>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Street__3214EC07083EFE1A");
+            entity.HasKey(e => e.Id).HasName("PK__Street__3214EC07C26C5B86");
 
             entity.ToTable(tb => tb.HasTrigger("TrgStreetUpdateUpdatedAt"));
-
-
-            entity.HasIndex(e => e.Code, "Street_Code").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(24)
-                .IsUnicode(false);
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(255)
-                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Zipcode>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Zipcode__3214EC07B3F7E0D6");
-
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
         });
 
         OnModelCreatingPartial(modelBuilder);
