@@ -165,6 +165,18 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasMaxLength(36)
                 .IsUnicode(false);
+            entity.Property(e => e.DistrictId)
+                .IsRequired()
+                .HasMaxLength(36)
+                .IsUnicode(false);
+            entity.Property(e => e.StreetId)
+                .IsRequired()
+                .HasMaxLength(36)
+                .IsUnicode(false);
+            entity.Property(e => e.StatusId)
+                .IsRequired()
+                .HasMaxLength(36)
+                .IsUnicode(false);
             entity.Property(e => e.BuildingCompanyId)
                 .IsRequired()
                 .HasMaxLength(36)
@@ -174,10 +186,6 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Description).HasColumnType("text");
-            entity.Property(e => e.DistrictId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
             entity.Property(e => e.Doorway)
                 .IsRequired()
                 .HasMaxLength(6)
@@ -192,14 +200,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Price)
                 .HasDefaultValueSql("((0.00))")
                 .HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.StatusId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
-            entity.Property(e => e.StreetId)
-                .IsRequired()
-                .HasMaxLength(36)
-                .IsUnicode(false);
             entity.Property(e => e.YearBuilt).HasDefaultValueSql("((1970))");
 
             entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Building)

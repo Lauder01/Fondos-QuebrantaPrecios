@@ -43,6 +43,18 @@
 						</div>
 					</div>
 				</div>
+						<div class="col-12">
+							<div class="card shadow-sm border-0 rounded-4 mb-2">
+								<div class="card-body p-4">
+									<div class="d-flex align-items-center mb-2">
+										<i class="bi bi-images fs-4 text-primary me-2"></i>
+										<h3 class="fw-bold mb-0">Imágenes del Edificio</h3>
+									</div>
+									<div class="text-gray-500 mb-4" style="margin-top:-8px;">Sube imágenes, selecciona una como portada y añade texto alternativo.</div>
+									<app-building-images [images]="buildingImages" (imagesChange)="buildingImages = $event"></app-building-images>
+								</div>
+							</div>
+						</div>
 			</div>
 		</form>
     <div class="sticky-bottom d-flex justify-content-center w-100 h-50">
