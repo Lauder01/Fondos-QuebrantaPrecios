@@ -188,7 +188,18 @@ namespace WebAPI.Controllers
         {
             var building = _buildingService.GetByCode(code);
             if (building == null) return NotFound();
-            var dto = _mapper.Map<SpecuLabGetterDto>(building);
+            var dto = new WebAPI.Dtos.SpecuLab.SpecuLabGetterDto
+            {
+                BuildingCode = building.Code,
+                BuildingName = building.Name ?? string.Empty,
+                //building.Address?.FirstOrDefault()?.ConstructedAddress.ToString() ??
+                ConstructedAddress = "N/A",
+                //string.IsNullOrWhiteSpace(building.District?.Name.ToString()) ? "N/A" : building.District.Name,
+                DistrictName = "N/A",
+                FloorCount = building.FloorCount,
+                YearBuilt = building.YearBuilt,
+                ApartmentCount = building.ApartmentCount
+            };
             return Ok(dto);
         }
 

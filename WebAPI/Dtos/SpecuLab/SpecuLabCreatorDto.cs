@@ -3,7 +3,7 @@
 namespace WebAPI.Dtos.SpecuLab
 {
     /// <summary>
-    /// Este dto se encarga de mandar edificios a SpecuLab.
+    /// Este dto se encarga de mandar request a SpecuLab.
     /// </summary>  
     public class SpecuLabCreatorDto
     {
