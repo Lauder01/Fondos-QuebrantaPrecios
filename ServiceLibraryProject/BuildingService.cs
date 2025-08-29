@@ -202,13 +202,16 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
-        /// Obtiene un edificio por su código.
+        /// Obtiene un edificio por su código único.
         /// </summary>
-        /// <param name="code">Código del edificio.</param>
+        /// <param name="code">Código único del edificio.</param>
         /// <returns>El edificio encontrado o null si no existe.</returns>
         public Building? GetByCode(string code)
         {
-            return _buildingRepository.Find(b => b.Code == code);
+            // Llama al método específico del repositorio para obtener el edificio por código
+            if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
+                return repoImpl.GetBuildingByCode(code);
+            throw new NotSupportedException("El repositorio no soporta GetBuildingByCode.");
         }
 
         /// <summary>

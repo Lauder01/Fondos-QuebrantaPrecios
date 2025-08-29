@@ -9,13 +9,13 @@ namespace WebAPI.AutoMapperProfiles
     {
         public SpecuLabProfile()
         {
-            CreateMap<Building, SpecuLabGetterDto>()
-                .ForMember(dest => dest.BuildingCode, opt => opt.MapFrom(src => src.Code))
-                .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.ConstructedAddress, opt => opt.MapFrom(src => src.Address.FirstOrDefault() != null ? src.Address.FirstOrDefault().ConstructedAddress : string.Empty))
-                .ForMember(dest => dest.DistrictName, opt => opt.MapFrom(src => src.District != null ? src.District.Name : string.Empty))
-                .ForMember(dest => dest.FloorCount, opt => opt.MapFrom(src => src.FloorCount))
-                .ForMember(dest => dest.YearBuilt, opt => opt.MapFrom(src => src.YearBuilt));
+            //CreateMap<Building, SpecuLabGetterDto>()
+            //    .ForMember(dest => dest.BuildingCode, opt => opt.MapFrom(src => src.Code))
+            //    .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Name))
+            //    .ForMember(dest => dest.ConstructedAddress, opt => opt.MapFrom(src => src.Address.FirstOrDefault() != null ? src.Address.FirstOrDefault().ConstructedAddress : string.Empty))
+            //    .ForMember(dest => dest.DistrictName, opt => opt.MapFrom(src => src.District != null ? src.District.Name : string.Empty))
+            //    .ForMember(dest => dest.FloorCount, opt => opt.MapFrom(src => src.FloorCount))
+            //    .ForMember(dest => dest.YearBuilt, opt => opt.MapFrom(src => src.YearBuilt));
                 // .ForMember(dest => dest.ApartmentNumber, opt => opt.Ignore()); // Para uso futuro
         }
     }

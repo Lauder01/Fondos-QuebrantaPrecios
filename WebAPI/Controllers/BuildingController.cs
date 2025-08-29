@@ -343,14 +343,25 @@ namespace WebAPI.Controllers
             }
         }
 
+        //Método para enviar el DTO a SpecuLab
+
         [HttpPost("{id}/send-to-speculab")]
-        public async Task<IActionResult> GetForSpecuLab(string id)
+        public async Task<IActionResult> PostToSpecuLab(string id)
         {
             var building = _buildingService.GetByIdWithAddressAndDistrict(id);
             if (building == null)
                 return NotFound();
 
-            var dto = _mapper.Map<WebAPI.Dtos.SpecuLab.SpecuLabGetterDto>(building);
+            var dto = new WebAPI.Dtos.SpecuLab.SpecuLabCreatorDto
+            {
+                BuildingCode = building.Code,
+                BuildingName = building.Name ?? string.Empty,
+                ConstructedAddress = building.Address?.FirstOrDefault()?.ConstructedAddress ?? "N/A",
+                DistrictName = building.District?.Name ?? "N/A",
+                FloorCount = building.FloorCount,
+                YearBuilt = building.YearBuilt,
+                ApartmentCount = building.ApartmentCount
+            };
 
             // Configura la URL de la API externa
             var apiUrl = "https://url-de-la-otra-api/api/speculab"; // Cambia esto por la URL real

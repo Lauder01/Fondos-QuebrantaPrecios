@@ -108,7 +108,8 @@ namespace RepositoryLibraryProject
             throw new NotSupportedException("GetByIdWithAddressAndDistrict solo es válido para Building.");
         }
 
-        // Nuevo método: Obtener Building por Code
+        // Nuevo método: Obtener Building por Code. 
+        // Este método lo usamos para SpecuLab.
         public Building? GetBuildingByCode(string code)
         {
             if (typeof(T) == typeof(Building))
@@ -119,5 +120,18 @@ namespace RepositoryLibraryProject
                     .FirstOrDefault(b => b.Code == code) as Building;
             throw new NotSupportedException("GetBuildingByCode solo es válido para Building.");
         }
-    }
-}
+
+        //Método para mandar request a SpecuLab
+    }   public Request? PostRequest(Request request)
+        {
+            try
+            {
+                _context.Request.Add(request);
+                _context.SaveChanges();
+                return request;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error al agregar la solicitud a la base de datos.", ex);
+            }
+        }
