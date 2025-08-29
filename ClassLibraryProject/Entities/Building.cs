@@ -69,6 +69,11 @@ namespace ClassLibraryProject.Entities
         public string StatusId { get; set; }
 
         /// <summary>
+        /// Número de apartamentos del edificio.
+        /// </summary>
+        public int ApartmentCount { get; set; }
+
+        /// <summary>
         /// Distrito asociado al edificio (navegación).
         /// </summary>
         public virtual District District { get; set; }
