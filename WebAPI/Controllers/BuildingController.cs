@@ -137,20 +137,20 @@ namespace WebAPI.Controllers
                 var context = scope.ServiceProvider.GetRequiredService<RepositoryLibraryProject.Data.AppDbContext>();
                 
                 // Obtener el primer distrito disponible (sin crear nuevos)
-                var district = context.Districts.FirstOrDefault();
+                var district = context.District.FirstOrDefault();
                 string districtId = district?.Id ?? string.Empty;
                 
                 // Obtener la primera calle disponible (sin crear nuevos)
-                var street = context.Streets.FirstOrDefault();
+                var street = context.Street.FirstOrDefault();
                 string streetId = street?.Id ?? string.Empty;
                 
                 // Obtener la primera empresa disponible (sin crear nuevos)
-                var company = context.BuildingCompanies.FirstOrDefault();
+                var company = context.BuildingCompany.FirstOrDefault();
                 string companyId = company?.Id ?? string.Empty;
                 
                 // Obtener o buscar status "Registrado" (sin crear nuevos)
-                var status = context.Statuses.FirstOrDefault(s => s.Name == "Registrado") 
-                           ?? context.Statuses.FirstOrDefault();
+                var status = context.Status.FirstOrDefault(s => s.Name == "Registrado") 
+                           ?? context.Status.FirstOrDefault();
                 string statusId = status?.Id ?? string.Empty;
                 
                 Console.WriteLine($"IDs obtenidos - Distrito: {districtId}, Calle: {streetId}, Empresa: {companyId}, Status: {statusId}");
@@ -198,7 +198,7 @@ namespace WebAPI.Controllers
             {
                 using var scope = HttpContext.RequestServices.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<RepositoryLibraryProject.Data.AppDbContext>();
-                return context.Districts.FirstOrDefault();
+                return context.District.FirstOrDefault();
             }
             catch
             {
@@ -212,7 +212,7 @@ namespace WebAPI.Controllers
             {
                 using var scope = HttpContext.RequestServices.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<RepositoryLibraryProject.Data.AppDbContext>();
-                return context.Streets.FirstOrDefault();
+                return context.Street.FirstOrDefault();
             }
             catch
             {
@@ -226,7 +226,7 @@ namespace WebAPI.Controllers
             {
                 using var scope = HttpContext.RequestServices.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<RepositoryLibraryProject.Data.AppDbContext>();
-                return context.BuildingCompanies.FirstOrDefault();
+                return context.BuildingCompany.FirstOrDefault();
             }
             catch
             {
@@ -242,11 +242,11 @@ namespace WebAPI.Controllers
                 var context = scope.ServiceProvider.GetRequiredService<RepositoryLibraryProject.Data.AppDbContext>();
                 
                 // Obtener el código postal del distrito
-                var district = context.Districts.Include(d => d.Zipcode).FirstOrDefault(d => d.Id == districtId);
+                var district = context.District.Include(d => d.Zipcode).FirstOrDefault(d => d.Id == districtId);
                 var zipCode = district?.Zipcode?.FirstOrDefault()?.Code ?? "ZZZ";
                 
                 // Obtener el código de la calle
-                var street = context.Streets.FirstOrDefault(s => s.Id == streetId);
+                var street = context.Street.FirstOrDefault(s => s.Id == streetId);
                 var streetCode = street?.Code ?? "STR";
                 
                 // Usar el doorway proporcionado

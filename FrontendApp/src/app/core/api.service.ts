@@ -1,3 +1,14 @@
+export interface RequestCreatorDto {
+	buildingId: string;
+	statusId: string;
+	price: number;
+	maintenancePrice: number;
+}
+
+export interface RequestGetterDto extends RequestCreatorDto {
+	id: string;
+}
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -67,6 +78,11 @@ export class ApiService {
 	private baseUrl = environment.apiUrl;
 
 	constructor(private http: HttpClient) {}
+
+	// Request methods
+	createRequest(dto: RequestCreatorDto): Observable<RequestGetterDto> {
+		return this.http.post<RequestGetterDto>(`${this.baseUrl}/Request`, dto);
+	}
 
 	getDistricts(): Observable<DistrictGetterDto[]> {
 		return this.http.get<DistrictGetterDto[]>(`${this.baseUrl}/District`);
