@@ -1,0 +1,31 @@
+<div class="mb-3">
+  <label class="form-label fw-semibold small text-primary-dark">Imágenes del Edificio</label>
+  <input type="file" class="form-control" (change)="onFileSelected($event)" multiple accept="image/*">
+  <div class="form-text small">Puedes subir varias imágenes. Selecciona una como portada.</div>
+</div>
+<div class="gallery-masonry">
+  <div class="gallery-card" *ngFor="let img of images; let i = index">
+    <div class="gallery-img-wrapper" [ngClass]="{'cover': img.isCover}">
+      <img *ngIf="img.url" [src]="img.url" class="gallery-img" [alt]="img.altText || img.fileName" (load)="($event.target.parentElement ? $event.target.parentElement.classList.add('loaded') : null)">
+    <!-- Botones superiores eliminados, solo se mantienen los de la parte inferior -->
+      <div *ngIf="img.uploading" class="gallery-uploading">
+        <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
+        <span>Subiendo...</span>
+      </div>
+      <div *ngIf="img.error" class="gallery-error">{{img.error}}</div>
+    </div>
+    <div class="gallery-meta-row">
+      <div class="gallery-alt-row">
+        <input type="text" class="form-control form-control-sm gallery-alt-input" [(ngModel)]="img.altText" placeholder="Texto alternativo" [disabled]="!!img.uploading">
+      </div>
+      <div class="gallery-btn-row">
+        <button type="button" class="btn btn-outline-danger gallery-btn" (click)="removeImage(i)" [disabled]="img.uploading">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
+        <button type="button" class="btn btn-outline-primary gallery-btn" [class.selected]="img.isCover" (click)="setAsCover(i)" [disabled]="img.uploading || img.isCover">
+          <i class="bi bi-star-fill"></i> Portada
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

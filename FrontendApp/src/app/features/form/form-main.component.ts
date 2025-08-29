@@ -5,17 +5,19 @@ import { Router } from '@angular/router';
 import { GeneralInfoComponent } from './general-info.component';
 import { LocationComponent } from './location.component';
 import { TechnicalDetailsComponent } from './technical-details.component';
+import { BuildingImagesComponent, BuildingImage } from './building-images/building-images.component';
 import { ApiService, BuildingCreatorDto, ZipcodeGetterDto } from '../../core/api.service';
 
 @Component({
 	selector: 'app-form-main',
 	standalone: true,
-	imports: [ReactiveFormsModule, GeneralInfoComponent, LocationComponent, TechnicalDetailsComponent],
+	imports: [ReactiveFormsModule, GeneralInfoComponent, LocationComponent, TechnicalDetailsComponent, BuildingImagesComponent],
 	templateUrl: './form-main.component.html',
 })
 export class FormMainComponent {
 	form: FormGroup;
 	allZipcodes: ZipcodeGetterDto[] = [];
+	buildingImages: BuildingImage[] = [];
 
 	constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
 		this.form = this.fb.group({
@@ -63,89 +65,89 @@ export class FormMainComponent {
 		return this.form.get('technicalDetails') as FormGroup;
 	}
 
-	onSubmit() {
-		if (this.form.valid) {
-			// No necesitamos buscar el status, se asigna automáticamente en el backend
-			const formData = this.form.value;
+		onSubmit() {
+			if (this.form.valid) {
+				// No necesitamos buscar el status, se asigna automáticamente en el backend
+				const formData = this.form.value;
 
-			const buildingData: BuildingCreatorDto = {
-				// Información General - name siempre se envía, aunque esté vacío
-				name: (formData.generalInfo.name || '').trim(),
-				description: (formData.generalInfo.description || '').trim(),
-				buildingCompanyId: (formData.generalInfo.buildingCompanyId || '').trim(),
-				// statusId se asigna automáticamente en el backend
+				const buildingData: BuildingCreatorDto = {
+					// Información General - name siempre se envía, aunque esté vacío
+					name: (formData.generalInfo.name || '').trim(),
+					description: (formData.generalInfo.description || '').trim(),
+					buildingCompanyId: (formData.generalInfo.buildingCompanyId || '').trim(),
+					// statusId se asigna automáticamente en el backend
 
-				// Ubicación
-				districtId: (formData.location.districtId || '').trim(),
-				streetId: (formData.location.streetId || '').trim(),
-				doorway: (formData.location.buildingNumber || '').trim(),
+					// Ubicación
+					districtId: (formData.location.districtId || '').trim(),
+					streetId: (formData.location.streetId || '').trim(),
+					doorway: (formData.location.buildingNumber || '').trim(),
 
-				// Detalles Técnicos
-				floorCount: Number(formData.technicalDetails.floorCount) || 1,
-				yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
-				price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
-				energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
-				hasElevator: !!formData.technicalDetails.hasElevator,
+					// Detalles Técnicos
+					floorCount: Number(formData.technicalDetails.floorCount) || 1,
+					yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
+					price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
+					energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
+					hasElevator: !!formData.technicalDetails.hasElevator,
 
-			// Campos adicionales para la creación automática del Address
-			zipcodeId: this.getZipcodeIdFromCode(formData.location.zipCode),
-			constructedAddress: this.buildConstructedAddress(formData),
-			country: (formData.location.country || '').trim(),
-			city: (formData.location.city || '').trim()
+					// Campos adicionales para la creación automática del Address
+					zipcodeId: this.getZipcodeIdFromCode(formData.location.zipCode),
+					constructedAddress: this.buildConstructedAddress(formData),
+					country: (formData.location.country || '').trim(),
+					city: (formData.location.city || '').trim()
+				};
 
-			// El código se genera automáticamente en el backend usando BuildBuildingCode()
-		};
-
-		console.log('=== DEBUG buildingData ===');
-		console.log('zipcodeId enviado:', buildingData.zipcodeId);
-		console.log('zipCode del formulario:', formData.location.zipCode);
-		console.log('constructedAddress:', buildingData.constructedAddress);
-		console.log('country:', buildingData.country);
-		console.log('city:', buildingData.city);
-		console.log('buildingData completo:', buildingData);			// Eliminar campos undefined/null
-			Object.keys(buildingData).forEach(key => {
-				if (buildingData[key as keyof BuildingCreatorDto] === undefined || buildingData[key as keyof BuildingCreatorDto] === null) {
-					delete buildingData[key as keyof BuildingCreatorDto];
-				}
-			});
-
-			console.log('Enviando edificio:', buildingData);
-
-			// Enviar a la API
-					this.api.createBuilding(buildingData).subscribe({
-						next: (result) => {
-							console.log('Edificio creado exitosamente:', result);
-							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
-
-							// Redirigir a la página de registro de apartamentos
-							if (result.id) {
-								this.router.navigate(['/apartments/register', result.id]);
-							}
-
-							// Opcional: Limpiar el formulario
-							this.resetForm();
-						},
-				error: (error) => {
-					console.error('Error al crear el edificio:', error);
-					let errorMessage = 'Error al registrar el edificio.';
-
-					if (error.error && error.error.errors) {
-						// Errores de validación del servidor
-						const validationErrors = Object.values(error.error.errors).flat();
-						errorMessage = `Errores de validación:\n${validationErrors.join('\n')}`;
-					} else if (error.error && error.error.message) {
-						errorMessage = error.error.message;
+				console.log('=== DEBUG buildingData ===');
+				console.log('zipcodeId enviado:', buildingData.zipcodeId);
+				console.log('zipCode del formulario:', formData.location.zipCode);
+				console.log('constructedAddress:', buildingData.constructedAddress);
+				console.log('country:', buildingData.country);
+				console.log('city:', buildingData.city);
+				console.log('buildingData completo:', buildingData);
+				// Eliminar campos undefined/null
+				Object.keys(buildingData).forEach(key => {
+					if (buildingData[key as keyof BuildingCreatorDto] === undefined || buildingData[key as keyof BuildingCreatorDto] === null) {
+						delete buildingData[key as keyof BuildingCreatorDto];
 					}
+				});
 
-					alert(errorMessage);
-				}
-			});
-		} else {
-			console.log('Formulario inválido');
-			this.markAllFieldsAsTouched();
-			alert('Por favor, complete todos los campos obligatorios.');
+				console.log('Enviando edificio:', buildingData);
+
+				// Enviar a la API
+				this.api.createBuilding(buildingData).subscribe({
+					next: (result) => {
+						console.log('Edificio creado exitosamente:', result);
+						alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
+
+						// Redirigir a la página de registro de apartamentos
+						if (result.id) {
+							this.router.navigate(['/apartments/register', result.id]);
+						}
+
+						// Opcional: Limpiar el formulario
+						this.resetForm();
+						this.buildingImages = [];
+					},
+					error: (error) => {
+						console.error('Error al crear el edificio:', error);
+						let errorMessage = 'Error al registrar el edificio.';
+
+						if (error.error && error.error.errors) {
+							// Errores de validación del servidor
+							const validationErrors = Object.values(error.error.errors).flat();
+							errorMessage = `Errores de validación:\n${validationErrors.join('\n')}`;
+						} else if (error.error && error.error.message) {
+							errorMessage = error.error.message;
+						}
+
+						alert(errorMessage);
+					}
+				});
+			} else {
+				console.log('Formulario inválido');
+				this.markAllFieldsAsTouched();
+				alert('Por favor, complete todos los campos obligatorios.');
+			}
 		}
-	}
 
 	private resetForm() {
 		this.form.reset();
