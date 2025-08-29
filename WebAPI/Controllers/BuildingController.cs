@@ -6,6 +6,7 @@ using System.Linq;
 using RepositoryLibraryProject.Data;
 using WebAPI.Dtos.Building;
 using WebAPI.Dtos.Address;
+using WebAPI.Dtos.SpecuLab;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -181,6 +182,16 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
+
+        [HttpGet("bycode/{code}")]
+        public ActionResult<SpecuLabGetterDto> GetByCode(string code)
+        {
+            var building = _buildingService.GetByCode(code);
+            if (building == null) return NotFound();
+            var dto = _mapper.Map<SpecuLabGetterDto>(building);
+            return Ok(dto);
+        }
+
         private ClassLibraryProject.Entities.District? GetFirstAvailableDistrict()
         {
             try
@@ -333,7 +344,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("{id}/send-to-speculab")]
-        public async Task<IActionResult> SendToSpecuLab(string id)
+        public async Task<IActionResult> GetForSpecuLab(string id)
         {
             var building = _buildingService.GetByIdWithAddressAndDistrict(id);
             if (building == null)
@@ -352,5 +363,6 @@ namespace WebAPI.Controllers
             else
                 return StatusCode((int)response.StatusCode, $"Error al enviar a SpecuLab: {await response.Content.ReadAsStringAsync()}");
         }
+
     }
 }

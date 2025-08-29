@@ -107,5 +107,17 @@ namespace RepositoryLibraryProject
                     .FirstOrDefault(b => b.Id == id) as Building;
             throw new NotSupportedException("GetByIdWithAddressAndDistrict solo es válido para Building.");
         }
+
+        // Nuevo método: Obtener Building por Code
+        public Building? GetBuildingByCode(string code)
+        {
+            if (typeof(T) == typeof(Building))
+                return _context.Set<Building>()
+                    .Include(b => b.Address)
+                    .Include(b => b.District)
+                    .AsNoTracking()
+                    .FirstOrDefault(b => b.Code == code) as Building;
+            throw new NotSupportedException("GetBuildingByCode solo es válido para Building.");
+        }
     }
 }
