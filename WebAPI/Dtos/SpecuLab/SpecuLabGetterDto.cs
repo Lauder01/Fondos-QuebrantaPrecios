@@ -7,9 +7,11 @@ namespace WebAPI.Dtos.SpecuLab
 {
     public class SpecuLabGetterDto
     {
-        [Required(ErrorMessage = "ERR001: El campo Código de Edificio es obligatorio")]
-        [StringLength(30, MinimumLength = 1, ErrorMessage = "ERR002: El campo Código de Edificio debe tener entre 1 y 30 caracteres")]
-        public required string BuildingCode { get; set; }
-
+        public string BuildingName { get; set; }
+        public string ConstructedAddress { get; set; }
+        public string DistrictName { get; set; }
+        public int FloorCount { get; set; }
+        public int YearBuilt { get; set; }
+        public int ApartmentCount { get; set; }
     }
 }

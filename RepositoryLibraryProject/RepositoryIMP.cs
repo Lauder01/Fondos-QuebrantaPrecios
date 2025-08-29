@@ -122,7 +122,7 @@ namespace RepositoryLibraryProject
         }
 
         //Método para mandar request a SpecuLab
-    }   public Request? PostRequest(Request request)
+        public Request? PostRequest(Request request)
         {
             try
             {
@@ -135,3 +135,5 @@ namespace RepositoryLibraryProject
                 throw new InvalidOperationException("Error al agregar la solicitud a la base de datos.", ex);
             }
         }
+    }
+}
