@@ -1,11 +1,41 @@
-<div class="container py-4">
-  <h2 class="mb-4">Registro de Apartamentos para el edificio {{ buildingId }}</h2>
 
-  @if (step === 1) {
-    <label for="apartmentsPerFloor" class="form-label">¿Cuántos apartamentos hay por planta? <span class="text-muted small">(Esto es sólo una estimación, luego podrás editar cada planta individualmente)</span></label>
-    <input id="apartmentsPerFloor" type="number" min="1" class="form-control w-auto d-inline-block" [(ngModel)]="apartmentsPerFloor" (keyup.enter)="confirmApartmentsPerFloor()" />
-    <button class="btn btn-primary ms-2" (click)="confirmApartmentsPerFloor()">Confirmar</button>
-  }
+<main class="container py-4">
+  <h2 class="mb-4">Características generales de los apartamentos</h2>
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <label for="apartmentsPerFloor" class="form-label">Nº de apartamentos por piso</label>
+      <input id="apartmentsPerFloor" type="number" min="1" class="form-control" [(ngModel)]="apartmentsPerFloor" />
+    </div>
+    <div class="col-md-3 mb-3">
+      <label for="surface" class="form-label">Superficie (m²)</label>
+  <input id="surface" type="text" class="form-control" [(ngModel)]="surface" placeholder="70 m^2" />
+    </div>
+    <div class="col-md-3 mb-3">
+      <label for="numRooms" class="form-label">Nº de habitaciones</label>
+      <input id="numRooms" type="number" min="1" class="form-control" [(ngModel)]="numRooms" />
+    </div>
+    <div class="col-md-3 mb-3">
+      <label for="numBathrooms" class="form-label">Nº de baños</label>
+      <input id="numBathrooms" type="number" min="1" class="form-control" [(ngModel)]="numBathrooms" />
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between mb-4">
+    <button type="button" class="btn btn-lg px-5 shadow rounded-3 fw-semibold"
+      style="background-color: var(--color-primary-dark); color: var(--color-white); border: 2px solid var(--color-primary); transition: background 0.2s, color 0.2s;"
+      onmouseover="this.style.backgroundColor='var(--color-primary)'"
+      onmouseout="this.style.backgroundColor='var(--color-primary-dark)'"
+      (click)="confirmGeneralCharacteristics()">
+      Registro detallado
+    </button>
+    <button type="button" class="btn btn-lg px-5 shadow rounded-3 fw-semibold"
+      style="background-color: var(--color-primary-dark); color: var(--color-white); border: 2px solid var(--color-primary); transition: background 0.2s, color 0.2s;"
+      onmouseover="this.style.backgroundColor='var(--color-primary)'"
+      onmouseout="this.style.backgroundColor='var(--color-primary-dark)'"
+      (click)="finishRegistration()">
+      Finalizar registro
+    </button>
+  </div>
 
   @if (step === 2) {
     <nav>
@@ -36,4 +66,4 @@
     </div>
     <button class="btn btn-secondary mt-3" (click)="step = 1">Volver</button>
   }
-</div>
+</main>

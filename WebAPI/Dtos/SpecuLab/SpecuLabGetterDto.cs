@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Dtos.SpecuLab
 {
-    public class SpecuLabCreatorDto
+    public class SpecuLabGetterDto
     {
         [Required(ErrorMessage = "ERR001: El campo Código de Edificio es obligatorio")]
         [StringLength(30, MinimumLength = 1, ErrorMessage = "ERR002: El campo Código de Edificio debe tener entre 1 y 30 caracteres")]
@@ -13,10 +13,10 @@ namespace WebAPI.Dtos.SpecuLab
         public required string BuildingName { get; set; }
 
         [Required(ErrorMessage = "ERR005: El campo Dirección es obligatorio")]
-        public required string Address { get; set; }
+        public required string ConstructedAddress { get; set; }
 
         [Required(ErrorMessage = "ERR006: El campo Distrito es obligatorio")]
-        public required string District { get; set; }
+        public required string DistrictName { get; set; }
 
         [Required(ErrorMessage = "ERR007: El campo Número de pisos es obligatorio")]
         [Range(0, 1000, ErrorMessage = "ERR008: El campo Número de plantas debe estar entre 0 y 1000")]

@@ -7,6 +7,9 @@ using RepositoryLibraryProject.Data;
 using WebAPI.Dtos.Building;
 using WebAPI.Dtos.Address;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -327,6 +330,27 @@ namespace WebAPI.Controllers
                 Console.WriteLine($"StackTrace: {ex.StackTrace}");
                 // No fallar el proceso de creación del Building por un error en Address
             }
+        }
+
+        [HttpPost("{id}/send-to-speculab")]
+        public async Task<IActionResult> SendToSpecuLab(string id)
+        {
+            var building = _buildingService.GetByIdWithAddressAndDistrict(id);
+            if (building == null)
+                return NotFound();
+
+            var dto = _mapper.Map<WebAPI.Dtos.SpecuLab.SpecuLabGetterDto>(building);
+
+            // Configura la URL de la API externa
+            var apiUrl = "https://url-de-la-otra-api/api/speculab"; // Cambia esto por la URL real
+
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsJsonAsync(apiUrl, dto);
+
+            if (response.IsSuccessStatusCode)
+                return Ok("DTO enviado correctamente a SpecuLab.");
+            else
+                return StatusCode((int)response.StatusCode, $"Error al enviar a SpecuLab: {await response.Content.ReadAsStringAsync()}");
         }
     }
 }
