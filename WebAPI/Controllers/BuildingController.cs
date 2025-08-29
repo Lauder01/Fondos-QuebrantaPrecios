@@ -339,7 +339,7 @@ namespace WebAPI.Controllers
             if (building == null)
                 return NotFound();
 
-            var dto = _mapper.Map<WebAPI.Dtos.SpecuLab.SpecuLabCreatorDto>(building);
+            var dto = _mapper.Map<WebAPI.Dtos.SpecuLab.SpecuLabGetterDto>(building);
 
             // Configura la URL de la API externa
             var apiUrl = "https://url-de-la-otra-api/api/speculab"; // Cambia esto por la URL real
