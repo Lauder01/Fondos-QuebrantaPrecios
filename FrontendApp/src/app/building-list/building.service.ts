@@ -1,6 +1,8 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Building {
   id: string;
@@ -19,6 +21,7 @@ export interface Building {
   city?: string;
   country?: string;
   zipcodeId?: string;
+  statusId?: string;
   // Puedes agregar más campos según BuildingGetterDto
 }
 
@@ -31,7 +34,7 @@ export interface BuildingListResult {
 
 @Injectable({ providedIn: 'root' })
 export class BuildingService {
-  private apiUrl = '/api/building/paged';
+  private apiUrl = `${environment.apiUrl}/Building/paged`;
 
   constructor(private http: HttpClient) {}
 

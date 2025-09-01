@@ -10,6 +10,7 @@ namespace WebAPI.AutoMapperProfiles
         {
             CreateMap<Building, BuildingGetterDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => src.StatusId))
                 .ForMember(dest => dest.ConstructedAddress, opt => opt.MapFrom(src => GetAddressField(src, a => a.ConstructedAddress)))
                 .ForMember(dest => dest.ZipcodeId, opt => opt.MapFrom(src => GetAddressField(src, a => a.ZipcodeId)))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => GetAddressField(src, a => a.Country)))

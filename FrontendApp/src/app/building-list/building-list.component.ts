@@ -1,69 +1,229 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { BuildingCardComponent } from '../building-card/building-card.component';
-import { BuildingService, Building } from './building.service';
+import { BuildingService } from './building.service';
+import { ApiService, DistrictGetterDto, StatusGetterDto } from '../core/api.service';
+import { forkJoin, of, Subject } from 'rxjs';
+import { timeout, catchError, take, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-building-list',
   standalone: true,
   imports: [CommonModule, FormsModule, BuildingCardComponent],
   templateUrl: './building-list.component.html',
-  styleUrl: './building-list.component.css'
+  styleUrls: ['./building-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuildingListComponent implements OnInit {
+export class BuildingListComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   loading = false;
-  buildings: Building[] = [];
+  buildings: any[] = [];
   totalCount = 0;
   page = 1;
   pageSize = 6;
-  pages: number[] = [];
   searchName = '';
 
-  constructor(private buildingService: BuildingService) {}
+  districts: DistrictGetterDto[] = [];
+  statuses: StatusGetterDto[] = [];
+  districtMap: { [id: string]: string } = {};
+  statusMap: { [id: string]: string } = {};
 
-  ngOnInit(): void {
-    this.fetchBuildings();
-  }
-
-  fetchBuildings() {
-    this.loading = true;
-    this.buildingService.getBuildings(this.page, this.pageSize, this.searchName).subscribe({
-      next: (result) => {
-        this.buildings = result.items;
-        this.totalCount = result.totalCount;
-        this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
-        this.loading = false;
-      },
-      error: () => {
-        this.buildings = [];
-        this.totalCount = 0;
-        this.pages = [];
-        this.loading = false;
+  constructor(
+    private buildingService: BuildingService,
+    private apiService: ApiService,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    // Escuchar cambios de navegación para recargar cuando se navega a esta ruta
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event: NavigationEnd) => {
+      if (event.url === '/buildings' || event.url.startsWith('/buildings?')) {
+        console.log('Navegación detectada a buildings, recargando datos...');
+        setTimeout(() => {
+          this.resetAndLoadData();
+        }, 100);
       }
     });
   }
 
-  onPageChange(newPage: number) {
-    if (newPage < 1 || newPage > this.pages.length) return;
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
+  getPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  ngOnInit(): void {
+    this.resetAndLoadData();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private resetAndLoadData(): void {
+    console.log('Reseteando y cargando datos...');
+    // Reset del estado
+    this.buildings = [];
+    this.totalCount = 0;
+    this.page = 1;
+    this.loading = false;
+    this.districts = [];
+    this.statuses = [];
+    this.districtMap = {};
+    this.statusMap = {};
+
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
+
+    // Cargar datos
+    this.loadCatalogsAndBuildings();
+  }
+
+  /** 1) Garantiza que catálogos COMPLETAN (take(1)); 2) Dentro de NgZone */
+  private loadCatalogsAndBuildings(): void {
+    if (this.loading) {
+      console.log('Ya está cargando, saltando...');
+      return;
+    }
+
+    console.log('Iniciando carga de catálogos y edificios...');
+    forkJoin({
+      districts: this.apiService.getDistricts().pipe(
+        timeout(10000),
+        catchError(() => of([])),
+        take(1),
+        takeUntil(this.destroy$)
+      ),
+      statuses: this.apiService.getStatuses().pipe(
+        timeout(10000),
+        catchError(() => of([])),
+        take(1),
+        takeUntil(this.destroy$)
+      )
+    }).subscribe({
+      next: ({ districts, statuses }) => {
+        this.zone.run(() => {
+          console.log('Catálogos cargados:', { districts: districts?.length, statuses: statuses?.length });
+          console.log('Status recibidos:', statuses);
+          this.districts = districts || [];
+          this.statuses = statuses || [];
+          this.districtMap = {};
+          this.statusMap = {};
+          this.districts.forEach(d => { if (d?.id) this.districtMap[d.id] = d.name || '-'; });
+          this.statuses.forEach(s => { if (s?.id) this.statusMap[s.id] = s.name || '-'; });
+
+          console.log('Status map creado:', this.statusMap);
+
+          // catálogos listos -> ahora edificios
+          this.fetchBuildings();
+          this.cdr.detectChanges();
+        });
+      },
+      error: (error) => {
+        console.error('Error loading catalogs:', error);
+        // incluso si falla, cargamos edificios (mostrarán '-')
+        this.fetchBuildings();
+      }
+    });
+  }
+
+  /** También dentro de NgZone para forzar CD si la API usa fetch/no-zone */
+  fetchBuildings(): void {
+    if (this.loading) {
+      console.log('Ya está cargando edificios, saltando...');
+      return;
+    }
+
+    console.log('Iniciando carga de edificios...', { page: this.page, pageSize: this.pageSize, searchName: this.searchName });
+    this.loading = true;
+    this.cdr.detectChanges(); // Forzar actualización del loading
+
+    this.buildingService.getBuildings(this.page, this.pageSize, this.searchName)
+      .pipe(
+        timeout(10000),
+        catchError(error => {
+          console.error('Error fetching buildings:', error);
+          return of({ items: [], totalCount: 0, page: this.page, pageSize: this.pageSize });
+        }),
+        take(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (result) => {
+          console.log('RESULTADO API BUILDINGS:', result);
+          this.zone.run(() => {
+            this.buildings = (result.items || []).map(b => {
+              console.log('Procesando edificio:', b.name, 'StatusID:', b.statusId, 'StatusName en map:', this.statusMap[b?.statusId || '']);
+              return {
+                ...b,
+                name: (b?.name && b.name.trim()) ? b.name : (b?.constructedAddress && b.constructedAddress.trim() ? b.constructedAddress : 'Edificio sin dirección'),
+                districtName: this.districtMap[b?.districtId || ''] || '-',
+                statusName: this.statusMap[b?.statusId || ''] || 'Sin estado'
+              };
+            });
+            this.totalCount = result.totalCount || 0;
+            this.loading = false;
+
+            console.log('Edificios procesados:', this.buildings.length);
+            console.log('Total count:', this.totalCount);
+            console.log('Primer edificio con status:', this.buildings[0]);
+
+            // Forzar detección de cambios múltiples veces para asegurar renderizado
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.cdr.detectChanges();
+            }, 0);
+          });
+        },
+        error: (error) => {
+          console.error('Unexpected error:', error);
+          this.zone.run(() => {
+            this.buildings = [];
+            this.totalCount = 0;
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
+        }
+      });
+  }
+
+  goToPage(newPage: number): void {
+    if (newPage < 1 || newPage > this.totalPages || this.loading || newPage === this.page) return;
+    console.log('Cambiando a página:', newPage);
     this.page = newPage;
     this.fetchBuildings();
   }
 
-  onPageSizeChange(event: any) {
-    this.pageSize = Number(event);
+  onPageSizeChange(): void {
+    if (this.loading) return;
+    console.log('Cambiando tamaño de página a:', this.pageSize);
     this.page = 1;
     this.fetchBuildings();
   }
 
-  onSearchChange() {
+  onSearchChange(): void {
+    if (this.loading) return;
+    console.log('Búsqueda cambiada a:', this.searchName);
     this.page = 1;
     this.fetchBuildings();
   }
 
-  onCreateBuilding() {
+  onCreateBuilding(): void {
     // Implementar navegación a formulario de creación si es necesario
+  }
+
+  // TrackBy function para optimizar el rendering del *ngFor
+  trackByBuildingId(index: number, building: any): string {
+    return building?.id || index.toString();
   }
 }

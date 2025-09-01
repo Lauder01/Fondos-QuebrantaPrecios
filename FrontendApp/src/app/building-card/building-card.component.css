@@ -4,8 +4,25 @@
   box-shadow: 0 2px 12px 0 rgba(39,89,80,0.10);
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
 }
+
 .building-card:hover {
   box-shadow: 0 6px 28px 0 rgba(39,89,80,0.16);
   transform: translateY(-4px) scale(1.02);
   border-color: var(--color-primary);
+}
+
+.card-footer-custom {
+  border-top: 1px solid rgba(0,0,0,0.125) !important;
+  margin-top: auto;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.building-card .card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
