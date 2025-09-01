@@ -75,6 +75,16 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene todas las plantas de un edificio específico.
+        /// </summary>
+        /// <param name="buildingId">Identificador del edificio.</param>
+        /// <returns>Una colección de plantas del edificio especificado.</returns>
+        public IEnumerable<Floor> GetByBuildingId(string buildingId)
+        {
+            return _floorRepository.GetAll().Where(f => f.BuildingId == buildingId);
+        }
+
+        /// <summary>
         /// Actualiza una planta existente.
         /// </summary>
         /// <param name="entity">Entidad Floor a actualizar.</param>
