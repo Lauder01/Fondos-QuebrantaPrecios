@@ -73,6 +73,22 @@ export interface BuildingGetterDto extends BuildingCreatorDto {
 	id: string;
 }
 
+export interface FloorGetterDto {
+	id: string;
+	floorNumber: number;
+	buildingId: string;
+}
+
+export interface ApartmentCreatorDto {
+	code: string;
+	door: string;
+	floorId: string;
+}
+
+export interface ApartmentGetterDto extends ApartmentCreatorDto {
+	id: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
 	private baseUrl = environment.apiUrl;
@@ -139,5 +155,19 @@ export class ApiService {
 
 	getBuildingById(id: string): Observable<BuildingGetterDto> {
 		return this.http.get<BuildingGetterDto>(`${this.baseUrl}/Building/${id}`);
+	}
+
+	// Floor methods
+	getFloorsByBuildingId(buildingId: string): Observable<FloorGetterDto[]> {
+		return this.http.get<FloorGetterDto[]>(`${this.baseUrl}/Building/${buildingId}/floors`);
+	}
+
+	// Apartment methods
+	createApartment(apartment: ApartmentCreatorDto): Observable<ApartmentGetterDto> {
+		return this.http.post<ApartmentGetterDto>(`${this.baseUrl}/Apartment`, apartment);
+	}
+
+	getApartmentsByBuildingId(buildingId: string): Observable<ApartmentGetterDto[]> {
+		return this.http.get<ApartmentGetterDto[]>(`${this.baseUrl}/Building/${buildingId}/apartments`);
 	}
 }
