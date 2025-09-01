@@ -1,8 +1,10 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BuildingCardComponent } from '../building-card/building-card.component';
+import { BuildingService, Building } from './building.service';
 
 @Component({
   selector: 'app-building-list',
@@ -13,83 +15,55 @@ import { BuildingCardComponent } from '../building-card/building-card.component'
 })
 export class BuildingListComponent implements OnInit {
   loading = false;
-  allBuildings = [
-    {
-      id: 1,
-      name: 'Edificio Central',
-      district: 'Centro',
-      address: 'Calle Mayor 123',
-      price: 250000
-    },
-    {
-      id: 2,
-      name: 'Residencial Norte',
-      district: 'Norte',
-      address: 'Av. Libertad 45',
-      price: 180000
-    },
-    {
-      id: 3,
-      name: 'Torre Sur',
-      district: 'Sur',
-      address: 'Paseo del Prado 8',
-      price: 320000
-    },
-    {
-      id: 4,
-      name: 'Edificio Este',
-      district: 'Este',
-      address: 'Calle Sol 22',
-      price: 210000
-    },
-    {
-      id: 5,
-      name: 'Residencial Oeste',
-      district: 'Oeste',
-      address: 'Av. Mar 10',
-      price: 195000
-    },
-    {
-      id: 6,
-      name: 'Torre Norte',
-      district: 'Norte',
-      address: 'Paseo de la Paz 5',
-      price: 330000
-    }
-  ];
+  buildings: Building[] = [];
+  totalCount = 0;
   page = 1;
   pageSize = 6;
   pages: number[] = [];
+  searchName = '';
 
-  get buildings() {
-    const start = (this.page - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    return this.allBuildings.slice(start, end);
-  }
-
-  get totalCount() {
-    return this.allBuildings.length;
-  }
-
-  constructor() {}
+  constructor(private buildingService: BuildingService) {}
 
   ngOnInit(): void {
-    this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
+    this.fetchBuildings();
+  }
+
+  fetchBuildings() {
+    this.loading = true;
+    this.buildingService.getBuildings(this.page, this.pageSize, this.searchName).subscribe({
+      next: (result) => {
+        this.buildings = result.items;
+        this.totalCount = result.totalCount;
+        this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
+        this.loading = false;
+      },
+      error: () => {
+        this.buildings = [];
+        this.totalCount = 0;
+        this.pages = [];
+        this.loading = false;
+      }
+    });
   }
 
   onPageChange(newPage: number) {
     if (newPage < 1 || newPage > this.pages.length) return;
     this.page = newPage;
-    this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
+    this.fetchBuildings();
   }
 
-  onPageSizeChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.pageSize = Number(value);
+  onPageSizeChange(event: any) {
+    this.pageSize = Number(event);
     this.page = 1;
-    this.pages = Array.from({ length: Math.ceil(this.totalCount / this.pageSize) }, (_, i) => i + 1);
+    this.fetchBuildings();
+  }
+
+  onSearchChange() {
+    this.page = 1;
+    this.fetchBuildings();
   }
 
   onCreateBuilding() {
+    // Implementar navegación a formulario de creación si es necesario
   }
 }

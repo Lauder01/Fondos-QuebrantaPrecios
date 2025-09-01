@@ -16,18 +16,18 @@
       <h3 class="mb-4 text-secondary">{{ building.description }}</h3>
       <div class="row mb-3">
         <div class="col-12 col-md-6 mb-2">
-          <strong>Dirección:</strong> {{ building.address }}
+          <strong>Dirección:</strong> {{ building.constructedAddress || '-' }}
         </div>
         <div class="col-12 col-md-6 mb-2">
-          <strong>Distrito:</strong> {{ building.district }}
+          <strong>Distrito:</strong> {{ building.districtId || '-' }}
         </div>
       </div>
       <div class="row mb-3">
         <div class="col-6 col-md-3 mb-2">
-          <strong>Año de construcción:</strong> {{ building.yearBuilt }}
+          <strong>Año de construcción:</strong> {{ building.yearBuilt || '-' }}
         </div>
         <div class="col-6 col-md-3 mb-2">
-          <strong>Plantas:</strong> {{ building.floorCount }}
+          <strong>Plantas:</strong> {{ building.floorCount || '-' }}
         </div>
         <div class="col-6 col-md-3 mb-2">
           <strong>Ascensor:</strong> {{ building.hasElevator ? 'Sí' : 'No' }}
@@ -43,7 +43,7 @@
                      building.energyCertificate === 'F' ? '#85144b' :
                      building.energyCertificate === 'G' ? '#111111' : '#888'
           }" class="fw-bold">
-            {{ building.energyCertificate }}
+            {{ building.energyCertificate || '-' }}
           </span>
         </div>
       </div>

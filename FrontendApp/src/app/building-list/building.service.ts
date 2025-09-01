@@ -6,7 +6,6 @@ export interface Building {
   id: string;
   name: string;
   description?: string;
-  code: string;
   doorway: string;
   floorCount?: number;
   yearBuilt?: number;
@@ -14,7 +13,13 @@ export interface Building {
   districtId?: string;
   streetId?: string;
   buildingCompanyId?: string;
-  // Agrega más campos según tu DTO
+  energyCertificate?: string;
+  hasElevator?: boolean;
+  constructedAddress?: string;
+  city?: string;
+  country?: string;
+  zipcodeId?: string;
+  // Puedes agregar más campos según BuildingGetterDto
 }
 
 export interface BuildingListResult {

@@ -83,7 +83,7 @@ namespace ServiceLibraryProject
         /// <returns>Tupla con la lista de edificios y el total</returns>
         public (IEnumerable<Building> Items, int TotalCount) GetPagedAndFiltered(int page, int pageSize, string? name, string? districtId, string? companyId)
         {
-            var query = _buildingRepository.GetAll().AsQueryable();
+            var query = GetAllWithAddressAndDistrict().AsQueryable();
             if (!string.IsNullOrWhiteSpace(name))
                 query = query.Where(b => b.Name != null && b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrWhiteSpace(districtId))

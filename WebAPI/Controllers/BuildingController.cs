@@ -67,7 +67,7 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<BuildingGetterDto> GetById(string id)
         {
-            var building = _buildingService.GetById(id);
+            var building = _buildingService.GetByIdWithAddressAndDistrict(id);
             if (building == null) return NotFound();
             var dto = _mapper.Map<BuildingGetterDto>(building);
             return Ok(dto);
@@ -188,18 +188,7 @@ namespace WebAPI.Controllers
         {
             var building = _buildingService.GetByCode(code);
             if (building == null) return NotFound();
-            var dto = new WebAPI.Dtos.SpecuLab.SpecuLabGetterDto
-            {
-                BuildingCode = building.Code,
-                BuildingName = building.Name ?? string.Empty,
-                //building.Address?.FirstOrDefault()?.ConstructedAddress.ToString() ??
-                ConstructedAddress = "N/A",
-                //string.IsNullOrWhiteSpace(building.District?.Name.ToString()) ? "N/A" : building.District.Name,
-                DistrictName = "N/A",
-                FloorCount = building.FloorCount,
-                YearBuilt = building.YearBuilt,
-                ApartmentCount = building.ApartmentCount
-            };
+            var dto = _mapper.Map<SpecuLabGetterDto>(building);
             return Ok(dto);
         }
 
