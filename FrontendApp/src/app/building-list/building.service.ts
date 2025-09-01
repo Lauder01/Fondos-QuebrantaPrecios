@@ -22,7 +22,9 @@ export interface Building {
   country?: string;
   zipcodeId?: string;
   statusId?: string;
-  // Puedes agregar más campos según BuildingGetterDto
+  // Campos calculados/mapeados del frontend
+  districtName?: string;
+  statusName?: string;
 }
 
 export interface BuildingListResult {
@@ -35,6 +37,7 @@ export interface BuildingListResult {
 @Injectable({ providedIn: 'root' })
 export class BuildingService {
   private apiUrl = `${environment.apiUrl}/Building/paged`;
+  private apiDetailUrl = `${environment.apiUrl}/Building`;
 
   constructor(private http: HttpClient) {}
 
@@ -52,5 +55,9 @@ export class BuildingService {
     if (districtId) params = params.set('districtId', districtId);
     if (companyId) params = params.set('companyId', companyId);
     return this.http.get<BuildingListResult>(this.apiUrl, { params });
+  }
+
+  getBuildingById(id: string): Observable<Building> {
+    return this.http.get<Building>(`${this.apiDetailUrl}/${id}`);
   }
 }

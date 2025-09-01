@@ -1,2 +1,63 @@
-.container { max-width: 600px; }
-h2 { color: #007bff; }
+.container {
+  max-width: 900px;
+}
+
+h1, h2 {
+  color: #007bff;
+}
+
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.text-orange {
+  color: #ff851b !important;
+}
+
+.text-dark-red {
+  color: #85144b !important;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.card-header {
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.card-body p {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.card-body strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.alert {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}

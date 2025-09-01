@@ -1,65 +1,145 @@
 <div style="width: 100%;">
-
   <div class="px-4 mb-2" style="width: 100%;">
     <div class="position-relative m-3" style="min-height: 48px;">
       <a routerLink="/buildings" class="btn btn-outline-primary position-absolute start-0 top-0">
         <i class="bi bi-arrow-left-circle me-2"></i> Volver a la lista de edificios
       </a>
-        <h2 class="w-100 text-center" style="font-weight: 600;">Detalle del edificio</h2>
+      <h2 class="w-100 text-center" style="font-weight: 600;">Detalle del edificio</h2>
     </div>
     <hr style="border-top: 2px solid #007bff; margin: 0; width: 100%;">
   </div>
-  <div class="container py-5" style="max-width: 700px;">
-    <!-- TODO: Conectar con la API para obtener los datos reales del edificio -->
-    <div *ngIf="building; else notFound">
-      <h1 class="mb-3 text-primary">{{ building.name }}</h1>
-      <h3 class="mb-4 text-secondary">{{ building.description }}</h3>
-      <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2">
-          <strong>Dirección:</strong> {{ building.constructedAddress || '-' }}
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Building Detail -->
+  <div class="container py-4" style="max-width: 900px;" *ngIf="building && !loading">
+    <!-- Header Section -->
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h1 class="mb-2 text-primary fw-bold">{{ building.name }}</h1>
+            <p class="text-muted mb-0" *ngIf="building.description">{{ building.description }}</p>
+          </div>
+          <div [class]="getStatusBadgeClass()">
+            {{ building.statusName }}
+          </div>
         </div>
-        <div class="col-12 col-md-6 mb-2">
-          <strong>Distrito:</strong> {{ building.districtId || '-' }}
+
+        <!-- Price highlight -->
+        <div class="bg-light rounded p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="h5 mb-0 text-success fw-bold">{{ building.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <small class="text-muted">Precio total</small>
+          </div>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-6 col-md-3 mb-2">
-          <strong>Año de construcción:</strong> {{ building.yearBuilt || '-' }}
-        </div>
-        <div class="col-6 col-md-3 mb-2">
-          <strong>Plantas:</strong> {{ building.floorCount || '-' }}
-        </div>
-        <div class="col-6 col-md-3 mb-2">
-          <strong>Ascensor:</strong> {{ building.hasElevator ? 'Sí' : 'No' }}
-        </div>
-        <div class="col-6 col-md-3 mb-2">
-          <strong>Certificado energético:</strong>
-          <span [ngStyle]="{
-            'color': building.energyCertificate === 'A' ? '#2ecc40' :
-                     building.energyCertificate === 'B' ? '#0074d9' :
-                     building.energyCertificate === 'C' ? '#ffdc00' :
-                     building.energyCertificate === 'D' ? '#ff851b' :
-                     building.energyCertificate === 'E' ? '#ff4136' :
-                     building.energyCertificate === 'F' ? '#85144b' :
-                     building.energyCertificate === 'G' ? '#111111' : '#888'
-          }" class="fw-bold">
-            {{ building.energyCertificate || '-' }}
-          </span>
-        </div>
-      </div>
-      <div class="mb-4">
-        <strong class="fs-5">Precio:</strong>
-        <span class="fw-semibold fs-5">{{ building.price | currency:'EUR' }}</span>
       </div>
     </div>
-    <hr>
-    <div *ngIf="building">
-        <a [routerLink]="['/buildings', building.id]" class="btn btn-outline-primary">
-          <i class="bi bi-cart me-2"></i> Comprar
-        </a>
+
+    <!-- Main Information -->
+    <div class="row">
+      <!-- Location & Basic Info -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Ubicación</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <strong>Dirección:</strong>
+              <p class="mb-1">{{ building.constructedAddress || 'No especificada' }}</p>
+            </div>
+            <div class="mb-3">
+              <strong>Distrito:</strong>
+              <p class="mb-1">{{ building.districtName }}</p>
+            </div>
+            <div class="mb-3" *ngIf="building.city">
+              <strong>Ciudad:</strong>
+              <p class="mb-1">{{ building.city }}</p>
+            </div>
+            <div class="mb-0" *ngIf="building.country">
+              <strong>País:</strong>
+              <p class="mb-0">{{ building.country }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Building Characteristics -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="bi bi-building me-2"></i>Características</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6 mb-3">
+                <strong>Plantas:</strong>
+                <p class="mb-1">{{ building.floorCount || '-' }}</p>
+              </div>
+              <div class="col-6 mb-3">
+                <strong>Año construcción:</strong>
+                <p class="mb-1">{{ building.yearBuilt || '-' }}</p>
+              </div>
+              <div class="col-6 mb-3">
+                <strong>Portal:</strong>
+                <p class="mb-1">{{ building.doorway || '-' }}</p>
+              </div>
+              <div class="col-6 mb-3">
+                <strong>Ascensor:</strong>
+                <p class="mb-1">
+                  <span [class]="building.hasElevator ? 'text-success' : 'text-danger'">
+                    <i [class]="building.hasElevator ? 'bi bi-check-circle' : 'bi bi-x-circle'"></i>
+                    {{ building.hasElevator ? 'Sí' : 'No' }}
+                  </span>
+                </p>
+              </div>
+              <div class="col-12">
+                <strong>Certificado energético:</strong>
+                <p class="mb-0">
+                  <span [class]="getEnergyClass()" class="fs-5">
+                    {{ building.energyCertificate || 'No especificado' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <ng-template #notFound>
-      <div class="alert alert-warning">No se encontró el edificio.</div>
-    </ng-template>
+
+    <!-- Action Buttons -->
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="mb-3">¿Interesado en este edificio?</h5>
+        <div *ngIf="building.statusName !== 'Comprado'">
+          <button class="btn btn-success btn-lg">
+            <i class="bi bi-cart me-2"></i> Comprar edificio
+          </button>
+        </div>
+        <div *ngIf="building.statusName === 'Comprado'" class="alert alert-warning mt-3">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Este edificio ya ha sido adquirido y no está disponible.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found -->
+  <div class="container py-5" *ngIf="!building && !loading">
+    <div class="text-center">
+      <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        No se encontró el edificio solicitado.
+      </div>
+      <a routerLink="/buildings" class="btn btn-primary">
+        <i class="bi bi-arrow-left me-2"></i> Volver a la lista
+      </a>
+    </div>
   </div>
 </div>
