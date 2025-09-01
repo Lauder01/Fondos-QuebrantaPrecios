@@ -34,7 +34,7 @@ namespace WebAPI.Dtos.Building
         [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR011: El BuildingCompanyId debe tener exactamente 36 caracteres")]
         public string BuildingCompanyId { get; set; } = string.Empty;
 
-        [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR013: El StatusId debe tener exactamente 36 caracteres")]
+        //[StringLength(36, MinimumLength = 0, ErrorMessage = "ERR013: El StatusId debe tener exactamente 36 caracteres")]
         public string StatusId { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "ERR012: El certificado energético no puede superar los 10 caracteres")]
