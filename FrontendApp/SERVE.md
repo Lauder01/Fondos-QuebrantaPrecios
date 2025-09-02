@@ -25,11 +25,11 @@ ng build --configuration=production
 ```
 
 ## URLs actuales por configuración:
-- **Development**: `https://localhost:7124/api`
-- **Staging**: `https://172.30.137.209:7124/api`  
+- **Development**: `https://devdemoapi1.azurewebsites.net/api`
+- **Staging**: `https://devdemoapi1.azurewebsites.net/api`  
 - **Production**: `https://api.production.domain.com/api`
 
-Para conectar con la API en `https://172.30.137.209:7124`, usa:
+Para conectar con la API en Azure, usa:
 ```bash
 ng serve --configuration=staging
 ```

@@ -5,12 +5,12 @@
 El proyecto está configurado para usar diferentes URLs de API según el ambiente:
 
 ### Desarrollo Local (`environment.ts`)
-- URL: `http://localhost:7124/api`
-- Para desarrollo local con backend en localhost
+- URL: `https://devdemoapi1.azurewebsites.net/api`
+- Para desarrollo con API de Azure
 
 ### Staging (`environment.staging.ts`)
-- URL: `https://172.30.137.209:7124/api`
-- Para pruebas en servidor de staging
+- URL: `https://devdemoapi1.azurewebsites.net/api`
+- Para pruebas con API de Azure
 
 ### Producción (`environment.prod.ts`)
 - URL: `https://api.production.domain.com/api`
