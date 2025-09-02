@@ -34,7 +34,9 @@ export interface BuildingListResult {
 
 @Injectable({ providedIn: 'root' })
 export class BuildingService {
+
   private apiUrl = `${environment.apiUrl}/Building/paged`;
+  private baseUrl = `${environment.apiUrl}/Building`;
 
   constructor(private http: HttpClient) {}
 
@@ -52,5 +54,10 @@ export class BuildingService {
     if (districtId) params = params.set('districtId', districtId);
     if (companyId) params = params.set('companyId', companyId);
     return this.http.get<BuildingListResult>(this.apiUrl, { params });
+  }
+
+  updateBuildingStatus(id: string, statusId: string): Observable<any> {
+    const url = `${this.baseUrl}/${id}/status`;
+    return this.http.put(url, { statusId });
   }
 }

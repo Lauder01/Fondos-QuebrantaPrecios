@@ -54,9 +54,9 @@
     </div>
     <hr>
     <div *ngIf="building">
-        <a [routerLink]="['/buildings', building.id]" class="btn btn-outline-primary">
+        <button (click)="buyBuilding()" class="btn btn-outline-primary">
           <i class="bi bi-cart me-2"></i> Comprar
-        </a>
+        </button>
     </div>
     <ng-template #notFound>
       <div class="alert alert-warning">No se encontró el edificio.</div>

@@ -16,6 +16,9 @@ export class BuildingDetailComponent implements OnInit {
   building: Building | null = null;
   loading = false;
 
+
+  readonly SOLD_STATUS_ID = 'CB85B731-5FBC-4F56-9938-E183B51EE409';
+
   constructor(private route: ActivatedRoute, private buildingService: BuildingService) {}
 
   ngOnInit(): void {
@@ -40,6 +43,19 @@ export class BuildingDetailComponent implements OnInit {
       error: () => {
         this.building = null;
         this.loading = false;
+      }
+    });
+  }
+
+  buyBuilding() {
+    if (!this.buildingId) return;
+    this.buildingService.updateBuildingStatus(this.buildingId, this.SOLD_STATUS_ID).subscribe({
+      next: () => {
+        alert('¡Edificio comprado exitosamente!');
+        this.fetchBuilding(this.buildingId!); // refrescar datos
+      },
+      error: () => {
+        alert('Error al comprar el edificio.');
       }
     });
   }
