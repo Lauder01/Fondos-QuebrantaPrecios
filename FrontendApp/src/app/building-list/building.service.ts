@@ -10,6 +10,7 @@ export interface Building {
   description?: string;
   doorway: string;
   floorCount?: number;
+  apartmentCount?: number;
   yearBuilt?: number;
   price?: number;
   districtId?: string;

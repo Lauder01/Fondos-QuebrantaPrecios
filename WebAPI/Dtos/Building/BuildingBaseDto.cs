@@ -58,6 +58,9 @@ namespace WebAPI.Dtos.Building
         [Range(0, 20, ErrorMessage = "El número de apartamentos por piso debe estar entre 0 y 20")]
         public int ApartmentsPerFloor { get; set; } = 1;
         
+        [Range(0, 20000, ErrorMessage = "El número total de apartamentos debe estar entre 0 y 20000")]
+        public int ApartmentCount { get; set; } = 0;
+        
         /// <summary>
         /// Validación personalizada para el DTO de Building.
         /// </summary>
