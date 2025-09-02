@@ -18,6 +18,7 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
   buildingId: string | null = null;
   building: Building | null = null;
   loading = false;
+  purchasing = false; // Para mostrar estado de compra
 
   districts: DistrictGetterDto[] = [];
   statuses: StatusGetterDto[] = [];
@@ -108,5 +109,68 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
       case 'G': return 'text-dark fw-bold';
       default: return 'text-muted';
     }
+  }
+
+  purchaseBuilding(): void {
+    if (!this.building?.id || this.purchasing) return;
+
+    this.purchasing = true;
+
+    // Obtener el ID del status "Pendiente"
+    this.apiService.getStatusByName('Pendiente')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (pendingStatus) => {
+          if (!pendingStatus) {
+            console.error('No se encontró el status "Pendiente"');
+            this.purchasing = false;
+            return;
+          }
+
+          if (!this.building) return;
+
+          // Actualizar el edificio con el nuevo status
+          this.buildingService.updateBuilding(this.building.id, {
+            statusId: pendingStatus.id,
+            // Incluir todas las propiedades requeridas del edificio
+            name: this.building.name,
+            doorway: this.building.doorway,
+            floorCount: this.building.floorCount || 0,
+            yearBuilt: this.building.yearBuilt || 1970,
+            price: this.building.price || 0,
+            districtId: this.building.districtId || '',
+            streetId: this.building.streetId || '',
+            buildingCompanyId: this.building.buildingCompanyId || '',
+            energyCertificate: this.building.energyCertificate || '',
+            hasElevator: this.building.hasElevator || false,
+            description: this.building.description || '',
+            constructedAddress: this.building.constructedAddress || '',
+            city: this.building.city || '',
+            country: this.building.country || '',
+            zipcodeId: this.building.zipcodeId || '',
+            apartmentCount: this.building.apartmentCount || 0
+          })
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              // Actualizar el estado local del edificio
+              if (this.building) {
+                this.building.statusId = pendingStatus.id;
+                this.building.statusName = 'Pendiente';
+              }
+              this.purchasing = false;
+              console.log('Edificio actualizado a estado Pendiente');
+            },
+            error: (error) => {
+              console.error('Error al actualizar el edificio:', error);
+              this.purchasing = false;
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error al obtener el status Pendiente:', error);
+          this.purchasing = false;
+        }
+      });
   }
 }

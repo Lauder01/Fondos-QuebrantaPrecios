@@ -61,4 +61,8 @@ export class BuildingService {
   getBuildingById(id: string): Observable<Building> {
     return this.http.get<Building>(`${this.apiDetailUrl}/${id}`);
   }
+
+  updateBuilding(id: string, building: Partial<Building>): Observable<void> {
+    return this.http.put<void>(`${this.apiDetailUrl}/${id}`, { ...building, id });
+  }
 }
