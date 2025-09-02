@@ -21,7 +21,7 @@ git push origin Angular
 2. **Configure Project Settings**:
    - Framework Preset: `Angular`
    - Root Directory: `FrontendApp`
-   - Build Command: `npm run build:vercel`
+   - Build Command: `npm run build`
    - Output Directory: `dist/FrontendApp/browser`
    - Install Command: `npm install && npm run setup-bootstrap-ci`
 
@@ -38,7 +38,7 @@ git push origin Angular
 ## 📝 Comandos útiles
 ```bash
 # Build local para testing
-npm run build:vercel
+npm run build
 
 # Servidor de desarrollo
 npm run start

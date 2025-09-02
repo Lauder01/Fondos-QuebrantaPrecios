@@ -18,7 +18,7 @@ El proyecto ya está configurado para Vercel con:
 ### 3. Configuración en Vercel
 - **Framework Preset**: Angular
 - **Root Directory**: `FrontendApp`
-- **Build Command**: `npm run build:vercel`
+- **Build Command**: `npm run build`
 - **Output Directory**: `dist/FrontendApp/browser`
 - **Install Command**: `npm install && npm run setup-bootstrap-ci`
 
@@ -36,7 +36,7 @@ npm install
 npm run setup-bootstrap-ci
 
 # Build de producción
-npm run build:vercel
+npm run build
 ```
 
 ### 6. Dominios personalizados
