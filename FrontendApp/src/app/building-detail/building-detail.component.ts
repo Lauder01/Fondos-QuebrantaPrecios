@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BuildingService, Building } from '../building-list/building.service';
@@ -19,6 +19,7 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
   building: Building | null = null;
   loading = false;
   purchasing = false; // Para mostrar estado de compra
+  purchaseSuccess = false; // Para mostrar mensaje de éxito temporal
 
   districts: DistrictGetterDto[] = [];
   statuses: StatusGetterDto[] = [];
@@ -28,7 +29,8 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private buildingService: BuildingService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -134,6 +136,7 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
             statusId: pendingStatus.id,
             // Incluir todas las propiedades requeridas del edificio
             name: this.building.name,
+            description: this.building.description || '',
             doorway: this.building.doorway,
             floorCount: this.building.floorCount || 0,
             yearBuilt: this.building.yearBuilt || 1970,
@@ -143,7 +146,6 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
             buildingCompanyId: this.building.buildingCompanyId || '',
             energyCertificate: this.building.energyCertificate || '',
             hasElevator: this.building.hasElevator || false,
-            description: this.building.description || '',
             constructedAddress: this.building.constructedAddress || '',
             city: this.building.city || '',
             country: this.building.country || '',
@@ -159,17 +161,30 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
                 this.building.statusName = 'Pendiente';
               }
               this.purchasing = false;
+              this.purchaseSuccess = true;
+
+              // Forzar detección de cambios para actualizar la UI inmediatamente
+              this.cdr.detectChanges();
+
+              // Ocultar mensaje de éxito después de 3 segundos
+              setTimeout(() => {
+                this.purchaseSuccess = false;
+                this.cdr.detectChanges();
+              }, 3000);
+
               console.log('Edificio actualizado a estado Pendiente');
             },
             error: (error) => {
               console.error('Error al actualizar el edificio:', error);
               this.purchasing = false;
+              this.cdr.detectChanges();
             }
           });
         },
         error: (error) => {
           console.error('Error al obtener el status Pendiente:', error);
           this.purchasing = false;
+          this.cdr.detectChanges();
         }
       });
   }

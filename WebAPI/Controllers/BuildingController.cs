@@ -212,8 +212,24 @@ namespace WebAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
+            // Obtener el edificio existente para preservar el Code (sin tracking)
+            var existingBuilding = _buildingService.GetById(id);
+            if (existingBuilding == null)
+                return NotFound();
+            
+            // Guardar el Code existente
+            var existingCode = existingBuilding.Code;
+            
             var building = _mapper.Map<Building>(dto);
             building.Id = id;
+            
+            // Preservar el Code existente si no se proporciona uno válido
+            if (string.IsNullOrEmpty(building.Code))
+            {
+                building.Code = existingCode;
+            }
+            
             _buildingService.Update(building);
             return NoContent();
         }

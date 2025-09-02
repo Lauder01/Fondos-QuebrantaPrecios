@@ -54,7 +54,31 @@ namespace RepositoryLibraryProject
         {
             try
             {
-                _dbSet.Update(entity);
+                // Obtener el valor de la clave primaria
+                var keyProperty = typeof(T).GetProperty("Id");
+                if (keyProperty == null)
+                    throw new InvalidOperationException("La entidad debe tener una propiedad 'Id'.");
+                
+                var keyValue = keyProperty.GetValue(entity)?.ToString();
+                if (string.IsNullOrEmpty(keyValue))
+                    throw new InvalidOperationException("El valor del Id no puede ser nulo o vacío.");
+
+                // Buscar si ya existe una entidad tracked con el mismo ID
+                var trackedEntity = _context.Entry(entity).Entity;
+                var existingEntry = _context.ChangeTracker.Entries<T>()
+                    .FirstOrDefault(e => keyProperty.GetValue(e.Entity)?.ToString() == keyValue);
+
+                if (existingEntry != null)
+                {
+                    // Si ya existe una entidad tracked, actualizar sus valores
+                    existingEntry.CurrentValues.SetValues(entity);
+                }
+                else
+                {
+                    // Si no existe, usar Update normal
+                    _dbSet.Update(entity);
+                }
+                
                 _context.SaveChanges();
             }
             catch (Exception ex)

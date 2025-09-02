@@ -8,6 +8,7 @@ export interface Building {
   id: string;
   name: string;
   description?: string;
+  code?: string;
   doorway: string;
   floorCount?: number;
   apartmentCount?: number;

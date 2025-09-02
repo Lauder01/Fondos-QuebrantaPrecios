@@ -150,6 +150,10 @@
           <i class="bi bi-clock me-2"></i>
           Esta compra está siendo procesada. El edificio está pendiente de aprobación.
         </div>
+        <div *ngIf="purchaseSuccess" class="alert alert-success mt-3">
+          <i class="bi bi-check-circle me-2"></i>
+          ¡Solicitud de compra enviada correctamente! El edificio está ahora en estado pendiente.
+        </div>
         <div *ngIf="building.statusName === 'Comprado'" class="alert alert-warning mt-3">
           <i class="bi bi-exclamation-triangle me-2"></i>
           Este edificio ya ha sido adquirido y no está disponible.
