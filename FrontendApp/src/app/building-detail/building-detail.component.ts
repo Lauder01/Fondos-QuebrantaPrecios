@@ -109,4 +109,50 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
       default: return 'text-muted';
     }
   }
+
+  readonly SOLD_STATUS_ID = 'CB85B731-5FBC-4F56-9938-E183B51EE409';
+
+  buyBuilding() {
+    if (!this.buildingId) return;
+    this.loading = true;
+    this.buildingService.getBuildingById(this.buildingId).subscribe({
+      next: (building) => {
+        // Solo los campos válidos para la base de datos
+        const cleanedBuilding = {
+          id: building.id,
+          districtId: building.districtId,
+          streetId: building.streetId,
+          statusId: this.SOLD_STATUS_ID,
+          buildingCompanyId: building.buildingCompanyId,
+          name: building.name,
+          description: building.description,
+          code: (building as any).code, // Si el campo code existe
+          doorway: building.doorway,
+          floorCount: building.floorCount,
+          apartmentCount: (building as any).apartmentCount, // Si el campo existe
+          yearBuilt: building.yearBuilt,
+          price: building.price,
+          energyCertificate: building.energyCertificate,
+          hasElevator: building.hasElevator,
+          createdAt: (building as any).createdAt, // Si el campo existe
+          updatedAt: (building as any).updatedAt  // Si el campo existe
+        };
+        this.buildingService.updateBuilding(this.buildingId!, cleanedBuilding).subscribe({
+          next: () => {
+            window.alert('¡Edificio comprado exitosamente!');
+            this.building = { ...building, statusId: this.SOLD_STATUS_ID, statusName: this.statusMap[this.SOLD_STATUS_ID] || 'Comprado' };
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+            window.alert('Error al comprar el edificio.');
+          }
+        });
+      },
+      error: () => {
+        this.loading = false;
+        window.alert('No se pudo obtener el edificio para actualizar.');
+      }
+    });
+  }
 }

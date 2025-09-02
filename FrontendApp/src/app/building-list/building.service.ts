@@ -60,4 +60,8 @@ export class BuildingService {
   getBuildingById(id: string): Observable<Building> {
     return this.http.get<Building>(`${this.apiDetailUrl}/${id}`);
   }
+
+  updateBuilding(id: string, building: Building): Observable<any> {
+    return this.http.put(`${this.apiDetailUrl}/${id}`, building);
+  }
 }

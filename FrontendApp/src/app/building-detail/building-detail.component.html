@@ -132,8 +132,8 @@
     <div class="card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="mb-3">¿Interesado en este edificio?</h5>
-        <div *ngIf="building.statusName !== 'Comprado'">
-          <button class="btn btn-success btn-lg">
+        <div *ngIf="building.statusId !== '5BAA7D8E-08A4-44AD-A713-2CF845C90471'">
+          <button class="btn btn-success btn-lg" (click)="buyBuilding()">
             <i class="bi bi-cart me-2"></i> Comprar edificio
           </button>
         </div>
