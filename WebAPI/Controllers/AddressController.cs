@@ -53,37 +53,6 @@ namespace WebAPI.Controllers
             var result = _mapper.Map<AddressGetterDto>(address);
             return CreatedAtAction(nameof(GetById), new { id = address.Id }, result);
         }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(string id, AddressUpdaterDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var address = _mapper.Map<Address>(dto);
-            address.Id = id;
-            try
-            {
-                _addressService.Update(address);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
-        {
-            try
-            {
-                _addressService.Delete(id);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            return NoContent();
-        }
+        
     }
 }

@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             var result = _mapper.Map<FloorGetterDto>(floor);
             return CreatedAtAction(nameof(GetById), new { id = floor.Id }, result);
         }
-
+        /*
         [HttpPut("{id}")]
         public IActionResult Update(string id, FloorUpdaterDto dto)
         {
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         {
             _floorService.Delete(id);
             return NoContent();
-        }
+        }*/
 
         [HttpGet("{id}/apartments")]
         public ActionResult<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>> GetApartmentsByFloorId(string id)

@@ -57,44 +57,5 @@ namespace WebAPI.Controllers
             var result = mapper.Map<DistrictGetterDto>(district);
             return CreatedAtAction(nameof(GetAll), new { id = district.Id }, result);
         }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(string id, DistrictUpdaterDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var district = mapper.Map<District>(dto);
-            district.Id = id;
-
-            try
-            {
-                districtService.Update(district);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
-        {
-            try
-            {
-                districtService.Delete(id);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            return NoContent();
-        }
     }
 }
