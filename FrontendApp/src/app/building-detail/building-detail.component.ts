@@ -3,8 +3,8 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BuildingService, Building } from '../building-list/building.service';
 import { ApiService, DistrictGetterDto, StatusGetterDto } from '../core/api.service';
-import { forkJoin, of, Subject } from 'rxjs';
-import { timeout, catchError, takeUntil, switchMap, take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-building-detail',
@@ -31,39 +31,17 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(params => {
-          this.buildingId = params.get('id');
-          if (!this.buildingId) return of(null);
-
-          this.loading = true;
-
-          return forkJoin({
-            catalogs: forkJoin({
-              districts: this.apiService.getDistricts().pipe(
-                timeout(10000),
-                catchError(() => of([])),
-                take(1)
-              ),
-              statuses: this.apiService.getStatuses().pipe(
-                timeout(10000),
-                catchError(() => of([])),
-                take(1)
-              )
-            }),
-            building: this.buildingService.getBuildingById(this.buildingId).pipe(
-              timeout(10000),
-              catchError(() => of(null)),
-              take(1)
-            )
-          });
-        })
-      )
+    // Los datos ya están resueltos por el resolver, solo necesitamos procesarlos
+    this.route.data
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result) => {
-          if (!result) return;
+        next: (data) => {
+          const result = data['data'];
+          if (!result) {
+            this.building = null;
+            this.loading = false;
+            return;
+          }
 
           // mapear catálogos
           const { districts, statuses } = result.catalogs;
