@@ -64,5 +64,23 @@ namespace WebAPI.Controllers
             _floorService.Delete(id);
             return NoContent();
         }
+
+        [HttpGet("{id}/apartments")]
+        public ActionResult<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>> GetApartmentsByFloorId(string id)
+        {
+            // Verificar que el floor existe
+            var floor = _floorService.GetById(id);
+            if (floor == null) return NotFound("Piso no encontrado");
+            
+            // Necesitamos inyectar ApartmentService
+            using var scope = HttpContext.RequestServices.CreateScope();
+            var apartmentService = scope.ServiceProvider.GetRequiredService<ServiceLibraryProject.ApartmentService>();
+            
+            // Obtener los apartamentos del piso específico
+            var apartments = apartmentService.GetByFloorId(id);
+            var apartmentDtos = _mapper.Map<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>>(apartments);
+            
+            return Ok(apartmentDtos);
+        }
     }
 }

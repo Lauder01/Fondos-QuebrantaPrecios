@@ -55,6 +55,9 @@ namespace WebAPI.Dtos.Building
         [StringLength(255, ErrorMessage = "La ciudad no puede superar los 255 caracteres")]
         public string? City { get; set; }
         
+        [Range(0, 20, ErrorMessage = "El número de apartamentos por piso debe estar entre 0 y 20")]
+        public int ApartmentsPerFloor { get; set; } = 1;
+        
         /// <summary>
         /// Validación personalizada para el DTO de Building.
         /// </summary>

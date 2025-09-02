@@ -32,33 +32,41 @@
       style="background-color: var(--color-primary-dark); color: var(--color-white); border: 2px solid var(--color-primary); transition: background 0.2s, color 0.2s;"
       onmouseover="this.style.backgroundColor='var(--color-primary)'"
       onmouseout="this.style.backgroundColor='var(--color-primary-dark)'"
-      (click)="finishRegistration()">
-      Finalizar registro
+      (click)="finishRegistration()"
+      [disabled]="isCreatingApartments">
+      @if (isCreatingApartments) {
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Creando apartamentos...
+      } @else {
+        Finalizar registro
+      }
     </button>
   </div>
 
   @if (step === 2) {
     <nav>
       <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentFloor === 1">
+        <li class="page-item" [class.disabled]="floors.indexOf(currentFloor) === 0">
           <button class="page-link" (click)="prevFloor()">Anterior</button>
         </li>
         @for (floor of floors; track floor; let i = $index) {
-          <li class="page-item" [class.active]="currentFloor === (i+1)">
-            <button class="page-link" (click)="goToFloor(i+1)">{{ i+1 }}</button>
+          <li class="page-item" [class.active]="currentFloor === floor">
+            <button class="page-link" (click)="goToFloor(floor)">Piso {{ floor }}</button>
           </li>
         }
-        <li class="page-item" [class.disabled]="currentFloor === floors.length">
+        <li class="page-item" [class.disabled]="floors.indexOf(currentFloor) === floors.length - 1">
           <button class="page-link" (click)="nextFloor()">Siguiente</button>
         </li>
       </ul>
     </nav>
-    <h4 class="mb-3">Planta {{ currentFloor }}</h4>
+    <h4 class="mb-3">Piso {{ currentFloor }}</h4>
     <div class="row">
       @for (apt of apartmentsArray; track apt) {
         <div class="col-md-4 mb-3">
           <div class="card p-3">
             <strong>Apartamento {{ apt }}</strong>
+            <small class="text-muted">Código: {{ currentFloor }}-{{ apt.toString().padStart(2, '0') }}</small>
+            <small class="text-muted">Puerta: {{ apt }}{{ getDoorLetter(apt) }}</small>
             <!-- Aquí puedes añadir campos para cada apartamento -->
           </div>
         </div>

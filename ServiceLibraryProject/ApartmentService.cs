@@ -9,7 +9,7 @@ namespace ServiceLibraryProject
 {
     /// <summary>
     /// Servicio para operaciones de negocio relacionadas con apartamentos (Apartment).
-    /// Proporciona m閠odos para obtener, agregar, actualizar y eliminar apartamentos en la base de datos.
+    /// Proporciona m茅todos para obtener, agregar, actualizar y eliminar apartamentos en la base de datos.
     /// </summary>
     public class ApartmentService : IService<Apartment>
     {
@@ -46,7 +46,7 @@ namespace ServiceLibraryProject
         public void Add(Apartment entity)
         {
             if (_apartmentRepository.GetAll().Any(a => a.Code == entity.Code))
-                throw new InvalidOperationException("Ya existe un apartamento con ese c骴igo.");
+                throw new InvalidOperationException("Ya existe un apartamento con ese c贸digo.");
             _apartmentRepository.Add(entity);
         }
 
@@ -63,7 +63,7 @@ namespace ServiceLibraryProject
         /// <summary>
         /// Obtiene todos los apartamentos.
         /// </summary>
-        /// <returns>Una colecci髇 de apartamentos.</returns>
+        /// <returns>Una colecci贸n de apartamentos.</returns>
         public IEnumerable<Apartment> GetAll()
         {
             return _apartmentRepository.GetAll();
@@ -80,13 +80,33 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
-        /// Obtiene un apartamento por su c骴igo.
+        /// Obtiene un apartamento por su c贸digo.
         /// </summary>
-        /// <param name="code">C骴igo del apartamento.</param>
+        /// <param name="code">C贸digo del apartamento.</param>
         /// <returns>El apartamento encontrado o null si no existe.</returns>
         public Apartment? GetByCode(string code)
         {
             return _apartmentRepository.Find(a => a.Code == code);
+        }
+
+        /// <summary>
+        /// Obtiene todos los apartamentos de un piso espec铆fico.
+        /// </summary>
+        /// <param name="floorId">Identificador del piso.</param>
+        /// <returns>Una colecci贸n de apartamentos del piso especificado.</returns>
+        public IEnumerable<Apartment> GetByFloorId(string floorId)
+        {
+            return _apartmentRepository.GetAll().Where(a => a.FloorId == floorId);
+        }
+
+        /// <summary>
+        /// Obtiene todos los apartamentos de un edificio espec铆fico.
+        /// </summary>
+        /// <param name="buildingId">Identificador del edificio.</param>
+        /// <returns>Una colecci贸n de apartamentos del edificio especificado.</returns>
+        public IEnumerable<Apartment> GetByBuildingId(string buildingId)
+        {
+            return _apartmentRepository.GetAll().Where(a => a.Floor != null && a.Floor.BuildingId == buildingId);
         }
 
         /// <summary>
@@ -95,7 +115,6 @@ namespace ServiceLibraryProject
         /// <param name="entity">Entidad Apartment a actualizar.</param>
         public void Update(Apartment entity)
         {
-
             _apartmentRepository.Update(entity);
         }
     }

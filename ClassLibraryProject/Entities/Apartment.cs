@@ -8,15 +8,15 @@ namespace ClassLibraryProject.Entities
     public class Apartment
     {
         /// <summary>
-        /// Identificador único del apartamento.
+        /// Identificador ï¿½nico del apartamento.
         /// </summary>
         public string Id { get; set; }
         /// <summary>
-        /// Código único del apartamento.
+        /// Cï¿½digo ï¿½nico del apartamento.
         /// </summary>
         public string Code { get; set; }
         /// <summary>
-        /// Puerta o número del apartamento.
+        /// Puerta o nï¿½mero del apartamento.
         /// </summary>
         public string Door { get; set; }
         /// <summary>
@@ -28,11 +28,19 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public decimal Area { get; set; }
         /// <summary>
-        /// Planta asociada al apartamento (navegación).
+        /// Numero de habitaciones del apartamento.
+        /// </summary>
+        public int NumRooms { get; set; }
+        /// <summary>
+        /// NÃºmero de baÃ±os del apartamento.
+        /// </summary>
+        public int NumBathrooms { get; set; }
+        /// <summary>
+        /// Planta asociada al apartamento (navegaciï¿½n).
         /// </summary>
         public virtual Floor Floor { get; set; }
         /// <summary>
-        /// Colección de direcciones asociada al apartamento (apartamento y edificio).
+        /// Colecciï¿½n de direcciones asociada al apartamento (apartamento y edificio).
         /// </summary>
         public virtual ICollection<Address> Address { get; set; } = new List<Address>();
 

@@ -22,16 +22,22 @@ namespace WebAPI.Controllers
         private readonly ServiceLibraryProject.BuildingService _buildingService;
         private readonly ServiceLibraryProject.StatusService _statusService;
         private readonly ServiceLibraryProject.AddressService _addressService;
+        private readonly ServiceLibraryProject.FloorService _floorService;
+        private readonly ServiceLibraryProject.ApartmentService _apartmentService;
         
         public BuildingController(
             ServiceLibraryProject.BuildingService buildingService, 
             ServiceLibraryProject.StatusService statusService, 
             ServiceLibraryProject.AddressService addressService,
+            ServiceLibraryProject.FloorService floorService,
+            ServiceLibraryProject.ApartmentService apartmentService,
             IMapper mapper)
         {
             _buildingService = buildingService;
             _statusService = statusService;
             _addressService = addressService;
+            _floorService = floorService;
+            _apartmentService = apartmentService;
             _mapper = mapper;
         }
 
@@ -71,6 +77,34 @@ namespace WebAPI.Controllers
             if (building == null) return NotFound();
             var dto = _mapper.Map<BuildingGetterDto>(building);
             return Ok(dto);
+        }
+
+        [HttpGet("{id}/floors")]
+        public ActionResult<IEnumerable<WebAPI.Dtos.Floor.FloorGetterDto>> GetFloorsByBuildingId(string id)
+        {
+            // Verificar que el edificio existe
+            var building = _buildingService.GetById(id);
+            if (building == null) return NotFound("Edificio no encontrado");
+            
+            // Obtener los floors del edificio específico
+            var floors = _floorService.GetByBuildingId(id);
+            var floorDtos = _mapper.Map<IEnumerable<WebAPI.Dtos.Floor.FloorGetterDto>>(floors);
+            
+            return Ok(floorDtos);
+        }
+
+        [HttpGet("{id}/apartments")]
+        public ActionResult<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>> GetApartmentsByBuildingId(string id)
+        {
+            // Verificar que el edificio existe
+            var building = _buildingService.GetById(id);
+            if (building == null) return NotFound("Edificio no encontrado");
+            
+            // Obtener los apartamentos del edificio específico
+            var apartments = _apartmentService.GetByBuildingId(id);
+            var apartmentDtos = _mapper.Map<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>>(apartments);
+            
+            return Ok(apartmentDtos);
         }
 
         [HttpPost]
@@ -125,7 +159,16 @@ namespace WebAPI.Controllers
             // Crear automáticamente el Address si se proporcionaron los datos necesarios
             await CreateAddressForBuilding(building.Id, dto);
             
-            var result = _mapper.Map<BuildingGetterDto>(building);
+            // Crear automáticamente los floors basados en FloorCount
+            CreateFloorsForBuilding(building.Id, building.FloorCount);
+            
+            // Crear automáticamente los apartamentos basados en ApartmentsPerFloor
+            CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
+            
+            // Obtener el building con sus floors para la respuesta
+            var buildingWithFloors = _buildingService.GetById(building.Id);
+            var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
+            
             return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
         }
 
@@ -340,6 +383,182 @@ namespace WebAPI.Controllers
                 Console.WriteLine($"Error creando Address automáticamente: {ex.Message}");
                 Console.WriteLine($"StackTrace: {ex.StackTrace}");
                 // No fallar el proceso de creación del Building por un error en Address
+            }
+        }
+
+        /// <summary>
+        /// Crea automáticamente los floors para el Building recién creado
+        /// </summary>
+        /// <param name="buildingId">ID del edificio</param>
+        /// <param name="floorCount">Número total de pisos del edificio</param>
+        private void CreateFloorsForBuilding(string buildingId, int floorCount)
+        {
+            try
+            {
+                Console.WriteLine($"=== DEBUG CreateFloorsForBuilding ===");
+                Console.WriteLine($"BuildingId: {buildingId}");
+                Console.WriteLine($"FloorCount: {floorCount}");
+                
+                if (floorCount <= 0)
+                {
+                    Console.WriteLine("FloorCount es 0 o negativo, no se crearán floors");
+                    return;
+                }
+
+                // Obtener el building para generar códigos correctos
+                var building = _buildingService.GetById(buildingId);
+                if (building == null)
+                {
+                    Console.WriteLine($"No se encontró el building con ID: {buildingId}");
+                    return;
+                }
+
+                var floorsCreated = new List<string>();
+
+                // Crear floors desde el piso 1 hasta floorCount
+                // En España es común que el primer piso sea "Planta Baja" (0) y luego 1, 2, 3...
+                // Pero según el dominio actual, usaremos 1, 2, 3... directamente
+                for (int i = 1; i <= floorCount; i++)
+                {
+                    var floor = new Floor
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        BuildingId = buildingId,
+                        FloorNumber = i,
+                        Building = building // Asignar la referencia del building
+                    };
+                    
+                    // Generar el código del floor
+                    floor.Code = floor.BuildFloorCode();
+                    
+                    Console.WriteLine($"Creando Floor #{i} con ID: {floor.Id}, Code: {floor.Code}");
+                    
+                    _floorService.Add(floor);
+                    floorsCreated.Add($"Piso {i} (ID: {floor.Id})");
+                }
+                
+                Console.WriteLine($"Se crearon {floorCount} floors automáticamente para Building {buildingId}:");
+                foreach (var floorInfo in floorsCreated)
+                {
+                    Console.WriteLine($"  - {floorInfo}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creando floors automáticamente: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                // No fallar el proceso de creación del Building por un error en los floors
+            }
+        }
+
+        /// <summary>
+        /// Crea automáticamente los apartamentos para el Building recién creado
+        /// </summary>
+        /// <param name="buildingId">ID del edificio</param>
+        /// <param name="apartmentsPerFloor">Número de apartamentos por piso</param>
+        private void CreateApartmentsForBuilding(string buildingId, int apartmentsPerFloor)
+        {
+            try
+            {
+                Console.WriteLine($"=== DEBUG CreateApartmentsForBuilding ===");
+                Console.WriteLine($"BuildingId: {buildingId}");
+                Console.WriteLine($"ApartmentsPerFloor: {apartmentsPerFloor}");
+                
+                if (apartmentsPerFloor <= 0)
+                {
+                    Console.WriteLine("ApartmentsPerFloor es 0 o negativo, no se crearán apartamentos");
+                    return;
+                }
+
+                // Obtener todos los floors de este edificio
+                var floors = _floorService.GetByBuildingId(buildingId);
+                if (!floors.Any())
+                {
+                    Console.WriteLine($"No se encontraron floors para el building con ID: {buildingId}");
+                    return;
+                }
+
+                var apartmentsCreated = new List<string>();
+
+                foreach (var floor in floors)
+                {
+                    Console.WriteLine($"Creando {apartmentsPerFloor} apartamentos para Floor #{floor.FloorNumber} (ID: {floor.Id})");
+                    
+                    // Crear apartamentos para cada floor
+                    for (int i = 1; i <= apartmentsPerFloor; i++)
+                    {
+                        var apartment = new Apartment
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            FloorId = floor.Id,
+                            Door = GenerateApartmentDoor(floor.FloorNumber, i),
+                            Area = 0.0m, // Área por defecto, se puede actualizar después
+                            Floor = floor
+                        };
+                        
+                        // Generar el código del apartamento basado en el floor y la puerta
+                        apartment.Code = GenerateApartmentCode(floor, apartment.Door);
+                        
+                        Console.WriteLine($"  - Apartamento {apartment.Door} (ID: {apartment.Id}, Code: {apartment.Code})");
+                        
+                        _apartmentService.Add(apartment);
+                        apartmentsCreated.Add($"Floor {floor.FloorNumber} - Apt {apartment.Door} (ID: {apartment.Id})");
+                    }
+                }
+                
+                Console.WriteLine($"Se crearon {apartmentsCreated.Count} apartamentos automáticamente para Building {buildingId}:");
+                foreach (var apartmentInfo in apartmentsCreated)
+                {
+                    Console.WriteLine($"  - {apartmentInfo}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creando apartamentos automáticamente: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                // No fallar el proceso de creación del Building por un error en los apartamentos
+            }
+        }
+
+        /// <summary>
+        /// Genera el nombre/número de puerta para un apartamento
+        /// </summary>
+        /// <param name="floorNumber">Número del piso</param>
+        /// <param name="apartmentNumber">Número del apartamento en el piso</param>
+        /// <returns>String representando la puerta del apartamento</returns>
+        private string GenerateApartmentDoor(int floorNumber, int apartmentNumber)
+        {
+            // Formato: {Piso}{Apartamento} (ejemplo: 1A, 1B, 2A, 2B)
+            // Si hay más de 26 apartamentos por piso, usar números: 101, 102, 201, 202, etc.
+            if (apartmentNumber <= 26)
+            {
+                char letter = (char)('A' + apartmentNumber - 1);
+                return $"{floorNumber}{letter}";
+            }
+            else
+            {
+                return $"{floorNumber:D2}{apartmentNumber:D2}";
+            }
+        }
+
+        /// <summary>
+        /// Genera el código único para un apartamento
+        /// </summary>
+        /// <param name="floor">Floor al que pertenece el apartamento</param>
+        /// <param name="door">Puerta del apartamento</param>
+        /// <returns>Código único del apartamento</returns>
+        private string GenerateApartmentCode(Floor floor, string door)
+        {
+            try
+            {
+                // Formato: {CodigoFloor}-{Puerta}
+                var floorCode = floor.Code ?? $"FL{floor.FloorNumber:D2}";
+                return $"{floorCode}-{door}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generando código de apartamento: {ex.Message}");
+                return $"APT-{Guid.NewGuid().ToString()[..8]}-{door}";
             }
         }
 
