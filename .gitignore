@@ -372,6 +372,12 @@ FrontendApp/vite/
 # Ignorar caché de Angular
 FrontendApp/.angular/
 
+# Ignorar assets de bootstrap (archivos de terceros)
+FrontendApp/src/assets/bootstrap/
+
+# Ignorar archivos de build y distribución de Angular
+FrontendApp/dist/
+
 # Ignorar archivos de build de TypeScript
 FrontendApp/.angular/cache/**/*.tsbuildinfo
 
