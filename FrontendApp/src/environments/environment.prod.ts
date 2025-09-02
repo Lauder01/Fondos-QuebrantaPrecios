@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.production.domain.com/api'
+  apiUrl: 'https://devdemoapi1.azurewebsites.net/api'
 };
