@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Dtos.Address;
 
 namespace WebAPI.Controllers
@@ -19,24 +20,24 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<AddressGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<AddressGetterDto>>> GetAll()
         {
-            var addresses = _addressService.GetAll();
+            var addresses = await _addressService.GetAllAsync();
             var dtos = _mapper.Map<IEnumerable<AddressGetterDto>>(addresses);
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<AddressGetterDto> GetById(string id)
+        public async Task<ActionResult<AddressGetterDto>> GetById(string id)
         {
-            var address = _addressService.GetById(id);
+            var address = await _addressService.GetByIdAsync(id);
             if (address == null) return NotFound();
             var dto = _mapper.Map<AddressGetterDto>(address);
             return Ok(dto);
         }
 
         [HttpPost]
-        public ActionResult<AddressGetterDto> Create(AddressCreatorDto dto)
+        public async Task<ActionResult<AddressGetterDto>> Create(AddressCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -44,7 +45,7 @@ namespace WebAPI.Controllers
             address.Id = Guid.NewGuid().ToString();
             try
             {
-                _addressService.Add(address);
+                await _addressService.AddAsync(address);
             }
             catch (ArgumentException ex)
             {

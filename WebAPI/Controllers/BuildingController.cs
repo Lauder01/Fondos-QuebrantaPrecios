@@ -3,6 +3,7 @@ using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RepositoryLibraryProject.Data;
 using WebAPI.Dtos.Building;
 using WebAPI.Dtos.Address;
@@ -10,7 +11,6 @@ using WebAPI.Dtos.SpecuLab;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -41,25 +41,15 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        /// <summary>
-        /// Obtiene una lista paginada y filtrada de edificios.
-        /// </summary>
-        /// <param name="page">Página actual (por defecto 1)</param>
-        /// <param name="pageSize">Tamaño de página (por defecto 10)</param>
-        /// <param name="name">Filtro por nombre</param>
-        /// <param name="districtId">Filtro por distrito</param>
-        /// <param name="companyId">Filtro por empresa constructora</param>
-        /// <returns>Lista paginada de edificios</returns>
         [HttpGet("paged")]
-        public ActionResult<WebAPI.Dtos.Building.BuildingListResultDto> GetPaged(
+        public async Task<ActionResult<WebAPI.Dtos.Building.BuildingListResultDto>> GetPaged(
             int page = 1,
             int pageSize = 10,
             string? name = null,
             string? districtId = null,
             string? companyId = null)
         {
-            var result = _buildingService.GetPagedAndFiltered(page, pageSize, name, districtId, companyId);
+            var result = await _buildingService.GetPagedAndFilteredAsync(page, pageSize, name, districtId, companyId);
             var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(result.Items);
             return Ok(new WebAPI.Dtos.Building.BuildingListResultDto
             {
@@ -71,9 +61,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BuildingGetterDto> GetById(string id)
+        public async Task<ActionResult<BuildingGetterDto>> GetById(string id)
         {
-            var building = _buildingService.GetByIdWithAddressAndDistrict(id);
+            var building = await _buildingService.GetByIdWithAddressAndDistrictAsync(id);
             if (building == null) return NotFound();
             var dto = _mapper.Map<BuildingGetterDto>(building);
             return Ok(dto);
@@ -82,28 +72,20 @@ namespace WebAPI.Controllers
         [HttpGet("{id}/floors")]
         public ActionResult<IEnumerable<WebAPI.Dtos.Floor.FloorGetterDto>> GetFloorsByBuildingId(string id)
         {
-            // Verificar que el edificio existe
             var building = _buildingService.GetById(id);
             if (building == null) return NotFound("Edificio no encontrado");
-            
-            // Obtener los floors del edificio específico
             var floors = _floorService.GetByBuildingId(id);
             var floorDtos = _mapper.Map<IEnumerable<WebAPI.Dtos.Floor.FloorGetterDto>>(floors);
-            
             return Ok(floorDtos);
         }
 
         [HttpGet("{id}/apartments")]
         public ActionResult<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>> GetApartmentsByBuildingId(string id)
         {
-            // Verificar que el edificio existe
             var building = _buildingService.GetById(id);
             if (building == null) return NotFound("Edificio no encontrado");
-            
-            // Obtener los apartamentos del edificio específico
             var apartments = _apartmentService.GetByBuildingId(id);
             var apartmentDtos = _mapper.Map<IEnumerable<WebAPI.Dtos.Apartment.ApartmentGetterDto>>(apartments);
-            
             return Ok(apartmentDtos);
         }
 
@@ -112,64 +94,58 @@ namespace WebAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            // Crear registros por defecto si no existen y obtener sus IDs
             var defaultIds = EnsureDefaultDataExists();
-            
             var building = _mapper.Map<Building>(dto);
             building.Id = Guid.NewGuid().ToString();
-            
-            // Debug: Log los IDs que estamos recibiendo
-            Console.WriteLine($"DistrictId recibido: '{building.DistrictId}'");
-            Console.WriteLine($"StreetId recibido: '{building.StreetId}'");
-            Console.WriteLine($"BuildingCompanyId recibido: '{building.BuildingCompanyId}'");
-            
-            // Si algún ID está vacío o no válido, usar los datos por defecto disponibles
             if (string.IsNullOrWhiteSpace(building.DistrictId) && !string.IsNullOrWhiteSpace(defaultIds.DistrictId))
-            {
                 building.DistrictId = defaultIds.DistrictId;
-                Console.WriteLine($"Asignando distrito por defecto: {defaultIds.DistrictId}");
-            }
-            
             if (string.IsNullOrWhiteSpace(building.StreetId) && !string.IsNullOrWhiteSpace(defaultIds.StreetId))
-            {
                 building.StreetId = defaultIds.StreetId;
-                Console.WriteLine($"Asignando calle por defecto: {defaultIds.StreetId}");
-            }
-            
             if (string.IsNullOrWhiteSpace(building.BuildingCompanyId) && !string.IsNullOrWhiteSpace(defaultIds.CompanyId))
-            {
                 building.BuildingCompanyId = defaultIds.CompanyId;
-                Console.WriteLine($"Asignando empresa por defecto: {defaultIds.CompanyId}");
-            }
-            
-            // Asignar status
             if (string.IsNullOrWhiteSpace(building.StatusId) && !string.IsNullOrWhiteSpace(defaultIds.StatusId))
-            {
                 building.StatusId = defaultIds.StatusId;
-                Console.WriteLine($"Asignando status por defecto: {defaultIds.StatusId}");
-            }
-            
-            // Generar el código usando información básica sin cargar entidades relacionadas
             building.Code = GenerateBuildingCode(building.DistrictId, building.StreetId, building.Doorway);
-            Console.WriteLine($"Código generado: {building.Code}");
-            
-            _buildingService.Add(building);
-            
-            // Crear automáticamente el Address si se proporcionaron los datos necesarios
+            await _buildingService.AddAsync(building);
             await CreateAddressForBuilding(building.Id, dto);
-            
-            // Crear automáticamente los floors basados en FloorCount
             CreateFloorsForBuilding(building.Id, building.FloorCount);
-            
-            // Crear automáticamente los apartamentos basados en ApartmentsPerFloor
             CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
-            
-            // Obtener el building con sus floors para la respuesta
             var buildingWithFloors = _buildingService.GetById(building.Id);
             var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
-            
             return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, BuildingUpdaterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var existingBuilding = await _buildingService.GetByIdAsync(id);
+            if (existingBuilding == null)
+                return NotFound();
+            var existingCode = existingBuilding.Code;
+            var building = _mapper.Map<Building>(dto);
+            building.Id = id;
+            if (string.IsNullOrEmpty(building.Code))
+                building.Code = existingCode;
+            await _buildingService.UpdateAsync(building);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _buildingService.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpGet("bycode/{code}")]
+        public async Task<ActionResult<SpecuLabGetterDto>> GetByCode(string code)
+        {
+            var building = await _buildingService.GetByCodeAsync(code);
+            if (building == null) return NotFound();
+            var dto = _mapper.Map<SpecuLabGetterDto>(building);
+            return Ok(dto);
         }
 
         private (string DistrictId, string StreetId, string CompanyId, string StatusId) EnsureDefaultDataExists()
@@ -205,50 +181,6 @@ namespace WebAPI.Controllers
                 Console.WriteLine($"Error obteniendo datos por defecto: {ex.Message}");
                 return (string.Empty, string.Empty, string.Empty, string.Empty);
             }
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(string id, BuildingUpdaterDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            // Obtener el edificio existente para preservar el Code (sin tracking)
-            var existingBuilding = _buildingService.GetById(id);
-            if (existingBuilding == null)
-                return NotFound();
-            
-            // Guardar el Code existente
-            var existingCode = existingBuilding.Code;
-            
-            var building = _mapper.Map<Building>(dto);
-            building.Id = id;
-            
-            // Preservar el Code existente si no se proporciona uno válido
-            if (string.IsNullOrEmpty(building.Code))
-            {
-                building.Code = existingCode;
-            }
-            
-            _buildingService.Update(building);
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
-        {
-            _buildingService.Delete(id);
-            return NoContent();
-        }
-
-
-        [HttpGet("bycode/{code}")]
-        public ActionResult<SpecuLabGetterDto> GetByCode(string code)
-        {
-            var building = _buildingService.GetByCode(code);
-            if (building == null) return NotFound();
-            var dto = _mapper.Map<SpecuLabGetterDto>(building);
-            return Ok(dto);
         }
 
         private ClassLibraryProject.Entities.District? GetFirstAvailableDistrict()
@@ -508,8 +440,7 @@ namespace WebAPI.Controllers
                             Id = Guid.NewGuid().ToString(),
                             FloorId = floor.Id,
                             Door = GenerateApartmentDoor(floor.FloorNumber, i),
-                            Area = 0.0m, // Área por defecto, se puede actualizar después
-                            Floor = floor
+                            Area = 0.0m // Área por defecto, se puede actualizar después
                         };
                         
                         // Generar el código del apartamento basado en el floor y la puerta

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using ServiceLibraryProject.Interfaces;
@@ -51,6 +52,18 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Agrega un nuevo apartamento de forma asíncrona tras validar sus datos.
+        /// </summary>
+        /// <param name="entity">Entidad Apartment a agregar.</param>
+        public async Task AddAsync(Apartment entity)
+        {
+            var all = await _apartmentRepository.GetAllAsync();
+            if (all.Any(a => a.Code == entity.Code))
+                throw new InvalidOperationException("Ya existe un apartamento con ese código.");
+            await _apartmentRepository.AddAsync(entity);
+        }
+
+        /// <summary>
         /// Elimina un apartamento por su identificador.
         /// </summary>
         /// <param name="id">Identificador del apartamento a eliminar.</param>
@@ -61,12 +74,33 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Elimina un apartamento por su identificador de forma asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador del apartamento a eliminar.</param>
+        public async Task DeleteAsync(string id)
+        {
+            var apartment = await _apartmentRepository.GetByIdAsync(id);
+            if (apartment == null)
+                throw new ArgumentException("El apartamento no existe.", nameof(id));
+            await _apartmentRepository.DeleteAsync(id);
+        }
+
+        /// <summary>
         /// Obtiene todos los apartamentos.
         /// </summary>
         /// <returns>Una colección de apartamentos.</returns>
         public IEnumerable<Apartment> GetAll()
         {
             return _apartmentRepository.GetAll();
+        }
+
+        /// <summary>
+        /// Obtiene todos los apartamentos de forma asíncrona.
+        /// </summary>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado contiene una colección de apartamentos.</returns>
+        public async Task<IEnumerable<Apartment>> GetAllAsync()
+        {
+            return await _apartmentRepository.GetAllAsync();
         }
 
         /// <summary>
@@ -80,6 +114,16 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene un apartamento por su identificador de forma asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador del apartamento.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado contiene el apartamento encontrado o null si no existe.</returns>
+        public async Task<Apartment?> GetByIdAsync(string id)
+        {
+            return await _apartmentRepository.GetByIdAsync(id);
+        }
+
+        /// <summary>
         /// Obtiene un apartamento por su código.
         /// </summary>
         /// <param name="code">Código del apartamento.</param>
@@ -87,6 +131,16 @@ namespace ServiceLibraryProject
         public Apartment? GetByCode(string code)
         {
             return _apartmentRepository.Find(a => a.Code == code);
+        }
+
+        /// <summary>
+        /// Obtiene un apartamento por su código de forma asíncrona.
+        /// </summary>
+        /// <param name="code">Código del apartamento.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado contiene el apartamento encontrado o null si no existe.</returns>
+        public async Task<Apartment?> GetByCodeAsync(string code)
+        {
+            return await _apartmentRepository.FindAsync(a => a.Code == code);
         }
 
         /// <summary>
@@ -100,6 +154,17 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene todos los apartamentos de un piso específico de forma asíncrona.
+        /// </summary>
+        /// <param name="floorId">Identificador del piso.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado contiene una colección de apartamentos del piso especificado.</returns>
+        public async Task<IEnumerable<Apartment>> GetByFloorIdAsync(string floorId)
+        {
+            var all = await _apartmentRepository.GetAllAsync();
+            return all.Where(a => a.FloorId == floorId);
+        }
+
+        /// <summary>
         /// Obtiene todos los apartamentos de un edificio específico.
         /// </summary>
         /// <param name="buildingId">Identificador del edificio.</param>
@@ -110,12 +175,32 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene todos los apartamentos de un edificio específico de forma asíncrona.
+        /// </summary>
+        /// <param name="buildingId">Identificador del edificio.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado contiene una colección de apartamentos del edificio especificado.</returns>
+        public async Task<IEnumerable<Apartment>> GetByBuildingIdAsync(string buildingId)
+        {
+            var all = await _apartmentRepository.GetAllAsync();
+            return all.Where(a => a.Floor != null && a.Floor.BuildingId == buildingId);
+        }
+
+        /// <summary>
         /// Actualiza un apartamento existente.
         /// </summary>
         /// <param name="entity">Entidad Apartment a actualizar.</param>
         public void Update(Apartment entity)
         {
             _apartmentRepository.Update(entity);
+        }
+
+        /// <summary>
+        /// Actualiza un apartamento existente de forma asíncrona.
+        /// </summary>
+        /// <param name="entity">Entidad Apartment a actualizar.</param>
+        public async Task UpdateAsync(Apartment entity)
+        {
+            await _apartmentRepository.UpdateAsync(entity);
         }
     }
 }
