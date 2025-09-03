@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using ServiceLibraryProject.Interfaces;
@@ -37,6 +38,15 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene todas las direcciones de manera asíncrona.
+        /// </summary>
+        /// <returns>Una tarea que representa la operación asíncrona. Contiene una colección de direcciones.</returns>
+        public async Task<IEnumerable<Address>> GetAllAsync()
+        {
+            return await _addressRepository.GetAllAsync();
+        }
+
+        /// <summary>
         /// Obtiene una dirección por su identificador.
         /// </summary>
         /// <param name="id">Identificador de la dirección.</param>
@@ -46,6 +56,18 @@ namespace ServiceLibraryProject
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
             return _addressRepository.GetById(id);
+        }
+
+        /// <summary>
+        /// Obtiene una dirección por su identificador de manera asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador de la dirección.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. Contiene la dirección encontrada o null si no existe.</returns>
+        public async Task<Address?> GetByIdAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("El identificador proporcionado no puede estar vacío.", nameof(id));
+            return await _addressRepository.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -71,6 +93,22 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Agrega una nueva dirección de manera asíncrona.
+        /// </summary>
+        /// <param name="entity">Entidad Address a agregar.</param>
+        public async Task AddAsync(Address entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
+            entity.BuildingId = entity.BuildingId ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(entity.ApartmentId))
+                entity.ApartmentId = null;
+            if (string.IsNullOrWhiteSpace(entity.BuildingId))
+                throw new ArgumentException("El BuildingId es obligatorio.", nameof(entity.BuildingId));
+            await _addressRepository.AddAsync(entity);
+        }
+
+        /// <summary>
         /// Actualiza una dirección existente.
         /// </summary>
         /// <param name="entity">Entidad Address a actualizar.</param>
@@ -89,6 +127,20 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Actualiza una dirección existente de manera asíncrona.
+        /// </summary>
+        /// <param name="entity">Entidad Address a actualizar.</param>
+        public async Task UpdateAsync(Address entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La dirección no puede ser nula.");
+            entity.BuildingId = entity.BuildingId ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(entity.ApartmentId))
+                entity.ApartmentId = null;
+            await _addressRepository.UpdateAsync(entity);
+        }
+
+        /// <summary>
         /// Elimina una dirección por su identificador.
         /// </summary>
         /// <param name="id">Identificador de la dirección a eliminar.</param>
@@ -96,6 +148,18 @@ namespace ServiceLibraryProject
         {
             _ = _addressRepository.GetById(id) ?? throw new ArgumentException("La dirección no existe.", nameof(id));
             _addressRepository.Delete(id);
+        }
+
+        /// <summary>
+        /// Elimina una dirección por su identificador de manera asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador de la dirección a eliminar.</param>
+        public async Task DeleteAsync(string id)
+        {
+            var address = await _addressRepository.GetByIdAsync(id);
+            if (address == null)
+                throw new ArgumentException("La dirección no existe.", nameof(id));
+            await _addressRepository.DeleteAsync(id);
         }
     }
 }

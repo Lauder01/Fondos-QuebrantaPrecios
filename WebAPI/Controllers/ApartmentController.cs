@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Dtos.Apartment;
 
 namespace WebAPI.Controllers
@@ -19,49 +20,49 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ApartmentGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<ApartmentGetterDto>>> GetAll()
         {
-            var apartments = _apartmentService.GetAll();
+            var apartments = await _apartmentService.GetAllAsync();
             var dtos = _mapper.Map<IEnumerable<ApartmentGetterDto>>(apartments);
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ApartmentGetterDto> GetById(string id)
+        public async Task<ActionResult<ApartmentGetterDto>> GetById(string id)
         {
-            var apartment = _apartmentService.GetById(id);
+            var apartment = await _apartmentService.GetByIdAsync(id);
             if (apartment == null) return NotFound();
             var dto = _mapper.Map<ApartmentGetterDto>(apartment);
             return Ok(dto);
         }
 
         [HttpPost]
-        public ActionResult<ApartmentGetterDto> Create(ApartmentCreatorDto dto)
+        public async Task<ActionResult<ApartmentGetterDto>> Create(ApartmentCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var apartment = _mapper.Map<Apartment>(dto);
             apartment.Id = Guid.NewGuid().ToString();
-            _apartmentService.Add(apartment);
+            await _apartmentService.AddAsync(apartment);
             var result = _mapper.Map<ApartmentGetterDto>(apartment);
             return CreatedAtAction(nameof(GetById), new { id = apartment.Id }, result);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, ApartmentUpdaterDto dto)
+        public async Task<IActionResult> Update(string id, ApartmentUpdaterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var apartment = _mapper.Map<Apartment>(dto);
             apartment.Id = id;
-            _apartmentService.Update(apartment);
+            await _apartmentService.UpdateAsync(apartment);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            _apartmentService.Delete(id);
+            await _apartmentService.DeleteAsync(id);
             return NoContent();
         }
     }
