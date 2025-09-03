@@ -1,20 +1,137 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule],
- // templateUrl: './header.component.html',
+  imports: [RouterModule, CommonModule],
   styleUrls: ['./header.component.css'],
   template: `
     <header class="header">
-      <div class="header-content">
-        <h1 class="page-title">
-          <a routerLink="/" routerLinkActive="active" class="brand-title">Fondos QuebrantaPrecios</a>
-        </h1>
+      <div class="header-container">
+        <!-- Brand Section -->
+        <div class="brand-section">
+          <a routerLink="/" class="brand-link" aria-label="Inicio">
+            <span class="brand-text">Fondos QuebrantaPrecios</span>
+          </a>
+        </div>
+
+        <!-- Navigation Section -->
+        <nav class="main-nav" aria-label="Navegación principal" role="navigation">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link" aria-current="page">
+                <i class="bi bi-house"></i>
+                <span class="nav-text">Inicio</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/buildings" routerLinkActive="active" class="nav-link">
+                <i class="bi bi-building"></i>
+                <span class="nav-text">Edificios</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/form" routerLinkActive="active" class="nav-link">
+                <i class="bi bi-plus-circle"></i>
+                <span class="nav-text">Agregar Edificio</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle"
+                (click)="toggleMobileMenu()"
+                [attr.aria-expanded]="isMobileMenuOpen"
+                aria-controls="mobileNav"
+                aria-label="Abrir menú móvil">
+          <span class="hamburger-line" [class.active]="isMobileMenuOpen"></span>
+          <span class="hamburger-line" [class.active]="isMobileMenuOpen"></span>
+          <span class="hamburger-line" [class.active]="isMobileMenuOpen"></span>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div class="mobile-nav" [class.open]="isMobileMenuOpen" id="mobileNav" tabindex="-1" (keydown)="onMobileNavKeydown($event)" (mousedown)="onMobileNavMousedown($event)">
+        <nav class="mobile-nav-content" aria-label="Menú móvil" role="navigation">
+          <ul class="mobile-nav-list">
+            <li class="mobile-nav-item">
+              <a routerLink="/" (click)="closeMobileMenu()" class="mobile-nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                <i class="bi bi-house"></i>
+                <span class="nav-text">Inicio</span>
+              </a>
+            </li>
+            <li class="mobile-nav-item">
+              <a routerLink="/buildings" (click)="closeMobileMenu()" class="mobile-nav-link" routerLinkActive="active">
+                <i class="bi bi-building"></i>
+                <span class="nav-text">Edificios</span>
+              </a>
+            </li>
+            <li class="mobile-nav-item">
+              <a routerLink="/form" (click)="closeMobileMenu()" class="mobile-nav-link" routerLinkActive="active">
+                <i class="bi bi-plus-circle"></i>
+                <span class="nav-text">Agregar Edificio</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </header>
   `
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  isMobileMenuOpen = false;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    // Solo ejecutar en el navegador (evitar errores de SSR)
+    if (isPlatformBrowser(this.platformId)) {
+      // Cerrar menú móvil con Escape globalmente
+      window.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (this.isMobileMenuOpen && event.key === 'Escape') {
+          this.closeMobileMenu();
+        }
+      });
+      // Cerrar menú móvil al hacer clic fuera
+      window.addEventListener('mousedown', (event: MouseEvent) => {
+        const mobileNav = document.getElementById('mobileNav');
+        if (this.isMobileMenuOpen && mobileNav && !mobileNav.contains(event.target as Node)) {
+          this.closeMobileMenu();
+        }
+      });
+    }
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    // Animación simple: scroll bloqueado cuando menú abierto
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = this.isMobileMenuOpen ? 'hidden' : '';
+    }
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Accesibilidad: cerrar menú con Escape desde el propio nav
+  onMobileNavKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closeMobileMenu();
+    }
+  }
+
+  // Interactividad: cerrar menú si se hace clic fuera del nav móvil
+  onMobileNavMousedown(event: MouseEvent) {
+    if (isPlatformBrowser(this.platformId)) {
+      const mobileNav = document.getElementById('mobileNav');
+      if (mobileNav && !mobileNav.contains(event.target as Node)) {
+        this.closeMobileMenu();
+      }
+    }
+  }
+}
