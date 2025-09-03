@@ -41,6 +41,8 @@ namespace WebAPI.Dtos.Building
         public string EnergyCertificate { get; set; } = string.Empty;
 
         public bool HasElevator { get; set; }
+
+        public bool HasGarage { get; set; }
         
         // Campos opcionales para la creación automática del Address
         [StringLength(36, MinimumLength = 36, ErrorMessage = "El ZipcodeId debe tener exactamente 36 caracteres")]

@@ -14,9 +14,12 @@ namespace WebAPI.AutoMapperProfiles
                 .ForMember(dest => dest.ConstructedAddress, opt => opt.MapFrom(src => GetAddressField(src, a => a.ConstructedAddress)))
                 .ForMember(dest => dest.ZipcodeId, opt => opt.MapFrom(src => GetAddressField(src, a => a.ZipcodeId)))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => GetAddressField(src, a => a.Country)))
-                .ForMember(dest => dest.City, opt => opt.MapFrom(src => GetAddressField(src, a => a.City)));
-            CreateMap<BuildingCreatorDto, Building>();
-            CreateMap<BuildingUpdaterDto, Building>();
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => GetAddressField(src, a => a.City)))
+                .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
+            CreateMap<BuildingCreatorDto, Building>()
+                .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
+            CreateMap<BuildingUpdaterDto, Building>()
+                .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
         }
 
         private static string? GetConstructedAddress(Building src)

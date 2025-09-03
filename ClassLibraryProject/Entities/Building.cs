@@ -64,6 +64,10 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public bool HasElevator { get; set; }
         /// <summary>
+        /// Indica si el edificio tiene garaje.
+        /// </summary>
+        public bool HasGarage { get; set; }
+        /// <summary>
         /// Identificador del estado del edificio.
         /// </summary>
         public string StatusId { get; set; }
