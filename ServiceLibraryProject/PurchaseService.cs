@@ -59,5 +59,51 @@ namespace ServiceLibraryProject
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Agrega una nueva compra (método asíncrono).
+        /// </summary>
+        /// <param name="entity">Entidad Purchase a agregar.</param>
+        public async Task AddAsync(Purchase entity)
+        {
+            await Task.Run(() => Add(entity));
+        }
+
+        /// <summary>
+        /// Elimina una compra por su identificador (método asíncrono).
+        /// </summary>
+        /// <param name="id">Identificador de la compra a eliminar.</param>
+        public async Task DeleteAsync(string id)
+        {
+            await Task.Run(() => Delete(id));
+        }
+
+        /// <summary>
+        /// Obtiene todas las compras (método asíncrono).
+        /// </summary>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado de la tarea contiene una colección de compras.</returns>
+        public async Task<IEnumerable<Purchase>> GetAllAsync()
+        {
+            return await Task.Run(() => GetAll());
+        }
+
+        /// <summary>
+        /// Obtiene una compra por su identificador (método asíncrono).
+        /// </summary>
+        /// <param name="id">Identificador de la compra.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. El resultado de la tarea contiene la compra encontrada o null si no existe.</returns>
+        public async Task<Purchase?> GetByIdAsync(string id)
+        {
+            return await Task.Run(() => GetById(id));
+        }
+
+        /// <summary>
+        /// Actualiza una compra existente (método asíncrono).
+        /// </summary>
+        /// <param name="entity">Entidad Purchase a actualizar.</param>
+        public async Task UpdateAsync(Purchase entity)
+        {
+            await Task.Run(() => Update(entity));
+        }
     }
 }
