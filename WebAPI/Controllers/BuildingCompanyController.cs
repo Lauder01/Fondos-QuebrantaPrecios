@@ -2,6 +2,7 @@
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Dtos.BuildingCompany;
 
 namespace WebAPI.Controllers
@@ -19,49 +20,49 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BuildingCompanyGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<BuildingCompanyGetterDto>>> GetAll()
         {
-            var companies = _companyService.GetAll();
+            var companies = await _companyService.GetAllAsync();
             var dtos = _mapper.Map<IEnumerable<BuildingCompanyGetterDto>>(companies);
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BuildingCompanyGetterDto> GetById(string id)
+        public async Task<ActionResult<BuildingCompanyGetterDto>> GetById(string id)
         {
-            var company = _companyService.GetById(id);
+            var company = await _companyService.GetByIdAsync(id);
             if (company == null) return NotFound();
             var dto = _mapper.Map<BuildingCompanyGetterDto>(company);
             return Ok(dto);
         }
 
         [HttpPost]
-        public ActionResult<BuildingCompanyGetterDto> Create(BuildingCompanyCreatorDto dto)
+        public async Task<ActionResult<BuildingCompanyGetterDto>> Create(BuildingCompanyCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var company = _mapper.Map<BuildingCompany>(dto);
             company.Id = Guid.NewGuid().ToString();
-            _companyService.Add(company);
+            await _companyService.AddAsync(company);
             var result = _mapper.Map<BuildingCompanyGetterDto>(company);
             return CreatedAtAction(nameof(GetById), new { id = company.Id }, result);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, BuildingCompanyUpdaterDto dto)
+        public async Task<IActionResult> Update(string id, BuildingCompanyUpdaterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var company = _mapper.Map<BuildingCompany>(dto);
             company.Id = id;
-            _companyService.Update(company);
+            await _companyService.UpdateAsync(company);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            _companyService.Delete(id);
+            await _companyService.DeleteAsync(id);
             return NoContent();
         }
     }
