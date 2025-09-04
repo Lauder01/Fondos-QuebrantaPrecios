@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
+using ServiceLibraryProject;
 using AutoMapper;
 using System.Collections.Generic;
-using ServiceLibraryProject;
 using WebAPI.Dtos.BuildingImage;
 using System;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -13,20 +14,20 @@ namespace WebAPI.Controllers
     public class BuildingImageController(BuildingImageService buildingImageService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
-        public ActionResult<IEnumerable<BuildingImageGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<BuildingImageGetterDto>>> GetAll()
         {
-            var images = buildingImageService.GetAll();
+            var images = await buildingImageService.GetAllAsync();
             var dtos = mapper.Map<IEnumerable<BuildingImageGetterDto>>(images);
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BuildingImageGetterDto> GetById(string id)
+        public async Task<ActionResult<BuildingImageGetterDto>> GetById(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest("El identificador no puede estar vacío.");
 
-            var image = buildingImageService.GetById(id);
+            var image = await buildingImageService.GetByIdAsync(id);
             if (image == null)
                 return NotFound($"Imagen {id} no encontrada.");
 
@@ -35,18 +36,18 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("building/{buildingId}")]
-        public ActionResult<IEnumerable<BuildingImageGetterDto>> GetByBuildingId(string buildingId)
+        public async Task<ActionResult<IEnumerable<BuildingImageGetterDto>>> GetByBuildingId(string buildingId)
         {
             if (string.IsNullOrEmpty(buildingId))
                 return BadRequest("El identificador de edificio no puede estar vacío.");
 
-            var images = buildingImageService.GetByBuildingId(buildingId);
+            var images = await buildingImageService.GetByBuildingIdAsync(buildingId);
             var dtos = mapper.Map<IEnumerable<BuildingImageGetterDto>>(images);
             return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult<BuildingImageGetterDto> Create(BuildingImageCreatorDto dto)
+        public async Task<ActionResult<BuildingImageGetterDto>> Create(BuildingImageCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -56,7 +57,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                buildingImageService.Add(image);
+                await buildingImageService.AddAsync(image);
             }
             catch (ArgumentException ex)
             {
@@ -72,7 +73,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, BuildingImageUpdaterDto dto)
+        public async Task<IActionResult> Update(string id, BuildingImageUpdaterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -82,7 +83,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                buildingImageService.Update(image);
+                await buildingImageService.UpdateAsync(image);
             }
             catch (ArgumentException ex)
             {
@@ -97,11 +98,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
-                buildingImageService.Delete(id);
+                await buildingImageService.DeleteAsync(id);
             }
             catch (ArgumentException ex)
             {

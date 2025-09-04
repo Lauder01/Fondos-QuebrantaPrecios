@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Dtos.Request;
 
 namespace WebAPI.Controllers
@@ -19,49 +20,49 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<RequestGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<RequestGetterDto>>> GetAll()
         {
-            var requests = _requestService.GetAll();
+            var requests = await _requestService.GetAllAsync();
             var dtos = _mapper.Map<IEnumerable<RequestGetterDto>>(requests);
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<RequestGetterDto> GetById(string id)
+        public async Task<ActionResult<RequestGetterDto>> GetById(string id)
         {
-            var request = _requestService.GetById(id);
+            var request = await _requestService.GetByIdAsync(id);
             if (request == null) return NotFound();
             var dto = _mapper.Map<RequestGetterDto>(request);
             return Ok(dto);
         }
 
         [HttpPost]
-        public ActionResult<RequestGetterDto> Create(RequestCreatorDto dto)
+        public async Task<ActionResult<RequestGetterDto>> Create(RequestCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var request = _mapper.Map<Request>(dto);
             request.Id = Guid.NewGuid().ToString();
-            _requestService.Add(request);
+            await _requestService.AddAsync(request);
             var result = _mapper.Map<RequestGetterDto>(request);
             return CreatedAtAction(nameof(GetById), new { id = request.Id }, result);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, RequestUpdaterDto dto)
+        public async Task<IActionResult> Update(string id, RequestUpdaterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var request = _mapper.Map<Request>(dto);
             request.Id = id;
-            _requestService.Update(request);
+            await _requestService.UpdateAsync(request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            _requestService.Delete(id);
+            await _requestService.DeleteAsync(id);
             return NoContent();
         }
     }

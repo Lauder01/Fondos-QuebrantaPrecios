@@ -61,13 +61,30 @@
     </nav>
     <h4 class="mb-3">Piso {{ currentFloor }}</h4>
     <div class="row">
-      @for (apt of apartmentsArray; track apt) {
+      @for (apt of apartmentsByFloor[getCurrentFloorId()]; track apt) {
         <div class="col-md-4 mb-3">
           <div class="card p-3">
-            <strong>Apartamento {{ apt }}</strong>
-            <small class="text-muted">Código: {{ currentFloor }}-{{ apt.toString().padStart(2, '0') }}</small>
-            <small class="text-muted">Puerta: {{ apt }}{{ getDoorLetter(apt) }}</small>
-            <!-- Aquí puedes añadir campos para cada apartamento -->
+            <strong>Apartamento</strong>
+            <div class="mb-2">
+              <label>Código:</label>
+              <input class="form-control" [(ngModel)]="apt.code" />
+            </div>
+            <div class="mb-2">
+              <label>Puerta:</label>
+              <input class="form-control" [(ngModel)]="apt.door" />
+            </div>
+            <div class="mb-2">
+              <label>Habitaciones:</label>
+              <input type="number" min="1" class="form-control" [(ngModel)]="apt.numRooms" />
+            </div>
+            <div class="mb-2">
+              <label>Baños:</label>
+              <input type="number" min="1" class="form-control" [(ngModel)]="apt.numBathrooms" />
+            </div>
+            <div class="mb-2">
+              <label>Superficie (m²):</label>
+              <input type="number" min="1" class="form-control" [(ngModel)]="apt.surface" />
+            </div>
           </div>
         </div>
       }

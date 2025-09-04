@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClassLibraryProject.Enums;
 using ClassLibraryProject.Extensions;
 using ClassLibraryProject.Entities;
@@ -45,6 +46,22 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Agrega una nueva calle de manera asíncrona tras validar sus datos.
+        /// </summary>
+        /// <param name="entity">Entidad Street a agregar.</param>
+        public async Task AddAsync(Street entity)
+        {
+            var all = await _streetRepository.GetAllAsync();
+            // Validación: Unicidad de nombre compuesto
+            if (all.Any(s => s.Name == entity.Name))
+                throw new InvalidOperationException("Ya existe una calle con ese nombre.");
+            // Validación: Código único
+            if (all.Any(s => s.Code == entity.Code))
+                throw new InvalidOperationException("Ya existe una calle con ese código.");
+            await _streetRepository.AddAsync(entity);
+        }
+
+        /// <summary>
         /// Elimina una calle por su identificador.
         /// </summary>
         /// <param name="id">Identificador de la calle a eliminar.</param>
@@ -55,12 +72,33 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Elimina una calle por su identificador de manera asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador de la calle a eliminar.</param>
+        public async Task DeleteAsync(string id)
+        {
+            var street = await _streetRepository.GetByIdAsync(id);
+            if (street == null)
+                throw new ArgumentException("La calle no existe.", nameof(id));
+            await _streetRepository.DeleteAsync(id);
+        }
+
+        /// <summary>
         /// Obtiene todas las calles.
         /// </summary>
         /// <returns>Una colección de calles.</returns>
         public IEnumerable<Street> GetAll()
         {
             return _streetRepository.GetAll();
+        }
+
+        /// <summary>
+        /// Obtiene todas las calles de manera asíncrona.
+        /// </summary>
+        /// <returns>Una tarea que representa la operación asíncrona. Contiene una colección de calles.</returns>
+        public async Task<IEnumerable<Street>> GetAllAsync()
+        {
+            return await _streetRepository.GetAllAsync();
         }
 
         /// <summary>
@@ -74,6 +112,16 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene una calle por su identificador de manera asíncrona.
+        /// </summary>
+        /// <param name="id">Identificador de la calle.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. Contiene la calle encontrada o null si no existe.</returns>
+        public async Task<Street?> GetByIdAsync(string id)
+        {
+            return await _streetRepository.GetByIdAsync(id);
+        }
+
+        /// <summary>
         /// Obtiene una calle por su código.
         /// </summary>
         /// <param name="code">Código de la calle.</param>
@@ -81,6 +129,16 @@ namespace ServiceLibraryProject
         public Street? GetByCode(string code)
         {
             return _streetRepository.Find(s => s.Code == code);
+        }
+
+        /// <summary>
+        /// Obtiene una calle por su código de manera asíncrona.
+        /// </summary>
+        /// <param name="code">Código de la calle.</param>
+        /// <returns>Una tarea que representa la operación asíncrona. Contiene la calle encontrada o null si no existe.</returns>
+        public async Task<Street?> GetByCodeAsync(string code)
+        {
+            return await _streetRepository.FindAsync(s => s.Code == code);
         }
 
         /// <summary>
@@ -94,12 +152,31 @@ namespace ServiceLibraryProject
         }
 
         /// <summary>
+        /// Obtiene una calle por su nombre de manera asíncrona.
+        /// Realiza una búsqueda en el repositorio de calles utilizando una comparación que no distingue mayúsculas ni minúsculas.
+        /// Si el nombre proporcionado es nulo o está vacío, retorna null.
+        /// </summary>
+        public async Task<Street?> GetByNameAsync(string name)
+        {
+            return await _streetRepository.FindAsync(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
         /// Actualiza una calle existente.
         /// </summary>
         /// <param name="entity">Entidad Street a actualizar.</param>
         public void Update(Street entity)
         {
             _streetRepository.Update(entity);
+        }
+
+        /// <summary>
+        /// Actualiza una calle existente de manera asíncrona.
+        /// </summary>
+        /// <param name="entity">Entidad Street a actualizar.</param>
+        public async Task UpdateAsync(Street entity)
+        {
+            await _streetRepository.UpdateAsync(entity);
         }
 
         /// <summary>

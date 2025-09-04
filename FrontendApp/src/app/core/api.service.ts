@@ -1,3 +1,4 @@
+// ...existing code...
 export interface RequestCreatorDto {
 	buildingId: string;
 	statusId: string;
@@ -79,10 +80,18 @@ export interface FloorGetterDto {
 	buildingId: string;
 }
 
+export interface FloorCreatorDto {
+	floorNumber: number;
+	buildingId: string;
+}
+
 export interface ApartmentCreatorDto {
 	code: string;
 	door: string;
 	floorId: string;
+	numRooms: number;
+	numBathrooms: number;
+	surface: number;
 }
 
 export interface ApartmentGetterDto extends ApartmentCreatorDto {
@@ -160,6 +169,9 @@ export class ApiService {
 	// Floor methods
 	getFloorsByBuildingId(buildingId: string): Observable<FloorGetterDto[]> {
 		return this.http.get<FloorGetterDto[]>(`${this.baseUrl}/Building/${buildingId}/floors`);
+	}
+	createFloor(floor: FloorCreatorDto): Observable<FloorGetterDto> {
+		return this.http.post<FloorGetterDto>(`${this.baseUrl}/Floor`, floor);
 	}
 
 	// Apartment methods

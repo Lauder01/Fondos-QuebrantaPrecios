@@ -24,6 +24,15 @@ export class ApartmentRegisterComponent implements OnInit {
   buildingFloors: FloorGetterDto[] = [];
   isCreatingApartments = false;
 
+  // Estructura para apartamentos personalizados por planta
+  apartmentsByFloor: { [floorId: string]: ApartmentCreatorDto[] } = {};
+
+  // Método para obtener el floorId de la planta activa
+  getCurrentFloorId(): string {
+    const floor = this.buildingFloors.find(f => f.floorNumber === this.currentFloor);
+    return floor ? floor.id : '';
+  }
+
   constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) {
     this.buildingId = this.route.snapshot.paramMap.get('buildingId');
   }
@@ -50,13 +59,23 @@ export class ApartmentRegisterComponent implements OnInit {
 
   confirmGeneralCharacteristics() {
     if (this.apartmentsPerFloor < 1) this.apartmentsPerFloor = 1;
-    if (this.numRooms < 1) this.numRooms = 1;
-    if (this.surface < 1) this.surface = 1;
-    if (this.numBathrooms < 1) this.numBathrooms = 1;
-
-    // Usar los floors ya cargados del edificio
+    // Inicializar apartamentos personalizados por planta
     if (this.buildingFloors.length > 0) {
       this.step = 2;
+      this.buildingFloors.forEach(floor => {
+        this.apartmentsByFloor[floor.id] = [];
+        for (let i = 0; i < this.apartmentsPerFloor; i++) {
+          this.apartmentsByFloor[floor.id].push({
+            code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
+            door: `${i + 1}${this.getDoorLetter(i + 1)}`,
+            floorId: floor.id,
+            numRooms: 1,
+            numBathrooms: 1,
+            surface: 70
+          });
+        }
+      });
+      this.currentFloor = this.buildingFloors[0].floorNumber;
     } else {
       alert('No se han encontrado pisos para este edificio');
     }
@@ -96,23 +115,13 @@ export class ApartmentRegisterComponent implements OnInit {
 
     this.isCreatingApartments = true;
 
-    // Crear todos los apartamentos
+    // Recoger todos los apartamentos personalizados
     const apartmentCreationRequests: any[] = [];
-
-    this.buildingFloors.forEach(floor => {
-      for (let aptNumber = 1; aptNumber <= this.apartmentsPerFloor; aptNumber++) {
-        const apartmentCode = `${floor.floorNumber}-${aptNumber.toString().padStart(2, '0')}`;
-        const apartmentDoor = `${aptNumber}${this.getDoorLetter(aptNumber)}`; // 1A, 2B, etc.
-
-        const apartmentData: ApartmentCreatorDto = {
-          code: apartmentCode,
-          door: apartmentDoor,
-          floorId: floor.id
-        };
-
-        apartmentCreationRequests.push(this.api.createApartment(apartmentData));
+    for (const floorId in this.apartmentsByFloor) {
+      for (const apt of this.apartmentsByFloor[floorId]) {
+        apartmentCreationRequests.push(this.api.createApartment(apt));
       }
-    });
+    }
 
     // Ejecutar todas las creaciones en paralelo
     forkJoin(apartmentCreationRequests).subscribe({

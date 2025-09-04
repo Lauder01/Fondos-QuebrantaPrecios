@@ -3,7 +3,9 @@ using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Dtos.Purchase;
+using ServiceLibraryProject;
 
 namespace WebAPI.Controllers
 {
@@ -11,28 +13,28 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class PurchaseController : ControllerBase
     {
-        private readonly IRepository<Purchase> _purchaseRepository;
+        private readonly PurchaseService _purchaseService;
         private readonly IMapper _mapper;
-        public PurchaseController(IRepository<Purchase> purchaseRepository, IMapper mapper)
+        public PurchaseController(PurchaseService purchaseService, IMapper mapper)
         {
-            _purchaseRepository = purchaseRepository;
+            _purchaseService = purchaseService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PurchaseBaseDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<PurchaseBaseDto>>> GetAll()
         {
-            var purchases = _purchaseRepository.GetAll();
+            var purchases = await _purchaseService.GetAllAsync();
             var dtos = _mapper.Map<IEnumerable<PurchaseBaseDto>>(purchases);
             return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult<PurchaseBaseDto> Create(PurchaseCreatorDto dto)
+        public async Task<ActionResult<PurchaseBaseDto>> Create(PurchaseCreatorDto dto)
         {
             var purchase = _mapper.Map<Purchase>(dto);
             purchase.Id = Guid.NewGuid().ToString();
-            _purchaseRepository.Add(purchase);
+            await _purchaseService.AddAsync(purchase);
             var result = _mapper.Map<PurchaseBaseDto>(purchase);
             return CreatedAtAction(nameof(GetAll), new { id = purchase.Id }, result);
         }
