@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClassLibraryProject.Entities;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ServiceLibraryProject;
 using WebAPI.Dtos.Zipcode;
 using System;
@@ -13,20 +14,20 @@ namespace WebAPI.Controllers
     public class ZipcodeController(ZipcodeService zipcodeService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
-        public ActionResult<IEnumerable<ZipcodeGetterDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<ZipcodeGetterDto>>> GetAll()
         {
-            var zipcodes = zipcodeService.GetAll();
+            var zipcodes = await zipcodeService.GetAllAsync();
             var dtos = mapper.Map<IEnumerable<ZipcodeGetterDto>>(zipcodes);
             return Ok(dtos);
         }
 
         [HttpGet("{code}")]
-        public ActionResult<ZipcodeGetterDto> GetByCode(string code)
+        public async Task<ActionResult<ZipcodeGetterDto>> GetByCode(string code)
         {
             if (string.IsNullOrEmpty(code))
                 return BadRequest("El código postal no puede estar vacío.");
 
-            var zipcode = zipcodeService.GetByCode(code);
+            var zipcode = await zipcodeService.GetByCodeAsync(code);
             if (zipcode == null)
                 return NotFound($"Código postal {code} no encontrado.");
 
@@ -35,7 +36,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ZipcodeGetterDto> Create(ZipcodeCreatorDto dto)
+        public async Task<ActionResult<ZipcodeGetterDto>> Create(ZipcodeCreatorDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -45,7 +46,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                zipcodeService.Add(zipcode);
+                await zipcodeService.AddAsync(zipcode);
             }
             catch (ArgumentException ex)
             {
@@ -61,7 +62,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, ZipcodeUpdaterDto dto)
+        public async Task<IActionResult> Update(string id, ZipcodeUpdaterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -71,7 +72,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                zipcodeService.Update(zipcode);
+                await zipcodeService.UpdateAsync(zipcode);
             }
             catch (ArgumentException ex)
             {
@@ -86,11 +87,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
-                zipcodeService.Delete(id);
+                await zipcodeService.DeleteAsync(id);
             }
             catch (ArgumentException ex)
             {
