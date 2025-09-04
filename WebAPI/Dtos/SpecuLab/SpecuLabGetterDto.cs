@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 /// <summary>
-/// Este dto está para que speculab acceda a la request de un edificio en concreto.
+/// Este dto está para que speculab acceda a la request de un edificio en concreto. Está relacionado con el método Get a SpecuLab.
 /// </summary> 
 
 namespace WebAPI.Dtos.SpecuLab
@@ -28,7 +28,7 @@ namespace WebAPI.Dtos.SpecuLab
         public required int YearBuilt { get; set; }
 
         [Required(ErrorMessage = "ERR011: El campo Número de Apartamentos es obligatorio")]
-        [Range(0, 1000, ErrorMessage = "ERR012: El campo Número de Apartamentos debe estar entre 0 y 1000")]
+        [Range(0, 20000, ErrorMessage = "ERR012: El campo Número de Apartamentos debe estar entre 0 y 20000")]
         public required int ApartmentCount { get; set; }
     }
 }

@@ -9,6 +9,11 @@ namespace WebAPI.AutoMapperProfiles
     {
         public SpecuLabProfile()
         {
+            CreateMap<SpecuLabCreatorDto, Building>()
+                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.BuildingCode))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.BuildingAmount))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
             CreateMap<Building, SpecuLabGetterDto>()
                 .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ConstructedAddress, opt => opt.MapFrom(src => src.Address.FirstOrDefault() != null ? src.Address.FirstOrDefault().ConstructedAddress : string.Empty))

@@ -148,6 +148,26 @@ namespace WebAPI.Controllers
             return Ok(dto);
         }
 
+        [HttpPatch("speculab/status/bycode/{code}")]
+        public async Task<IActionResult> PatchStatusFromSpecuLab(string code, [FromBody] SpecuLabUpdaterDto dto)
+        {
+            // Buscar el edificio por código
+            var building = await _buildingService.GetByCodeAsync(code);
+            if (building == null)
+                return NotFound($"No se encontró el edificio con código: {code}");
+
+            // Buscar el StatusId por StatusName
+            var status = await _statusService.GetByNameAsync(dto.StatusName);
+            if (status == null)
+                return NotFound($"No se encontró el estado con nombre: {dto.StatusName}");
+
+            // Actualizar el StatusId del edificio
+            building.StatusId = status.Id;
+            await _buildingService.UpdateAsync(building);
+
+            return Ok($"Status actualizado correctamente a '{dto.StatusName}' para el edificio con código '{code}'.");
+        }
+
         private (string DistrictId, string StreetId, string CompanyId, string StatusId) EnsureDefaultDataExists()
         {
             try
@@ -521,12 +541,8 @@ namespace WebAPI.Controllers
             var dto = new WebAPI.Dtos.SpecuLab.SpecuLabCreatorDto
             {
                 BuildingCode = building.Code,
-                BuildingName = building.Name ?? string.Empty,
-                ConstructedAddress = building.Address?.FirstOrDefault()?.ConstructedAddress ?? "N/A",
-                DistrictName = building.District?.Name ?? "N/A",
-                FloorCount = building.FloorCount,
-                YearBuilt = building.YearBuilt,
-                ApartmentCount = building.ApartmentCount
+                Description = building.Description ?? string.Empty,
+                BuildingAmount = building.Price.ToString()
             };
 
             // Configura la URL de la API externa

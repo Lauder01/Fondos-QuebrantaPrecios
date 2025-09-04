@@ -4,6 +4,7 @@ using System.Linq;
 using ClassLibraryProject.Entities;
 using RepositoryLibraryProject.Interfaces;
 using ServiceLibraryProject.Interfaces;
+using System.Threading.Tasks;
 
 namespace ServiceLibraryProject
 {
@@ -74,6 +75,17 @@ namespace ServiceLibraryProject
         public void Update(Status entity)
         {
             _statusRepository.Update(entity);
+        }
+
+        /// <summary>
+        /// Obtiene un estado por su nombre de forma asíncrona.
+        /// </summary>
+        /// <param name="name">Nombre del estado.</param>
+        /// <returns>El estado encontrado o null si no existe.</returns>
+        public async Task<Status?> GetByNameAsync(string name)
+        {
+            var allStatuses = await _statusRepository.GetAllAsync();
+            return allStatuses.FirstOrDefault(s => s.Name == name);
         }
     }
 }
