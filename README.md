@@ -20,7 +20,7 @@ Sistema de gestión de edificios y apartamentos desarrollado con Angular y .NE##
 ## 🚀 Aplicación en Producción
 
 ### Acceso Directo
-**URL de la aplicación:** [https://fondos-quebranta-precios-3w4os1it8-lauder01s-projects.vercel.app/](https://fondos-quebranta-precios-3w4os1it8-lauder01s-projects.vercel.app/)
+**URL de la aplicación:** [https://fondos-quebranta-precios-six.vercel.app/]
 
 ### Arquitectura de Despliegue
 - **Frontend**: Desplegado en Vercel (Angular)
