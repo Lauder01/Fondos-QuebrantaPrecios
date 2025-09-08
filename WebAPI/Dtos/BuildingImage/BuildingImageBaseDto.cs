@@ -13,7 +13,7 @@ namespace WebAPI.Dtos.BuildingImage
 
         [Required(ErrorMessage = "ERR004: El campo Ruta de Archivo es obligatorio")]
         [StringLength(1024, ErrorMessage = "ERR005: El campo Ruta de Archivo no puede superar los 1024 caracteres")]
-        public required string FilePath { get; set; }
+        public required string Url { get; set; }
 
         [Range(0,255, ErrorMessage = "ERR006: El campo Texto Alternativo debe estar entre 0 y 255 caracteres")]
         public string AltText { get; set; } = string.Empty;
