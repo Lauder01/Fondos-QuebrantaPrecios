@@ -65,5 +65,55 @@ namespace WebAPI.Controllers
             await _apartmentService.DeleteAsync(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Envía los datos de un apartamento a la API externa CozyHouse.
+        /// </summary>
+        /// <param name="id">Identificador único del apartamento</param>
+        /// <returns>Resultado de la operación</returns>
+        [HttpPost("{id}/send-to-cozyhouse")]
+        public async Task<IActionResult> PostToCozyHouse(string id)
+        {
+            try
+            {
+                // Buscar el apartamento por id
+                var apartment = await _apartmentService.GetByIdAsync(id);
+                if (apartment == null)
+                {
+                    // Mensaje descriptivo si no se encuentra el apartamento
+                    return NotFound($"No se encontró el apartamento con id: {id}");
+                }
+
+                // Mapear la entidad Apartment al DTO CozyHouseCreatorDto
+                var dto = _mapper.Map<WebAPI.Dtos.CozyHouse.CozyHouseCreatorDto>(apartment);
+
+                // Configura la URL de la API externa CozyHouse
+                var apiUrl = "https://url-de-la-api-cozyhouse/api/cozyhouse"; // Cambia esto por la URL real
+
+                using var httpClient = new HttpClient();
+                var response = await httpClient.PostAsJsonAsync(apiUrl, dto);
+
+                // Manejo de respuesta de la API externa
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok("DTO enviado correctamente a CozyHouse.");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, $"Error al enviar a CozyHouse: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Error de red o conexión con la API externa
+                return StatusCode(503, $"Error de conexión con CozyHouse: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Error inesperado en el proceso
+                return StatusCode(500, $"Error interno al enviar apartamento a CozyHouse: {ex.Message}");
+            }
+        }
     }
 }
