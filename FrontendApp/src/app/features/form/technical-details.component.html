@@ -74,6 +74,18 @@
 				</label>
 			</div>
 		</div>
+
+		<!-- Garaje -->
+		<div class="col-md-4 position-relative mt-2">
+			<label class="form-label fw-semibold small text-primary-dark" for="hasGarage">¿Tiene garaje?</label>
+			<div class="form-check form-switch mt-1">
+				<input class="form-check-input" type="checkbox" formControlName="hasGarage" id="hasGarage">
+				<label class="form-check-label small" for="hasGarage">
+					<span *ngIf="!formGroup.get('hasGarage')?.value">NO</span>
+					<span *ngIf="formGroup.get('hasGarage')?.value">SÍ</span>
+				</label>
+			</div>
+		</div>
 	</div>
 </div>
 
