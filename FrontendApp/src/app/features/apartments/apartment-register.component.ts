@@ -113,20 +113,19 @@ export class ApartmentRegisterComponent implements OnInit {
       return; // Evitar múltiples clics
     }
 
-    // Validar y normalizar los campos numéricos
+    // Solo validar campos obligatorios, sin normalizar valores numéricos
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
-        // Si el usuario deja vacío el campo, Angular lo pone como null o ''
-        apt.numRooms = apt.numRooms && !isNaN(apt.numRooms) ? Number(apt.numRooms) : 0;
-        apt.numBathrooms = apt.numBathrooms && !isNaN(apt.numBathrooms) ? Number(apt.numBathrooms) : 0;
-        apt.area = apt.area && !isNaN(apt.area) ? Number(apt.area) : 0;
         if (!apt.code || !apt.door || !apt.floorId ||
-            apt.code.trim() === '' || apt.door.trim() === '' || apt.floorId.trim() === '') {
+            apt.code.toString().trim() === '' || apt.door.toString().trim() === '' || apt.floorId.toString().trim() === '') {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
       }
     }
+
+    // Log para depuración: mostrar los datos que se envían a la API
+    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(this.apartmentsByFloor, null, 2));
 
     this.isCreatingApartments = true;
 
