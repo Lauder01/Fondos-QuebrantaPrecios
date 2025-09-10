@@ -62,17 +62,19 @@ export class ApartmentRegisterComponent implements OnInit {
     // Inicializar apartamentos personalizados por planta con los valores del formulario general
     if (this.buildingFloors.length > 0) {
       this.step = 2;
+      let globalAptIndex = 1;
       this.buildingFloors.forEach(floor => {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
           this.apartmentsByFloor[floor.id].push({
-            code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
+            code: `APT-${globalAptIndex.toString().padStart(3, '0')}`,
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
             numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 1,
             area: this.area && !isNaN(this.area) ? Number(this.area) : 70
           });
+          globalAptIndex++;
         }
       });
       this.currentFloor = this.buildingFloors[0].floorNumber;
@@ -106,17 +108,19 @@ export class ApartmentRegisterComponent implements OnInit {
   finishRegistration() {
     // Siempre inicializar apartamentos si no existen
     if (Object.keys(this.apartmentsByFloor).length === 0 && this.buildingFloors.length > 0) {
+      let globalAptIndex = 1;
       this.buildingFloors.forEach(floor => {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
           this.apartmentsByFloor[floor.id].push({
-            code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
+            code: `APT-${globalAptIndex.toString().padStart(3, '0')}`,
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 0,
             numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 0,
             area: this.area && !isNaN(this.area) ? Number(this.area) : 0
           });
+          globalAptIndex++;
         }
       });
     }
@@ -159,9 +163,13 @@ export class ApartmentRegisterComponent implements OnInit {
           numBathrooms: Number(apt.numBathrooms),
           area: Number(apt.area)
         };
-        // Validar campos obligatorios
+        // Validar campos obligatorios y área válida
         if (!payload.code || !payload.door || !payload.floorId) {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
+          return;
+        }
+        if (isNaN(payload.area) || payload.area <= 0) {
+          alert('El área de cada apartamento debe ser mayor que 0. Corrige los valores antes de continuar.');
           return;
         }
         apartmentPayloads.push(payload);
