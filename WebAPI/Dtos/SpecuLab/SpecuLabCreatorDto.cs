@@ -17,5 +17,11 @@ namespace WebAPI.Dtos.SpecuLab
         [Required(ErrorMessage = "ERR016: El campo Precio del Edificio es obligatorio")]
         [Range(0.0, 9999999999.99, ErrorMessage = "ERR017: El campo Precio del Edificio debe estar entre 0 y 9999999999.99")]
         public required string BuildingAmount { get; set; }
+
+        /// <summary>
+        /// Campo requerido por la API externa, no se almacena en BD local.
+        /// </summary>
+        [Required]
+        public decimal MaintenanceAmount { get; set; } = 0;
     }
 }
