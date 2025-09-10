@@ -16,7 +16,7 @@ export class ApartmentRegisterComponent implements OnInit {
   step = 1;
   apartmentsPerFloor: number = 1;
   numRooms: number = 1;
-  surface: number = 1;
+  area: number = 1;
   numBathrooms: number = 1;
   totalFloors: number = 1;
   currentFloor: number = 1;
@@ -71,7 +71,7 @@ export class ApartmentRegisterComponent implements OnInit {
             floorId: floor.id,
             numRooms: 1,
             numBathrooms: 1,
-            surface: 70
+            area: 70
           });
         }
       });
@@ -164,7 +164,7 @@ export class ApartmentRegisterComponent implements OnInit {
         floorId: floorId,
         numRooms: 1,
         numBathrooms: 1,
-        surface: 70
+        area: 70
       });
     }
   }

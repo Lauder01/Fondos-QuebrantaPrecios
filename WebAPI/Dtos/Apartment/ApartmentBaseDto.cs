@@ -5,8 +5,8 @@ namespace WebAPI.Dtos.Apartment
 {
     public class ApartmentBaseDto : IValidatableObject
     {
-        [Required(ErrorMessage = "ERR001: El campo Código es obligatorio")]
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR002: El campo Código debe tener entre 1 y 50 caracteres")]
+        [Required(ErrorMessage = "ERR001: El campo Cï¿½digo es obligatorio")]
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "ERR002: El campo Cï¿½digo debe tener entre 1 y 50 caracteres")]
         public required string Code { get; set; }
 
         [Required(ErrorMessage = "ERR003: El campo Puerta es obligatorio")]
@@ -17,11 +17,20 @@ namespace WebAPI.Dtos.Apartment
         [StringLength(36, MinimumLength = 36, ErrorMessage = "ERR006: El campo Identificador de Piso debe tener exactamente 36 caracteres")]
         public required string FloorId { get; set; }
 
+        [Range(0.01, double.MaxValue, ErrorMessage = "ERR007: La superficie debe ser mayor que 0")]
+        public decimal Area { get; set; }
+
+        [Range(1, 50, ErrorMessage = "ERR008: El nÃºmero de habitaciones debe estar entre 1 y 50")]
+        public int NumRooms { get; set; }
+
+        [Range(1, 20, ErrorMessage = "ERR009: El nÃºmero de baÃ±os debe estar entre 1 y 20")]
+        public int NumBathrooms { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!string.IsNullOrEmpty(Code) && !string.IsNullOrEmpty(Door) && Code == Door)
             {
-                yield return new ValidationResult("El código y la puerta no pueden ser iguales.", new[] { nameof(Code), nameof(Door) });
+                yield return new ValidationResult("El cï¿½digo y la puerta no pueden ser iguales.", new[] { nameof(Code), nameof(Door) });
             }
         }
     }

@@ -92,7 +92,7 @@ export interface ApartmentCreatorDto {
 	floorId: string;
 	numRooms: number;
 	numBathrooms: number;
-	surface: number;
+	area: number;
 }
 
 export interface ApartmentGetterDto extends ApartmentCreatorDto {
