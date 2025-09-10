@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://devdemoapi1.azurewebsites.net/api'
+  apiUrl: '/api'  // Usar rewrite de Vercel para evitar CORS
 };
