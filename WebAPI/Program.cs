@@ -25,6 +25,9 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .CreateLogger();
 
+// Log de prueba para verificar la creación del archivo de logs
+Log.Information("La aplicación ha arrancado correctamente");
+
 builder.Host.UseSerilog();
 
 builder.WebHost.ConfigureKestrel(options =>
