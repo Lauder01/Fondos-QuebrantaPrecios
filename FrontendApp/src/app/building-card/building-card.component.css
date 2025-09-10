@@ -26,3 +26,21 @@
   flex-direction: column;
   height: 100%;
 }
+
+.card-img-container {
+  position: relative;
+  overflow: hidden;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.building-cover-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.building-card:hover .building-cover-image {
+  transform: scale(1.05);
+}

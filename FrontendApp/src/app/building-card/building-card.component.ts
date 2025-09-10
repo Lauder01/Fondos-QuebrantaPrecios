@@ -51,4 +51,12 @@ export class BuildingCardComponent {
         return 'badge bg-secondary';
     }
   }
+
+  // Método para manejar errores de carga de imagen
+  onImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.style.display = 'none';
+    }
+  }
 }

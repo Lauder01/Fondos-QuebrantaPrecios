@@ -54,6 +54,21 @@ namespace WebAPI.Controllers
         {
             var result = await _buildingService.GetPagedAndFilteredAsync(page, pageSize, name, districtId, companyId);
             var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(result.Items);
+
+            // Enriquecer los DTOs con información de imágenes
+            foreach (var dto in dtos)
+            {
+                var images = await _buildingImageService.GetByBuildingIdAsync(dto.Id);
+                var coverImage = images.FirstOrDefault(img => img.IsCoverImage);
+                
+                dto.HasImages = images.Any();
+                if (coverImage != null)
+                {
+                    dto.CoverImageId = coverImage.BuildingImageId;
+                    dto.CoverImageUrl = $"/api/ImageStorage/download/{coverImage.BuildingImageId}";
+                }
+            }
+
             return Ok(new WebAPI.Dtos.Building.BuildingListResultDto
             {
                 Items = dtos,
@@ -69,6 +84,18 @@ namespace WebAPI.Controllers
             var building = await _buildingService.GetByIdWithAddressAndDistrictAsync(id);
             if (building == null) return NotFound();
             var dto = _mapper.Map<BuildingGetterDto>(building);
+
+            // Enriquecer el DTO con información de imágenes
+            var images = await _buildingImageService.GetByBuildingIdAsync(dto.Id);
+            var coverImage = images.FirstOrDefault(img => img.IsCoverImage);
+            
+            dto.HasImages = images.Any();
+            if (coverImage != null)
+            {
+                dto.CoverImageId = coverImage.BuildingImageId;
+                dto.CoverImageUrl = $"/api/ImageStorage/download/{coverImage.BuildingImageId}";
+            }
+
             return Ok(dto);
         }
 

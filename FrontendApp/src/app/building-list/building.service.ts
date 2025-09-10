@@ -27,6 +27,10 @@ export interface Building {
   // Campos calculados/mapeados del frontend
   districtName?: string;
   statusName?: string;
+  // Campos de imágenes
+  hasImages?: boolean;
+  coverImageId?: string;
+  coverImageUrl?: string;
 }
 
 export interface BuildingListResult {
