@@ -42,9 +42,9 @@
 							<li class="page-item" [class.disabled]="page === 1">
 									<button class="page-link pagination-theme-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">Anterior</button>
 							</li>
-							<li class="page-item" *ngFor="let p of getPagesArray()" [class.active]="p === page">
-									<button class="page-link pagination-theme-btn" (click)="goToPage(p)">{{ p }}</button>
-							</li>
+							  <li class="page-item" *ngFor="let p of getPagesArray()" [class.active]="p === page">
+								  <button class="page-link pagination-theme-btn pagination-num-btn" (click)="goToPage(p)">{{ p }}</button>
+							  </li>
 							<li class="page-item" [class.disabled]="page === totalPages">
 									<button class="page-link pagination-theme-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">Siguiente</button>
 							</li>
@@ -66,10 +66,17 @@
 			color: #aaa !important;
 			border: 1px solid var(--color-primary-light) !important;
 		}
-		.page-item.active .pagination-theme-btn {
-			background-color: var(--color-accent) !important;
+		/* Números de página: fondo blanco, número verde */
+		.pagination-num-btn {
+			background-color: #fff !important;
+			color: var(--color-primary) !important;
+			border: 1px solid var(--color-primary) !important;
+		}
+		/* Página activa: fondo verde, número blanco */
+		.page-item.active .pagination-num-btn {
+			background-color: var(--color-primary) !important;
 			color: #fff !important;
-			border: 1px solid var(--color-accent-dark) !important;
+			border: 1px solid var(--color-primary-dark) !important;
 		}
 		</style>
 	</div>
