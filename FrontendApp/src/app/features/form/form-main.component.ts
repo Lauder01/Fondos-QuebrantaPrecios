@@ -90,7 +90,7 @@ export class FormMainComponent {
 					// Detalles Técnicos
 					floorCount: Number(formData.technicalDetails.floorCount) || 1,
 					yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
-					price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
+					price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? Number(formData.technicalDetails.price) : 0,
 					energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
 									hasElevator: !!formData.technicalDetails.hasElevator,
 									hasGarage: !!formData.technicalDetails.hasGarage,
