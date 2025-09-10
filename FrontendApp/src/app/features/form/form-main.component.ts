@@ -1,5 +1,6 @@
 
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GeneralInfoComponent } from './general-info.component';
@@ -11,13 +12,16 @@ import { ApiService, BuildingCreatorDto, ZipcodeGetterDto } from '../../core/api
 @Component({
 	selector: 'app-form-main',
 	standalone: true,
-	imports: [ReactiveFormsModule, GeneralInfoComponent, LocationComponent, TechnicalDetailsComponent, BuildingImagesComponent],
+	imports: [CommonModule, ReactiveFormsModule, GeneralInfoComponent, LocationComponent, TechnicalDetailsComponent, BuildingImagesComponent],
 	templateUrl: './form-main.component.html',
 })
 export class FormMainComponent {
+	@ViewChild(BuildingImagesComponent) buildingImagesComponent!: BuildingImagesComponent;
+
 	form: FormGroup;
 	allZipcodes: ZipcodeGetterDto[] = [];
 	buildingImages: BuildingImage[] = [];
+	createdBuildingId: string | null = null; // ID del edificio creado
 
 	constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
 		this.form = this.fb.group({
@@ -118,16 +122,23 @@ export class FormMainComponent {
 				this.api.createBuilding(buildingData).subscribe({
 					next: (result) => {
 						console.log('Edificio creado exitosamente:', result);
-						alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente`);
 
-						// Redirigir a la página de registro de apartamentos
-						if (result.id) {
-							this.router.navigate(['/apartments/register', result.id]);
+						// Guardar el ID del edificio creado
+						this.createdBuildingId = result.id;
+
+						// Subir las imágenes después de crear el edificio
+						if (this.buildingImagesComponent && this.buildingImages.length > 0) {
+							console.log('Subiendo imágenes pendientes...');
+							this.buildingImagesComponent.uploadPendingImages(result.id).then(() => {
+								console.log('Todas las imágenes han sido subidas exitosamente');
+								alert(`Edificio "${result.name || 'Sin nombre'}" e imágenes registrados exitosamente. Continúe con el registro de apartamentos.`);
+							}).catch((error) => {
+								console.error('Error subiendo imágenes:', error);
+								alert(`Edificio "${result.name || 'Sin nombre'}" creado, pero hubo un error subiendo las imágenes: ${error.message}`);
+							});
+						} else {
+							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente. Continúe con el registro de apartamentos.`);
 						}
-
-						// Opcional: Limpiar el formulario
-						this.resetForm();
-						this.buildingImages = [];
 					},
 					error: (error) => {
 						console.error('Error al crear el edificio:', error);
@@ -213,5 +224,14 @@ export class FormMainComponent {
 				control?.markAsTouched();
 			}
 		});
+	}
+
+	/**
+	 * Navega a la página de gestión de apartamentos
+	 */
+	continueToApartments() {
+		if (this.createdBuildingId) {
+			this.router.navigate(['/apartments/register', this.createdBuildingId]);
+		}
 	}
 }

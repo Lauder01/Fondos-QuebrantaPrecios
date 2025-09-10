@@ -16,7 +16,7 @@
     </div>
     <div class="gallery-meta-row">
       <div class="gallery-alt-row">
-        <input type="text" class="form-control form-control-sm gallery-alt-input" [(ngModel)]="img.altText" placeholder="Texto alternativo" [disabled]="!!img.uploading">
+        <input type="text" class="form-control form-control-sm gallery-alt-input" [(ngModel)]="img.altText" placeholder="Texto alternativo" [disabled]="!!img.uploading" (blur)="updateAltText(i)">
       </div>
       <div class="gallery-btn-row">
         <button type="button" class="btn btn-outline-danger gallery-btn" (click)="removeImage(i)" [disabled]="img.uploading">

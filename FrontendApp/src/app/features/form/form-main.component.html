@@ -51,7 +51,11 @@
 										<h3 class="fw-bold mb-0">Imágenes del Edificio</h3>
 									</div>
 									<div class="text-gray-500 mb-4" style="margin-top:-8px;">Sube imágenes, selecciona una como portada y añade texto alternativo.</div>
-									<app-building-images [images]="buildingImages" (imagesChange)="buildingImages = $event"></app-building-images>
+									<app-building-images
+										[images]="buildingImages"
+										[buildingId]="createdBuildingId || ''"
+										(imagesChange)="buildingImages = $event">
+									</app-building-images>
 								</div>
 							</div>
 						</div>
@@ -59,9 +63,25 @@
 		</form>
     <div class="sticky-bottom d-flex justify-content-center w-100 h-50">
 	    <div class="bg-white shadow-lg border-top py-3 rounded-4 w-100 h-100">
-        <div class="d-flex justify-content-center">
-					<button type="button" class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary" style="background-color: var(--color-primary-dark);" (click)="onSubmit()">
+        <div class="d-flex justify-content-center gap-3">
+					<!-- Botón para registrar edificio (solo si no está creado) -->
+					<button
+						*ngIf="!createdBuildingId"
+						type="button"
+						class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary"
+						style="background-color: var(--color-primary-dark);"
+						(click)="onSubmit()">
 						Registrar Edificio
+					</button>
+
+					<!-- Botón después de crear el edificio -->
+					<button
+						*ngIf="createdBuildingId"
+						type="button"
+						class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary"
+						style="background-color: var(--color-primary-dark);"
+						(click)="continueToApartments()">
+						<i class="bi bi-building me-2"></i>Continuar con el Registro
 					</button>
         </div>
       </div>

@@ -111,6 +111,85 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Actualiza el texto alternativo de una imagen
+        /// </summary>
+        [HttpPatch("update-alt/{buildingImageId}")]
+        public async Task<IActionResult> UpdateAltText(string buildingImageId, [FromBody] UpdateAltTextRequest request)
+        {
+            try
+            {
+                var image = await _buildingImageService.GetByIdAsync(buildingImageId);
+                if (image == null)
+                    return NotFound("Imagen no encontrada");
+
+                image.AltText = request.AltText;
+                await _buildingImageService.UpdateAsync(image);
+
+                return Ok(new { Message = "Texto alternativo actualizado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Elimina una imagen
+        /// </summary>
+        [HttpDelete("delete/{buildingImageId}")]
+        public async Task<IActionResult> DeleteImage(string buildingImageId)
+        {
+            try
+            {
+                var image = await _buildingImageService.GetByIdAsync(buildingImageId);
+                if (image == null)
+                    return NotFound("Imagen no encontrada");
+
+                await _buildingImageService.DeleteAsync(buildingImageId);
+
+                return Ok(new { Message = "Imagen eliminada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Establece una imagen como portada (y quita la portada de las demás)
+        /// </summary>
+        [HttpPatch("set-cover/{buildingImageId}")]
+        public async Task<IActionResult> SetAsCoverImage(string buildingImageId)
+        {
+            try
+            {
+                var image = await _buildingImageService.GetByIdAsync(buildingImageId);
+                if (image == null)
+                    return NotFound("Imagen no encontrada");
+
+                // Obtener todas las imágenes del edificio
+                var buildingImages = await _buildingImageService.GetByBuildingIdAsync(image.BuildingId);
+                
+                // Quitar portada de todas las imágenes
+                foreach (var img in buildingImages)
+                {
+                    img.IsCoverImage = false;
+                    await _buildingImageService.UpdateAsync(img);
+                }
+
+                // Establecer esta imagen como portada
+                image.IsCoverImage = true;
+                await _buildingImageService.UpdateAsync(image);
+
+                return Ok(new { Message = "Imagen establecida como portada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
         private string GetContentType(string fileName)
         {
             var extension = Path.GetExtension(fileName).ToLowerInvariant();
@@ -124,5 +203,10 @@ namespace WebAPI.Controllers
                 _ => "application/octet-stream"
             };
         }
+    }
+
+    public class UpdateAltTextRequest
+    {
+        public string AltText { get; set; } = string.Empty;
     }
 }
