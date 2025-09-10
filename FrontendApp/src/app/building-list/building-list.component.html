@@ -35,23 +35,42 @@
 		</div>
 
 		<nav *ngIf="totalPages > 1 && !loading" class="mt-4">
-			<ul class="pagination justify-content-center">
-				   <li class="page-item" [class.disabled]="page === 1">
-					   <button class="page-link" (click)="goToPage(1)" [disabled]="page === 1">Primera</button>
-				   </li>
-				   <li class="page-item" [class.disabled]="page === 1">
-					   <button class="page-link" (click)="goToPage(page - 1)" [disabled]="page === 1">Anterior</button>
-				   </li>
-				   <li class="page-item" *ngFor="let p of getPagesArray()" [class.active]="p === page">
-					   <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
-				   </li>
-				   <li class="page-item" [class.disabled]="page === totalPages">
-					   <button class="page-link" (click)="goToPage(page + 1)" [disabled]="page === totalPages">Siguiente</button>
-				   </li>
-				   <li class="page-item" [class.disabled]="page === totalPages">
-					   <button class="page-link" (click)="goToPage(totalPages)" [disabled]="page === totalPages">Última</button>
-				   </li>
-			</ul>
+			 <ul class="pagination justify-content-center">
+							<li class="page-item" [class.disabled]="page === 1">
+									<button class="page-link pagination-theme-btn" (click)="goToPage(1)" [disabled]="page === 1">Primera</button>
+							</li>
+							<li class="page-item" [class.disabled]="page === 1">
+									<button class="page-link pagination-theme-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">Anterior</button>
+							</li>
+							<li class="page-item" *ngFor="let p of getPagesArray()" [class.active]="p === page">
+									<button class="page-link pagination-theme-btn" (click)="goToPage(p)">{{ p }}</button>
+							</li>
+							<li class="page-item" [class.disabled]="page === totalPages">
+									<button class="page-link pagination-theme-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">Siguiente</button>
+							</li>
+							<li class="page-item" [class.disabled]="page === totalPages">
+									<button class="page-link pagination-theme-btn" (click)="goToPage(totalPages)" [disabled]="page === totalPages">Última</button>
+							</li>
+			 </ul>
 		</nav>
+		<style>
+		.pagination-theme-btn {
+			background-color: var(--color-primary-dark) !important;
+			color: var(--color-white, #fff) !important;
+			border: 1px solid var(--color-primary) !important;
+			transition: background 0.2s, color 0.2s;
+		}
+		.pagination-theme-btn:disabled,
+		.page-item.disabled .pagination-theme-btn {
+			background-color: var(--color-primary-lightest) !important;
+			color: #aaa !important;
+			border: 1px solid var(--color-primary-light) !important;
+		}
+		.page-item.active .pagination-theme-btn {
+			background-color: var(--color-accent) !important;
+			color: #fff !important;
+			border: 1px solid var(--color-accent-dark) !important;
+		}
+		</style>
 	</div>
 </div>
