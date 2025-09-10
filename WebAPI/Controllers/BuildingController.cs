@@ -588,7 +588,7 @@ namespace WebAPI.Controllers
             };
 
             // Configura la URL de la API externa
-            var apiUrl = "https://url-de-la-otra-api/api/speculab"; // Cambia esto por la URL real
+            var apiUrl = "https://devdemoapi3.azurewebsites.net/api/requests"; // URL de SpecuLab
 
             using var httpClient = new HttpClient();
             var response = await httpClient.PostAsJsonAsync(apiUrl, dto);

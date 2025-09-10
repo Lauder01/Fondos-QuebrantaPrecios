@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace WebAPI.Dtos.SpecuLab
 {
     /// <summary>
-    /// DTO para actualizar datos de edificio desde SpecuLab. Está relacionado con el método Patch a SpecuLab.
+    /// DTO para actualizar datos de edificio desde SpecuLab. Está relacionado con el método Patch de SpecuLab a nosotros.
     /// </summary>
     public class SpecuLabUpdaterDto
     {
