@@ -18,6 +18,8 @@ namespace WebAPI.AutoMapperProfiles
                 .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
             CreateMap<BuildingCreatorDto, Building>()
                 .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
+            CreateMap<BuildingWithImagesCreatorDto, Building>()
+                .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
             CreateMap<BuildingUpdaterDto, Building>()
                 .ForMember(dest => dest.HasGarage, opt => opt.MapFrom(src => src.HasGarage));
         }

@@ -191,4 +191,41 @@ export class BuildingImagesComponent implements OnInit {
       this.imagesChange.emit(this.images);
     });
   }
+
+  /**
+   * Convierte las imágenes pendientes a formato base64 para el endpoint unificado
+   */
+  async getImagesAsBase64(): Promise<any[]> {
+    const pendingImages = this.images.filter(img => img.file && !img.buildingImageId);
+
+    if (pendingImages.length === 0) {
+      return [];
+    }
+
+    const imageFilesPromises = pendingImages.map(image => {
+      return new Promise<any>((resolve, reject) => {
+        if (!image.file) {
+          reject(new Error('No hay archivo para convertir'));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64String = (e.target?.result as string)?.split(',')[1]; // Quitar el prefijo data:image/...;base64,
+
+          resolve({
+            fileName: image.fileName,
+            fileContent: base64String,
+            contentType: image.file!.type,
+            altText: image.altText || 'Imagen del edificio',
+            isCoverImage: image.isCover || false
+          });
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(image.file);
+      });
+    });
+
+    return Promise.all(imageFilesPromises);
+  }
 }

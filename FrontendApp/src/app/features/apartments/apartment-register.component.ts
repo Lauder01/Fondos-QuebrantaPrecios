@@ -113,13 +113,16 @@ export class ApartmentRegisterComponent implements OnInit {
       return; // Evitar múltiples clics
     }
 
-    // Validar que todos los campos requeridos estén completos y válidos
+    // Validar y normalizar los campos numéricos
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
-        if (!apt.code || !apt.door || !apt.floorId || !apt.area || !apt.numRooms || !apt.numBathrooms ||
-            apt.code.trim() === '' || apt.door.trim() === '' || apt.floorId.trim() === '' ||
-            apt.area <= 0 || apt.numRooms < 1 || apt.numBathrooms < 1) {
-          alert('Por favor, completa todos los campos requeridos y asegúrate de que los valores sean válidos en todos los apartamentos.');
+        // Si el usuario deja vacío el campo, Angular lo pone como null o ''
+        apt.numRooms = apt.numRooms && !isNaN(apt.numRooms) ? Number(apt.numRooms) : 0;
+        apt.numBathrooms = apt.numBathrooms && !isNaN(apt.numBathrooms) ? Number(apt.numBathrooms) : 0;
+        apt.area = apt.area && !isNaN(apt.area) ? Number(apt.area) : 0;
+        if (!apt.code || !apt.door || !apt.floorId ||
+            apt.code.trim() === '' || apt.door.trim() === '' || apt.floorId.trim() === '') {
+          alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
       }

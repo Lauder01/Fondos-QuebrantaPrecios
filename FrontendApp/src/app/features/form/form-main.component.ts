@@ -118,43 +118,47 @@ export class FormMainComponent {
 
 				console.log('Enviando edificio:', buildingData);
 
-				// Enviar a la API
-				this.api.createBuilding(buildingData).subscribe({
-					next: (result) => {
-						console.log('Edificio creado exitosamente:', result);
+				// Verificar si hay imágenes para enviar junto con el edificio
+				if (this.buildingImagesComponent && this.buildingImages.length > 0) {
+					console.log('Convirtiendo imágenes a base64...');
+					this.buildingImagesComponent.getImagesAsBase64().then((imageFiles) => {
+						const buildingWithImages = {
+							...buildingData,
+							imageFiles: imageFiles
+						};
 
-						// Guardar el ID del edificio creado
-						this.createdBuildingId = result.id;
+						console.log('Enviando edificio con imágenes al endpoint unificado:', buildingWithImages);
 
-						// Subir las imágenes después de crear el edificio
-						if (this.buildingImagesComponent && this.buildingImages.length > 0) {
-							console.log('Subiendo imágenes pendientes...');
-							this.buildingImagesComponent.uploadPendingImages(result.id).then(() => {
-								console.log('Todas las imágenes han sido subidas exitosamente');
+						// Enviar al endpoint unificado
+						this.api.createBuildingWithImages(buildingWithImages).subscribe({
+							next: (result) => {
+								console.log('Edificio e imágenes creados exitosamente:', result);
+								this.createdBuildingId = result.id;
 								alert(`Edificio "${result.name || 'Sin nombre'}" e imágenes registrados exitosamente. Continúe con el registro de apartamentos.`);
-							}).catch((error) => {
-								console.error('Error subiendo imágenes:', error);
-								alert(`Edificio "${result.name || 'Sin nombre'}" creado, pero hubo un error subiendo las imágenes: ${error.message}`);
-							});
-						} else {
+							},
+							error: (error) => {
+								console.error('Error al crear el edificio con imágenes:', error);
+								this.handleApiError(error);
+							}
+						});
+					}).catch((error) => {
+						console.error('Error convirtiendo imágenes a base64:', error);
+						alert('Error procesando las imágenes: ' + error.message);
+					});
+				} else {
+					// Sin imágenes, usar el endpoint normal
+					this.api.createBuilding(buildingData).subscribe({
+						next: (result) => {
+							console.log('Edificio creado exitosamente:', result);
+							this.createdBuildingId = result.id;
 							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente. Continúe con el registro de apartamentos.`);
+						},
+						error: (error) => {
+							console.error('Error al crear el edificio:', error);
+							this.handleApiError(error);
 						}
-					},
-					error: (error) => {
-						console.error('Error al crear el edificio:', error);
-						let errorMessage = 'Error al registrar el edificio.';
-
-						if (error.error && error.error.errors) {
-							// Errores de validación del servidor
-							const validationErrors = Object.values(error.error.errors).flat();
-							errorMessage = `Errores de validación:\n${validationErrors.join('\n')}`;
-						} else if (error.error && error.error.message) {
-							errorMessage = error.error.message;
-						}
-
-						alert(errorMessage);
-					}
-				});
+					});
+				}
 			} else {
 				console.log('Formulario inválido');
 				this.markAllFieldsAsTouched();
@@ -174,6 +178,21 @@ export class FormMainComponent {
 								hasGarage: false
 							}
 						});
+	}
+
+	private handleApiError(error: any) {
+		console.error('Error en API:', error);
+		let errorMessage = 'Error al registrar el edificio.';
+
+		if (error.error && error.error.errors) {
+			// Errores de validación del servidor
+			const validationErrors = Object.values(error.error.errors).flat();
+			errorMessage = `Errores de validación:\n${validationErrors.join('\n')}`;
+		} else if (error.error && error.error.message) {
+			errorMessage = error.error.message;
+		}
+
+		alert(errorMessage);
 	}
 
 	private buildConstructedAddress(formData: any): string {
