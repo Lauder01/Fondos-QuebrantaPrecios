@@ -128,6 +128,14 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable(tb => tb.HasTrigger("TrgBuildingImageUpdateUpdatedAt"));
 
+            // Configuración para almacenamiento de imágenes en varbinary(max)
+            entity.Property(e => e.RowGuid)
+                .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+            entity.Property(e => e.ImageData)
+                .HasColumnType("varbinary(max)")
+                .IsRequired(false);
+
             entity.HasOne(d => d.Building).WithMany(p => p.BuildingImage).HasConstraintName("FKBuildingIm593721");
         });
 

@@ -86,5 +86,38 @@ namespace ServiceLibraryProject
         {
             await _buildingImageRepository.UpdateAsync(entity);
         }
+
+        // Métodos específicos para manejar FILESTREAM
+        public void SaveImageData(string buildingImageId, byte[] imageData)
+        {
+            var image = GetById(buildingImageId);
+            if (image != null)
+            {
+                image.ImageData = imageData;
+                Update(image);
+            }
+        }
+
+        public async Task SaveImageDataAsync(string buildingImageId, byte[] imageData)
+        {
+            var image = await GetByIdAsync(buildingImageId);
+            if (image != null)
+            {
+                image.ImageData = imageData;
+                await UpdateAsync(image);
+            }
+        }
+
+        public byte[]? GetImageData(string buildingImageId)
+        {
+            var image = GetById(buildingImageId);
+            return image?.ImageData;
+        }
+
+        public async Task<byte[]?> GetImageDataAsync(string buildingImageId)
+        {
+            var image = await GetByIdAsync(buildingImageId);
+            return image?.ImageData;
+        }
     }
 }
