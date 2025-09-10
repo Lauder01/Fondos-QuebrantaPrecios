@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
                 var dto = _mapper.Map<WebAPI.Dtos.CozyHouse.CozyHouseCreatorDto>(apartment);
 
                 // Configura la URL de la API externa CozyHouse
-                var apiUrl = "https://url-de-la-api-cozyhouse/api/cozyhouse"; // Cambia esto por la URL real
+                var apiUrl = "https://devdemoapi4.azurewebsites.net/api/requests"; // Cambia esto por la URL real
 
                 using var httpClient = new HttpClient();
                 var response = await httpClient.PostAsJsonAsync(apiUrl, dto);
