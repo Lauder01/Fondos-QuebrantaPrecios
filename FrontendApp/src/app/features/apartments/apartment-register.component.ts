@@ -104,6 +104,22 @@ export class ApartmentRegisterComponent implements OnInit {
   }
 
   finishRegistration() {
+    // Siempre inicializar apartamentos si no existen
+    if (Object.keys(this.apartmentsByFloor).length === 0 && this.buildingFloors.length > 0) {
+      this.buildingFloors.forEach(floor => {
+        this.apartmentsByFloor[floor.id] = [];
+        for (let i = 0; i < this.apartmentsPerFloor; i++) {
+          this.apartmentsByFloor[floor.id].push({
+            code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
+            door: `${i + 1}${this.getDoorLetter(i + 1)}`,
+            floorId: floor.id,
+            numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 0,
+            numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 0,
+            area: this.area && !isNaN(this.area) ? Number(this.area) : 0
+          });
+        }
+      });
+    }
     // Si los apartamentos no están inicializados, inicializarlos automáticamente (como en confirmGeneralCharacteristics)
     if (Object.keys(this.apartmentsByFloor).length === 0 && this.buildingFloors.length > 0) {
       this.buildingFloors.forEach(floor => {
@@ -130,6 +146,7 @@ export class ApartmentRegisterComponent implements OnInit {
     }
 
     // Validar y limpiar datos antes de enviar
+    const apartmentPayloads: any[] = [];
     const apartmentCreationRequests: any[] = [];
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
@@ -147,12 +164,13 @@ export class ApartmentRegisterComponent implements OnInit {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
+        apartmentPayloads.push(payload);
         apartmentCreationRequests.push(this.api.createApartment(payload));
       }
     }
 
     // Log para depuración: mostrar los datos que se envían a la API
-    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(apartmentCreationRequests.map(r => r.source.value), null, 2));
+    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(apartmentPayloads, null, 2));
 
     this.isCreatingApartments = true;
 
