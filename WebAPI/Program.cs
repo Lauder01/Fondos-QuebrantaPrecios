@@ -10,10 +10,18 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Crear carpeta de logs si no existe
+var logDir = Path.Combine(AppContext.BaseDirectory, "logs");
+if (!Directory.Exists(logDir))
+{
+    Directory.CreateDirectory(logDir);
+}
+
 // Configuración de Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/webapi-.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(Path.Combine(logDir, "webapi-.log"), rollingInterval: RollingInterval.Day)
     .Enrich.FromLogContext()
     .CreateLogger();
 
