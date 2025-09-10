@@ -116,7 +116,7 @@ export class FormMainComponent {
 				this.api.createBuilding(buildingData).subscribe({
 					next: (result) => {
 						console.log('Edificio creado exitosamente:', result);
-						alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente con ID: ${result.id}`);
+						alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente`);
 
 						// Redirigir a la página de registro de apartamentos
 						if (result.id) {
