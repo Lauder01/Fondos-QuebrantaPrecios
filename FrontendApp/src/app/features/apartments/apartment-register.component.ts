@@ -59,7 +59,7 @@ export class ApartmentRegisterComponent implements OnInit {
 
   confirmGeneralCharacteristics() {
     if (this.apartmentsPerFloor < 1) this.apartmentsPerFloor = 1;
-    // Inicializar apartamentos personalizados por planta
+    // Inicializar apartamentos personalizados por planta con los valores del formulario general
     if (this.buildingFloors.length > 0) {
       this.step = 2;
       this.buildingFloors.forEach(floor => {
@@ -69,9 +69,9 @@ export class ApartmentRegisterComponent implements OnInit {
             code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
-            numRooms: 1,
-            numBathrooms: 1,
-            area: 70
+            numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
+            numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 1,
+            area: this.area && !isNaN(this.area) ? Number(this.area) : 70
           });
         }
       });
