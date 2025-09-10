@@ -129,29 +129,32 @@ export class ApartmentRegisterComponent implements OnInit {
       return; // Evitar múltiples clics
     }
 
-    // Solo validar campos obligatorios, sin normalizar valores numéricos
+    // Validar y limpiar datos antes de enviar
+    const apartmentCreationRequests: any[] = [];
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
-        if (!apt.code || !apt.door || !apt.floorId ||
-            apt.code.toString().trim() === '' || apt.door.toString().trim() === '' || apt.floorId.toString().trim() === '') {
+        // Limpiar y convertir todos los campos
+        const payload = {
+          code: String(apt.code ?? '').trim(),
+          door: String(apt.door ?? '').trim(),
+          floorId: String(apt.floorId ?? '').trim(),
+          numRooms: Number(apt.numRooms),
+          numBathrooms: Number(apt.numBathrooms),
+          area: Number(apt.area)
+        };
+        // Validar campos obligatorios
+        if (!payload.code || !payload.door || !payload.floorId) {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
+        apartmentCreationRequests.push(this.api.createApartment(payload));
       }
     }
 
     // Log para depuración: mostrar los datos que se envían a la API
-    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(this.apartmentsByFloor, null, 2));
+    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(apartmentCreationRequests.map(r => r.source.value), null, 2));
 
     this.isCreatingApartments = true;
-
-    // Recoger todos los apartamentos personalizados
-    const apartmentCreationRequests: any[] = [];
-    for (const floorId in this.apartmentsByFloor) {
-      for (const apt of this.apartmentsByFloor[floorId]) {
-        apartmentCreationRequests.push(this.api.createApartment(apt));
-      }
-    }
 
     // Ejecutar todas las creaciones en paralelo
     forkJoin(apartmentCreationRequests).subscribe({
