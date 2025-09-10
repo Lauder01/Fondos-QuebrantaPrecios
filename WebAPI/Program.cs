@@ -6,8 +6,18 @@ using ClassLibraryProject.Entities;
 using AutoMapper;
 using ServiceLibraryProject;
 using ServiceLibraryProject.Interfaces;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/webapi-.log", rollingInterval: RollingInterval.Day)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -80,9 +90,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseCors("AllowAll");
+
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -62,6 +62,7 @@ export interface BuildingCreatorDto {
 	statusId?: string;
 	energyCertificate?: string;
 	hasElevator: boolean;
+	hasGarage: boolean;
 
 	// Campos adicionales para la creación automática del Address
 	zipcodeId?: string;

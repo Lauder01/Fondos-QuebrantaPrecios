@@ -145,4 +145,34 @@ export class ApartmentRegisterComponent implements OnInit {
   getDoorLetter(aptNumber: number): string {
     return String.fromCharCode(64 + aptNumber); // A, B, C, etc.
   }
+
+  addApartment(floorId: string) {
+    const apts = this.apartmentsByFloor[floorId];
+    if (apts && apts.length > 0) {
+      // Copiar datos del primer apartamento
+      const base = { ...apts[0] };
+      // Generar nuevo código y puerta
+      const newIndex = apts.length;
+      base.code = `${this.currentFloor}-${(newIndex + 1).toString().padStart(2, '0')}`;
+      base.door = `${newIndex + 1}${this.getDoorLetter(newIndex + 1)}`;
+      apts.push({ ...base });
+    } else if (apts) {
+      // Si no hay ninguno, crear uno básico
+      apts.push({
+        code: `${this.currentFloor}-01`,
+        door: `1${this.getDoorLetter(1)}`,
+        floorId: floorId,
+        numRooms: 1,
+        numBathrooms: 1,
+        surface: 70
+      });
+    }
+  }
+
+  removeApartment(floorId: string, index: number) {
+    const apts = this.apartmentsByFloor[floorId];
+    if (apts && apts.length > index) {
+      apts.splice(index, 1);
+    }
+  }
 }

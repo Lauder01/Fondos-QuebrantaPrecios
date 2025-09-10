@@ -42,8 +42,9 @@ export class FormMainComponent {
 				floorCount: [1, [Validators.required, Validators.min(1)]],
 				yearBuilt: [2025, [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear()+1)]],
 				price: [0, [Validators.required, Validators.min(0)]],
-        energyCertificate: ['', Validators.required],
-				hasElevator: [false]
+	energyCertificate: ['', Validators.required],
+				hasElevator: [false],
+				hasGarage: [false]
 			})
 		});
 
@@ -87,7 +88,8 @@ export class FormMainComponent {
 					yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
 					price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? String(formData.technicalDetails.price) : '0',
 					energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
-					hasElevator: !!formData.technicalDetails.hasElevator,
+									hasElevator: !!formData.technicalDetails.hasElevator,
+									hasGarage: !!formData.technicalDetails.hasGarage,
 
 					// Campos adicionales para la creación automática del Address
 					zipcodeId: this.getZipcodeIdFromCode(formData.location.zipCode),
@@ -152,14 +154,15 @@ export class FormMainComponent {
 	private resetForm() {
 		this.form.reset();
 		// Restablecer valores por defecto
-		this.form.patchValue({
-			technicalDetails: {
-				floorCount: 1,
-				yearBuilt: 2025,
-				price: 0,
-				hasElevator: false
-			}
-		});
+						this.form.patchValue({
+							technicalDetails: {
+								floorCount: 1,
+								yearBuilt: 2025,
+								price: 0,
+								hasElevator: false,
+								hasGarage: false
+							}
+						});
 	}
 
 	private buildConstructedAddress(formData: any): string {
