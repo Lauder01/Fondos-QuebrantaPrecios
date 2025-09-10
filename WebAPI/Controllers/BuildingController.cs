@@ -24,6 +24,7 @@ namespace WebAPI.Controllers
         private readonly ServiceLibraryProject.AddressService _addressService;
         private readonly ServiceLibraryProject.FloorService _floorService;
         private readonly ServiceLibraryProject.ApartmentService _apartmentService;
+        private readonly ServiceLibraryProject.BuildingImageService _buildingImageService;
         
         public BuildingController(
             ServiceLibraryProject.BuildingService buildingService, 
@@ -31,6 +32,7 @@ namespace WebAPI.Controllers
             ServiceLibraryProject.AddressService addressService,
             ServiceLibraryProject.FloorService floorService,
             ServiceLibraryProject.ApartmentService apartmentService,
+            ServiceLibraryProject.BuildingImageService buildingImageService,
             IMapper mapper)
         {
             _buildingService = buildingService;
@@ -38,6 +40,7 @@ namespace WebAPI.Controllers
             _addressService = addressService;
             _floorService = floorService;
             _apartmentService = apartmentService;
+            _buildingImageService = buildingImageService;
             _mapper = mapper;
         }
 
@@ -110,6 +113,45 @@ namespace WebAPI.Controllers
             await CreateAddressForBuilding(building.Id, dto);
             CreateFloorsForBuilding(building.Id, building.FloorCount);
             CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
+            var buildingWithFloors = _buildingService.GetById(building.Id);
+            var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
+            return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
+        }
+
+        [HttpPost("with-images")]
+        public async Task<ActionResult<BuildingGetterDto>> CreateWithImages(BuildingWithImagesCreatorDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+                
+            var defaultIds = EnsureDefaultDataExists();
+            var building = _mapper.Map<Building>(dto);
+            building.Id = Guid.NewGuid().ToString();
+            
+            if (string.IsNullOrWhiteSpace(building.DistrictId) && !string.IsNullOrWhiteSpace(defaultIds.DistrictId))
+                building.DistrictId = defaultIds.DistrictId;
+            if (string.IsNullOrWhiteSpace(building.StreetId) && !string.IsNullOrWhiteSpace(defaultIds.StreetId))
+                building.StreetId = defaultIds.StreetId;
+            if (string.IsNullOrWhiteSpace(building.BuildingCompanyId) && !string.IsNullOrWhiteSpace(defaultIds.CompanyId))
+                building.BuildingCompanyId = defaultIds.CompanyId;
+            if (string.IsNullOrWhiteSpace(building.StatusId) && !string.IsNullOrWhiteSpace(defaultIds.StatusId))
+                building.StatusId = defaultIds.StatusId;
+                
+            building.Code = GenerateBuildingCode(building.DistrictId, building.StreetId, building.Doorway);
+            
+            // Crear el edificio
+            await _buildingService.AddAsync(building);
+            
+            // Crear la dirección
+            await CreateAddressForBuilding(building.Id, dto);
+            
+            // Crear las imágenes desde los archivos base64
+            await CreateImagesFromFiles(building.Id, dto.ImageFiles);
+            
+            // Crear pisos y apartamentos
+            CreateFloorsForBuilding(building.Id, building.FloorCount);
+            CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
+            
             var buildingWithFloors = _buildingService.GetById(building.Id);
             var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
             return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
@@ -555,6 +597,62 @@ namespace WebAPI.Controllers
                 return Ok("DTO enviado correctamente a SpecuLab.");
             else
                 return StatusCode((int)response.StatusCode, $"Error al enviar a SpecuLab: {await response.Content.ReadAsStringAsync()}");
+        }
+
+        /// <summary>
+        /// Crea las imágenes asociadas al edificio
+        /// </summary>
+        /// <param name="buildingId">ID del edificio</param>
+        /// <param name="imagesDtos">Lista de DTOs de imágenes a crear</param>
+        private async Task CreateImagesForBuilding(string buildingId, List<WebAPI.Dtos.BuildingImage.BuildingImageCreatorDto>? imagesDtos)
+        {
+            if (imagesDtos == null || !imagesDtos.Any())
+                return;
+
+            foreach (var imageDto in imagesDtos)
+            {
+                var buildingImage = _mapper.Map<ClassLibraryProject.Entities.BuildingImage>(imageDto);
+                buildingImage.BuildingImageId = Guid.NewGuid().ToString();
+                buildingImage.BuildingId = buildingId;
+
+                await _buildingImageService.AddAsync(buildingImage);
+            }
+        }
+
+        /// <summary>
+        /// Crea imágenes para el edificio desde archivos base64
+        /// </summary>
+        /// <param name="buildingId">ID del edificio</param>
+        /// <param name="imageFiles">Lista de archivos de imagen en formato base64</param>
+        private async Task CreateImagesFromFiles(string buildingId, List<ImageFileDto>? imageFiles)
+        {
+            if (imageFiles == null || !imageFiles.Any())
+                return;
+
+            // Obtener el edificio para la relación requerida
+            var building = _buildingService.GetById(buildingId);
+            if (building == null)
+                return;
+
+            foreach (var imageFile in imageFiles)
+            {
+                // Convertir base64 a bytes
+                byte[] imageBytes = Convert.FromBase64String(imageFile.FileContent);
+                
+                var buildingImage = new ClassLibraryProject.Entities.BuildingImage
+                {
+                    BuildingImageId = Guid.NewGuid().ToString(),
+                    BuildingId = buildingId,
+                    ImageData = imageBytes,
+                    FileName = imageFile.FileName ?? $"image_{DateTime.UtcNow:yyyyMMddHHmmss}",
+                    Url = $"/images/buildings/{buildingId}/{imageFile.FileName}",
+                    AltText = imageFile.AltText ?? "Imagen del edificio",
+                    IsCoverImage = imageFile.IsCoverImage,
+                    Building = building
+                };
+                
+                await _buildingImageService.AddAsync(buildingImage);
+            }
         }
 
     }
