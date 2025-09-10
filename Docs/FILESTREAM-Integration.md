@@ -12,11 +12,13 @@ Se agregaron dos propiedades simples:
 
 ### 2. Configuración de Base de Datos
 
-#### Script SQL necesario:
+#### Scripts SQL incluidos:
+- `Scripts/EnableFilestream.sql`: Verifica soporte de FILESTREAM (opcional)
 - `Scripts/ModifyBuildingImageTable.sql`: Agrega las columnas necesarias
 
 #### Para aplicar los cambios:
-1. Ejecutar `ModifyBuildingImageTable.sql` para modificar la tabla (ya ejecutado exitosamente)
+1. Opcional: Ejecutar `EnableFilestream.sql` para verificar soporte de FILESTREAM
+2. Ejecutar `ModifyBuildingImageTable.sql` para modificar la tabla (funciona en cualquier versión)
 
 ### 3. Configuración Entity Framework
 La configuración en `AppDbContext` es mínima:
@@ -33,17 +35,17 @@ Se agregaron métodos útiles en `BuildingImageService`:
 - `SaveImageData()` / `SaveImageDataAsync()`
 - `GetImageData()` / `GetImageDataAsync()`
 
-### 5. Controlador Principal
-`ImageStorageController` implementa:
-- Subir imágenes: `POST /api/ImageStorage/upload`
-- Descargar imágenes: `GET /api/ImageStorage/download/{id}`
-- Listar imágenes de un edificio: `GET /api/ImageStorage/building/{buildingId}`
+### 5. Controlador de Ejemplo
+`BuildingImageFileStreamController` muestra cómo:
+- Subir imágenes: `POST /api/BuildingImageFileStream/upload`
+- Descargar imágenes: `GET /api/BuildingImageFileStream/download/{id}`
+- Listar imágenes de un edificio: `GET /api/BuildingImageFileStream/building/{buildingId}`
 
 ## Uso
 
 ### Subir una imagen:
 ```http
-POST /api/ImageStorage/upload
+POST /api/BuildingImageFileStream/upload
 Content-Type: multipart/form-data
 
 buildingId: "edificio-123"
@@ -54,7 +56,7 @@ file: [archivo de imagen]
 
 ### Descargar una imagen:
 ```http
-GET /api/ImageStorage/download/imagen-456
+GET /api/BuildingImageFileStream/download/imagen-456
 ```
 
 ## Ventajas de esta implementación
