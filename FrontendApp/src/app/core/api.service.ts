@@ -163,6 +163,10 @@ export class ApiService {
 		return this.http.post<BuildingGetterDto>(`${this.baseUrl}/Building`, building);
 	}
 
+	createBuildingWithImages(building: any): Observable<BuildingGetterDto> {
+		return this.http.post<BuildingGetterDto>(`${this.baseUrl}/Building/with-images`, building);
+	}
+
 	getBuildingById(id: string): Observable<BuildingGetterDto> {
 		return this.http.get<BuildingGetterDto>(`${this.baseUrl}/Building/${id}`);
 	}
