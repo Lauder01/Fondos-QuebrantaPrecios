@@ -584,7 +584,7 @@ namespace WebAPI.Controllers
             {
                 BuildingCode = building.Code,
                 Description = building.Description ?? string.Empty,
-                BuildingAmount = building.Price.ToString()
+                BuildingAmount = building.Price?.ToString() ?? "0"
             };
 
             // Configura la URL de la API externa
