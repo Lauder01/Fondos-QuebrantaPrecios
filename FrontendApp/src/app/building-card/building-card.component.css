@@ -1,6 +1,8 @@
 /* Color especial para el título de la card */
-.info-content.high-contrast h6.card-title {
-  color: #c2fff4;
+.info-content.high-contrast h6.card-title,
+.info-content.info-green h6.card-title {
+  color: #c2fff4 !important;
+  text-shadow: none;
 }
 /* Caja de precio y estado con mismo tamaño, fondo blanco, color principal y más espacio para el texto */
 .price-box {
@@ -11,11 +13,13 @@
   font-weight: 600;
   font-size: 1.1rem;
   min-width: 110px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
   margin: 0 0.2rem;
+  text-shadow: none;
 }
 
 .status-box {
@@ -26,6 +30,7 @@
   font-weight: 600;
   font-size: 1.1rem;
   min-width: 110px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,12 +92,7 @@
   pointer-events: auto;
 }
 
-.building-card-full:hover .info-content {
-  background: rgba(255,255,255,0.99);
-  min-height: 70%;
-  padding-top: 2.5rem;
-  transition: all 0.4s cubic-bezier(.4,2,.6,1);
-}
+
 
 .building-card-full:hover .building-bg-image {
   transform: scale(1.05);
