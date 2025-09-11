@@ -4,11 +4,12 @@
   overflow: hidden;
   height: 100%;
   min-height: 320px;
-  border: 2.5px solid #e0e6ef;
+  border: 2.5px solid whitesmoke; /* Gris muy clarito */
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 4px 18px 0 rgba(13, 74, 23, 0.13);
   transition: box-shadow 0.3s;
+  margin: 1.2rem 0; /* Margen vertical entre cards */
 }
 
 .building-card-full:focus {
@@ -43,6 +44,7 @@
 .info-content {
   width: 100%;
   pointer-events: auto;
+  margin: 1.2rem 1.2rem 1.2rem 1.2rem; /* Márgenes internos para la info */
 }
 
 .info-content.high-contrast {
