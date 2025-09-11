@@ -25,6 +25,7 @@ namespace WebAPI.Controllers
         private readonly ServiceLibraryProject.FloorService _floorService;
         private readonly ServiceLibraryProject.ApartmentService _apartmentService;
         private readonly ServiceLibraryProject.BuildingImageService _buildingImageService;
+        private readonly ILogger<BuildingController> _logger;
         
         public BuildingController(
             ServiceLibraryProject.BuildingService buildingService, 
@@ -33,7 +34,8 @@ namespace WebAPI.Controllers
             ServiceLibraryProject.FloorService floorService,
             ServiceLibraryProject.ApartmentService apartmentService,
             ServiceLibraryProject.BuildingImageService buildingImageService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<BuildingController> logger)
         {
             _buildingService = buildingService;
             _statusService = statusService;
@@ -42,6 +44,7 @@ namespace WebAPI.Controllers
             _apartmentService = apartmentService;
             _buildingImageService = buildingImageService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet("paged")]
@@ -55,17 +58,31 @@ namespace WebAPI.Controllers
             var result = await _buildingService.GetPagedAndFilteredAsync(page, pageSize, name, districtId, companyId);
             var dtos = _mapper.Map<IEnumerable<BuildingGetterDto>>(result.Items);
 
+            // Optimización: Cargar todas las imágenes de los edificios de una vez
+            var buildingIds = dtos.Select(dto => dto.Id).ToList();
+            var allImages = await _buildingImageService.GetByBuildingIdsAsync(buildingIds);
+
+            // Agrupar imágenes por BuildingId para consulta rápida
+            var imagesByBuilding = allImages.GroupBy(img => img.BuildingId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
             // Enriquecer los DTOs con información de imágenes
             foreach (var dto in dtos)
             {
-                var images = await _buildingImageService.GetByBuildingIdAsync(dto.Id);
-                var coverImage = images.FirstOrDefault(img => img.IsCoverImage);
-                
-                dto.HasImages = images.Any();
-                if (coverImage != null)
+                if (imagesByBuilding.TryGetValue(dto.Id, out var images))
                 {
-                    dto.CoverImageId = coverImage.BuildingImageId;
-                    dto.CoverImageUrl = $"/api/ImageStorage/download/{coverImage.BuildingImageId}";
+                    var coverImage = images.FirstOrDefault(img => img.IsCoverImage);
+                    
+                    dto.HasImages = images.Any();
+                    if (coverImage != null)
+                    {
+                        dto.CoverImageId = coverImage.BuildingImageId;
+                        dto.CoverImageUrl = $"/api/ImageStorage/download/{coverImage.BuildingImageId}";
+                    }
+                }
+                else
+                {
+                    dto.HasImages = false;
                 }
             }
 
@@ -148,40 +165,106 @@ namespace WebAPI.Controllers
         [HttpPost("with-images")]
         public async Task<ActionResult<BuildingGetterDto>> CreateWithImages(BuildingWithImagesCreatorDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var requestId = HttpContext.Items["RequestId"]?.ToString() ?? Guid.NewGuid().ToString();
+            var buildingId = Guid.NewGuid().ToString();
+
+            _logger.LogInformation("Iniciando creación de edificio con imágenes - Name: {BuildingName}, Images: {ImageCount}, RequestId: {RequestId}",
+                dto.Name, dto.ImageFiles?.Count ?? 0, requestId);
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("Validación fallida para crear edificio - Errores: {ValidationErrors}, RequestId: {RequestId}",
+                        string.Join(", ", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))), requestId);
+                    return BadRequest(ModelState);
+                }
+
+                // Validar límites de imágenes
+                if (dto.ImageFiles?.Count > 10)
+                {
+                    _logger.LogWarning("Demasiadas imágenes en request - Count: {ImageCount}, RequestId: {RequestId}",
+                        dto.ImageFiles.Count, requestId);
+                    return BadRequest("Máximo 10 imágenes por edificio");
+                }
+
+                _logger.LogDebug("Iniciando mapeo y configuración de datos por defecto - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                    buildingId, requestId);
+
+                var defaultIds = EnsureDefaultDataExists();
+                var building = _mapper.Map<Building>(dto);
+                building.Id = buildingId;
                 
-            var defaultIds = EnsureDefaultDataExists();
-            var building = _mapper.Map<Building>(dto);
-            building.Id = Guid.NewGuid().ToString();
-            
-            if (string.IsNullOrWhiteSpace(building.DistrictId) && !string.IsNullOrWhiteSpace(defaultIds.DistrictId))
-                building.DistrictId = defaultIds.DistrictId;
-            if (string.IsNullOrWhiteSpace(building.StreetId) && !string.IsNullOrWhiteSpace(defaultIds.StreetId))
-                building.StreetId = defaultIds.StreetId;
-            if (string.IsNullOrWhiteSpace(building.BuildingCompanyId) && !string.IsNullOrWhiteSpace(defaultIds.CompanyId))
-                building.BuildingCompanyId = defaultIds.CompanyId;
-            if (string.IsNullOrWhiteSpace(building.StatusId) && !string.IsNullOrWhiteSpace(defaultIds.StatusId))
-                building.StatusId = defaultIds.StatusId;
+                if (string.IsNullOrWhiteSpace(building.DistrictId) && !string.IsNullOrWhiteSpace(defaultIds.DistrictId))
+                    building.DistrictId = defaultIds.DistrictId;
+                if (string.IsNullOrWhiteSpace(building.StreetId) && !string.IsNullOrWhiteSpace(defaultIds.StreetId))
+                    building.StreetId = defaultIds.StreetId;
+                if (string.IsNullOrWhiteSpace(building.BuildingCompanyId) && !string.IsNullOrWhiteSpace(defaultIds.CompanyId))
+                    building.BuildingCompanyId = defaultIds.CompanyId;
+                if (string.IsNullOrWhiteSpace(building.StatusId) && !string.IsNullOrWhiteSpace(defaultIds.StatusId))
+                    building.StatusId = defaultIds.StatusId;
+                    
+                building.Code = GenerateBuildingCode(building.DistrictId, building.StreetId, building.Doorway);
+
+                _logger.LogDebug("Código generado para edificio: {BuildingCode}, BuildingId: {BuildingId}, RequestId: {RequestId}",
+                    building.Code, buildingId, requestId);
                 
-            building.Code = GenerateBuildingCode(building.DistrictId, building.StreetId, building.Doorway);
-            
-            // Crear el edificio
-            await _buildingService.AddAsync(building);
-            
-            // Crear la dirección
-            await CreateAddressForBuilding(building.Id, dto);
-            
-            // Crear las imágenes desde los archivos base64
-            await CreateImagesFromFiles(building.Id, dto.ImageFiles);
-            
-            // Crear pisos y apartamentos
-            CreateFloorsForBuilding(building.Id, building.FloorCount);
-            CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
-            
-            var buildingWithFloors = _buildingService.GetById(building.Id);
-            var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
-            return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
+                // Crear el edificio
+                _logger.LogDebug("Guardando edificio en base de datos - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                    buildingId, requestId);
+                await _buildingService.AddAsync(building);
+                
+                // Crear la dirección
+                _logger.LogDebug("Creando dirección para edificio - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                    buildingId, requestId);
+                await CreateAddressForBuilding(building.Id, dto);
+                
+                // Crear las imágenes desde los archivos base64
+                if (dto.ImageFiles?.Any() == true)
+                {
+                    _logger.LogInformation("Procesando {ImageCount} imágenes para edificio - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                        dto.ImageFiles.Count, buildingId, requestId);
+                    await CreateImagesFromFiles(building.Id, dto.ImageFiles);
+                    _logger.LogInformation("Imágenes procesadas exitosamente - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                        buildingId, requestId);
+                }
+                
+                // Crear pisos y apartamentos
+                _logger.LogDebug("Creando {FloorCount} pisos y apartamentos - BuildingId: {BuildingId}, RequestId: {RequestId}",
+                    building.FloorCount, buildingId, requestId);
+                CreateFloorsForBuilding(building.Id, building.FloorCount);
+                CreateApartmentsForBuilding(building.Id, dto.ApartmentsPerFloor);
+                
+                var buildingWithFloors = _buildingService.GetById(building.Id);
+                var result = _mapper.Map<BuildingGetterDto>(buildingWithFloors);
+
+                // Agregar información de imágenes
+                var images = await _buildingImageService.GetByBuildingIdAsync(result.Id);
+                var coverImage = images.FirstOrDefault(img => img.IsCoverImage);
+                
+                result.HasImages = images.Any();
+                if (coverImage != null)
+                {
+                    result.CoverImageId = coverImage.BuildingImageId;
+                    result.CoverImageUrl = $"/api/ImageStorage/download/{coverImage.BuildingImageId}";
+                }
+
+                stopwatch.Stop();
+
+                _logger.LogInformation("Edificio creado exitosamente - BuildingId: {BuildingId}, Name: {BuildingName}, Images: {ImageCount}, Duración: {ElapsedMs}ms, RequestId: {RequestId}",
+                    buildingId, dto.Name, dto.ImageFiles?.Count ?? 0, stopwatch.ElapsedMilliseconds, requestId);
+
+                return CreatedAtAction(nameof(GetById), new { id = building.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                _logger.LogError(ex, "Error al crear edificio con imágenes - BuildingName: {BuildingName}, Images: {ImageCount}, Duración: {ElapsedMs}ms, RequestId: {RequestId}",
+                    dto.Name, dto.ImageFiles?.Count ?? 0, stopwatch.ElapsedMilliseconds, requestId);
+                
+                throw; // Dejar que el middleware global de excepciones lo maneje
+            }
         }
 
         [HttpPut("{id}")]

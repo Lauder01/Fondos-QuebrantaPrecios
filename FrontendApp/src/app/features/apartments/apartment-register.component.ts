@@ -154,27 +154,59 @@ export class ApartmentRegisterComponent implements OnInit {
     const apartmentCreationRequests: any[] = [];
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
-        // Limpiar y convertir todos los campos
+        // Limpiar y convertir todos los campos con validaciones del backend
+        const numRooms = Number(apt.numRooms) || 1;
+        const numBathrooms = Number(apt.numBathrooms) || 1;
+        const area = Number(apt.area) || 1;
+
         const payload = {
           code: String(apt.code ?? '').trim(),
           door: String(apt.door ?? '').trim(),
           floorId: String(apt.floorId ?? '').trim(),
-          numRooms: Number(apt.numRooms),
-          numBathrooms: Number(apt.numBathrooms),
-          area: Number(apt.area)
+          numRooms: Math.min(Math.max(1, numRooms), 50), // Limitar entre 1-50 (validación backend)
+          numBathrooms: Math.min(Math.max(1, numBathrooms), 20), // Limitar entre 1-20 (validación backend)
+          area: Math.max(0.01, area) // Mínimo 0.01 (validación backend)
         };
-        // Validar campos obligatorios y área válida
+
+        // Validar campos obligatorios
         if (!payload.code || !payload.door || !payload.floorId) {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
-        if (isNaN(payload.area) || payload.area <= 0) {
-          alert('El área de cada apartamento debe ser mayor que 0. Corrige los valores antes de continuar.');
+
+        // Validar que el código no sea demasiado largo
+        if (payload.code.length > 50) {
+          alert(`El código "${payload.code}" es demasiado largo (máximo 50 caracteres). Corrige los valores antes de continuar.`);
           return;
+        }
+
+        // Validar que la puerta no sea demasiado larga
+        if (payload.door.length > 24) {
+          alert(`La puerta "${payload.door}" es demasiado larga (máximo 24 caracteres). Corrige los valores antes de continuar.`);
+          return;
+        }
+
+        // Validar que código y puerta no sean iguales (validación del backend)
+        if (payload.code === payload.door) {
+          alert(`El apartamento con código "${payload.code}" no puede tener la misma puerta "${payload.door}". Los códigos y puertas deben ser diferentes.`);
+          return;
+        }
+
+        // Advertir si se han ajustado valores extremos
+        if (numRooms !== payload.numRooms || numBathrooms !== payload.numBathrooms) {
+          console.warn(`Apartamento ${payload.code}: Valores ajustados - Habitaciones: ${numRooms} → ${payload.numRooms}, Baños: ${numBathrooms} → ${payload.numBathrooms}`);
         }
         apartmentPayloads.push(payload);
         apartmentCreationRequests.push(this.api.createApartment(payload));
       }
+    }
+
+    // Validar que no haya códigos duplicados
+    const codes = apartmentPayloads.map(apt => apt.code);
+    const duplicateCodes = codes.filter((code, index) => codes.indexOf(code) !== index);
+    if (duplicateCodes.length > 0) {
+      alert(`Se han encontrado códigos duplicados: ${duplicateCodes.join(', ')}. Por favor, asegúrate de que todos los códigos sean únicos.`);
+      return;
     }
 
     // Log para depuración: mostrar los datos que se envían a la API

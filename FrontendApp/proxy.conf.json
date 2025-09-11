@@ -1,8 +1,22 @@
 {
-  "/api/*": {
+  "/api/Building/**": {
     "target": "https://localhost:7124",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "bypass": false,
+    "headers": {
+      "Connection": "keep-alive"
+    }
+  },
+  "/api/**": {
+    "target": "https://localhost:7124",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "bypass": false,
+    "headers": {
+      "Connection": "keep-alive"
+    }
   }
 }

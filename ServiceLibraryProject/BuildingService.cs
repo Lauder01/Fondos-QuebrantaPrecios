@@ -107,17 +107,38 @@ namespace ServiceLibraryProject
         /// <returns>Tupla con la lista de edificios y el total</returns>
         public async Task<(IEnumerable<Building> Items, int TotalCount)> GetPagedAndFilteredAsync(int page, int pageSize, string? name, string? districtId, string? companyId)
         {
+            // Optimización: usar repositorio directo con consulta filtrada
+            if (_buildingRepository is RepositoryLibraryProject.RepositoryIMP<Building> repoImpl)
+            {
+                return await Task.Run(() => {
+                    var query = repoImpl.GetQueryableWithIncludes();
+                    
+                    // Aplicar filtros antes de materializar
+                    if (!string.IsNullOrWhiteSpace(name))
+                        query = query.Where(b => b.Name != null && b.Name.Contains(name));
+                    if (!string.IsNullOrWhiteSpace(districtId))
+                        query = query.Where(b => b.DistrictId == districtId);
+                    if (!string.IsNullOrWhiteSpace(companyId))
+                        query = query.Where(b => b.BuildingCompanyId == companyId);
+                    
+                    var total = query.Count();
+                    var items = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                    return (items, total);
+                });
+            }
+            
+            // Fallback al método anterior si el repositorio no soporta consultas optimizadas
             var all = await GetAllWithAddressAndDistrictAsync();
-            var query = all.AsQueryable();
+            var queryFallback = all.AsQueryable();
             if (!string.IsNullOrWhiteSpace(name))
-                query = query.Where(b => b.Name != null && b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+                queryFallback = queryFallback.Where(b => b.Name != null && b.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrWhiteSpace(districtId))
-                query = query.Where(b => b.DistrictId == districtId);
+                queryFallback = queryFallback.Where(b => b.DistrictId == districtId);
             if (!string.IsNullOrWhiteSpace(companyId))
-                query = query.Where(b => b.BuildingCompanyId == companyId);
-            var total = query.Count();
-            var items = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            return (items, total);
+                queryFallback = queryFallback.Where(b => b.BuildingCompanyId == companyId);
+            var totalFallback = queryFallback.Count();
+            var itemsFallback = queryFallback.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return (itemsFallback, totalFallback);
         }
 
         /// <summary>

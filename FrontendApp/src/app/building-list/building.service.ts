@@ -60,6 +60,14 @@ export class BuildingService {
     if (name) params = params.set('name', name);
     if (districtId) params = params.set('districtId', districtId);
     if (companyId) params = params.set('companyId', companyId);
+
+    // Debug logging
+    console.log('🔍 BuildingService Debug:', {
+      apiUrl: this.apiUrl,
+      environment: environment,
+      finalUrl: `${this.apiUrl}?${params.toString()}`
+    });
+
     return this.http.get<BuildingListResult>(this.apiUrl, { params });
   }
 

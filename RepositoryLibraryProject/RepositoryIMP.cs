@@ -220,6 +220,17 @@ namespace RepositoryLibraryProject
             throw new NotSupportedException("GetAllWithAddressAndDistrict solo es válido para Building.");
         }
 
+        // Nuevo método optimizado: Obtener IQueryable con includes para paginación eficiente
+        public IQueryable<Building> GetQueryableWithIncludes()
+        {
+            if (typeof(T) == typeof(Building))
+                return _context.Set<Building>()
+                    .Include(b => b.Address)
+                    .Include(b => b.District)
+                    .AsNoTracking();
+            throw new NotSupportedException("GetQueryableWithIncludes solo es válido para Building.");
+        }
+
         public Building? GetByIdWithAddressAndDistrict(string id)
         {
             if (typeof(T) == typeof(Building))

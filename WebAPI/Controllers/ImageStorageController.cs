@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceLibraryProject;
 using ClassLibraryProject.Entities;
+using System.Diagnostics;
+using WebAPI.Dtos;
 
 namespace WebAPI.Controllers
 {
@@ -9,54 +11,102 @@ namespace WebAPI.Controllers
     public class ImageStorageController : ControllerBase
     {
         private readonly BuildingImageService _buildingImageService;
+        private readonly ILogger<ImageStorageController> _logger;
 
-        public ImageStorageController(BuildingImageService buildingImageService)
+        public ImageStorageController(
+            BuildingImageService buildingImageService,
+            ILogger<ImageStorageController> logger)
         {
             _buildingImageService = buildingImageService;
+            _logger = logger;
         }
 
         /// <summary>
         /// Sube una imagen y la almacena en la base de datos
         /// </summary>
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadImage([FromForm] string buildingId, [FromForm] string fileName, [FromForm] string altText, [FromForm] IFormFile file)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadImage([FromForm] ImageUploadDto uploadDto)
         {
+            var stopwatch = Stopwatch.StartNew();
+            var requestId = HttpContext.Items["RequestId"]?.ToString() ?? Guid.NewGuid().ToString();
+
+            _logger.LogInformation("Iniciando upload de imagen - BuildingId: {BuildingId}, FileName: {FileName}, Size: {FileSize}MB, RequestId: {RequestId}",
+                uploadDto.BuildingId, uploadDto.FileName ?? uploadDto.File?.FileName ?? "unknown", (uploadDto.File?.Length ?? 0) / 1024.0 / 1024.0, requestId);
+
             try
             {
-                if (file == null || file.Length == 0)
+                // Validaciones de entrada
+                if (uploadDto.File == null || uploadDto.File.Length == 0)
+                {
+                    _logger.LogWarning("Upload fallido - Archivo vacío o nulo. RequestId: {RequestId}", requestId);
                     return BadRequest("Archivo no válido");
+                }
+
+                if (uploadDto.File.Length > 5_242_880) // 5MB
+                {
+                    _logger.LogWarning("Upload fallido - Archivo demasiado grande: {FileSize}MB. RequestId: {RequestId}", 
+                        uploadDto.File.Length / 1024.0 / 1024.0, requestId);
+                    return BadRequest("El archivo excede el tamaño máximo permitido (5MB)");
+                }
+
+                // Validar tipo de archivo
+                var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif" };
+                if (!allowedTypes.Contains(uploadDto.File.ContentType.ToLower()))
+                {
+                    _logger.LogWarning("Upload fallido - Tipo de archivo no permitido: {ContentType}. RequestId: {RequestId}", 
+                        uploadDto.File.ContentType, requestId);
+                    return BadRequest($"Tipo de archivo no permitido: {uploadDto.File.ContentType}");
+                }
+
+                _logger.LogDebug("Validaciones pasadas - Procesando archivo. RequestId: {RequestId}", requestId);
 
                 // Convertir archivo a bytes
                 using var memoryStream = new MemoryStream();
-                await file.CopyToAsync(memoryStream);
+                await uploadDto.File.CopyToAsync(memoryStream);
                 var imageData = memoryStream.ToArray();
 
                 // Crear registro de imagen
+                var buildingImageId = Guid.NewGuid().ToString();
                 var buildingImage = new BuildingImage
                 {
-                    BuildingImageId = Guid.NewGuid().ToString(),
-                    BuildingId = buildingId,
-                    FileName = fileName ?? file.FileName,
-                    Url = $"/api/ImageStorage/download/{Guid.NewGuid()}",
-                    AltText = altText ?? "Imagen del edificio",
+                    BuildingImageId = buildingImageId,
+                    BuildingId = uploadDto.BuildingId,
+                    FileName = uploadDto.FileName ?? uploadDto.File.FileName,
+                    Url = $"/api/ImageStorage/download/{buildingImageId}",
+                    AltText = uploadDto.AltText ?? "Imagen del edificio",
                     IsCoverImage = false,
                     ImageData = imageData,
                     Building = null! // EF lo manejará
                 };
 
+                _logger.LogDebug("Guardando imagen en base de datos - BuildingImageId: {BuildingImageId}. RequestId: {RequestId}", 
+                    buildingImageId, requestId);
+
                 await _buildingImageService.AddAsync(buildingImage);
 
-                return Ok(new
+                stopwatch.Stop();
+
+                var response = new
                 {
                     Message = "Imagen subida correctamente",
                     BuildingImageId = buildingImage.BuildingImageId,
                     Size = imageData.Length,
                     DownloadUrl = $"/api/ImageStorage/download/{buildingImage.BuildingImageId}"
-                });
+                };
+
+                _logger.LogInformation("Upload completado exitosamente - BuildingImageId: {BuildingImageId}, Size: {Size}bytes, Duración: {ElapsedMs}ms, RequestId: {RequestId}",
+                    buildingImage.BuildingImageId, imageData.Length, stopwatch.ElapsedMilliseconds, requestId);
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error: {ex.Message}");
+                stopwatch.Stop();
+                _logger.LogError(ex, "Error durante upload de imagen - BuildingId: {BuildingId}, FileName: {FileName}, Duración: {ElapsedMs}ms, RequestId: {RequestId}",
+                    uploadDto.BuildingId, uploadDto.FileName ?? uploadDto.File?.FileName ?? "unknown", stopwatch.ElapsedMilliseconds, requestId);
+                
+                throw; // Dejar que el middleware global de excepciones lo maneje
             }
         }
 

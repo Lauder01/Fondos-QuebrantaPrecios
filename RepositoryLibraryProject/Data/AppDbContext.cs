@@ -79,6 +79,9 @@ public partial class AppDbContext : DbContext
                     tb.HasTrigger("TrgApartmentUpdateUpdatedAt");
                 });
 
+            entity.Property(e => e.Area)
+                .HasPrecision(18, 2);
+
             entity.HasOne(d => d.Floor).WithMany(p => p.Apartment).HasConstraintName("FKApartment152603");
         });
 
@@ -95,7 +98,9 @@ public partial class AppDbContext : DbContext
                 });
 
             entity.Property(e => e.EnergyCertificate).IsFixedLength();
-            entity.Property(e => e.Price).HasDefaultValueSql("((0.00))");
+            entity.Property(e => e.Price)
+                .HasPrecision(18, 2)
+                .HasDefaultValueSql("((0.00))");
             entity.Property(e => e.YearBuilt).HasDefaultValueSql("((1970))");
 
             entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Building)
@@ -213,8 +218,9 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Purchase__3214EC079EECDF3F");
 
             entity.ToTable(tb => tb.HasTrigger("TrgPurchaseUpdateUpdatedAt"));
-
-            entity.Property(e => e.Amount).HasDefaultValueSql("((0.00))");
+            entity.Property(e => e.Amount)
+                .HasPrecision(18, 2)
+                .HasDefaultValueSql("((0.00))");
 
             entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Purchase)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -238,6 +244,9 @@ public partial class AppDbContext : DbContext
                     tb.HasTrigger("TrgRequestStatusLogInsert");
                     tb.HasTrigger("TrgRequestUpdateUpdatedAt");
                 });
+                
+            entity.Property(e => e.Price)
+                .HasPrecision(18, 2);
 
             entity.HasOne(d => d.Building).WithMany(p => p.Request)
                 .OnDelete(DeleteBehavior.ClientSetNull)

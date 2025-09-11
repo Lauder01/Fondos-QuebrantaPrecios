@@ -10,11 +10,11 @@ import { ApartmentRegisterComponent } from './features/apartments/apartment-regi
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'form', component: FormMainComponent },
+  { path: 'buildings', component: BuildingListComponent },
   {
     path: 'buildings/:id',
     component: BuildingDetailComponent,
     resolve: { data: BuildingDetailResolver }
   },
-  { path: 'buildings', component: BuildingListComponent },
   { path: 'apartments/register/:buildingId', component: ApartmentRegisterComponent }
 ];

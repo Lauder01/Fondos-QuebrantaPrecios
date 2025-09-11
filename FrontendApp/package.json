@@ -4,9 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
+    "start:local": "ng serve --configuration=local --proxy-config proxy.conf.json",
+    "start:azure": "ng serve --configuration=azure",
     "start:lan": "ng serve --host 0.0.0.0 --port 4200 --ssl --proxy-config proxy.conf.json",
     "start:staging": "ng serve --configuration=staging --host 0.0.0.0 --port 4200",
     "build": "ng build --configuration=production",
+    "build:local": "ng build --configuration=local",
+    "build:azure": "ng build --configuration=azure",
     "build:staging": "ng build --configuration=staging",
     "build:vercel": "npm run setup-bootstrap-ci && ng build --configuration=production",
     "watch": "ng build --watch --configuration development",

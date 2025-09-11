@@ -77,6 +77,14 @@ namespace ServiceLibraryProject
             return all.Where(bi => bi.BuildingId == buildingId);
         }
 
+        // Método optimizado para obtener imágenes de múltiples edificios de una vez
+        public async Task<IEnumerable<BuildingImage>> GetByBuildingIdsAsync(IEnumerable<string> buildingIds)
+        {
+            var all = await _buildingImageRepository.GetAllAsync();
+            var buildingIdSet = buildingIds.ToHashSet(); // Optimización de búsqueda
+            return all.Where(bi => buildingIdSet.Contains(bi.BuildingId));
+        }
+
         public void Update(BuildingImage entity)
         {
             _buildingImageRepository.Update(entity);

@@ -4,6 +4,7 @@ using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebAPI.Dtos.Apartment;
+using System.Diagnostics;
 
 namespace WebAPI.Controllers
 {
@@ -13,10 +14,13 @@ namespace WebAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ServiceLibraryProject.ApartmentService _apartmentService;
-        public ApartmentController(ServiceLibraryProject.ApartmentService apartmentService, IMapper mapper)
+        private readonly ILogger<ApartmentController> _logger;
+        
+        public ApartmentController(ServiceLibraryProject.ApartmentService apartmentService, IMapper mapper, ILogger<ApartmentController> logger)
         {
             _apartmentService = apartmentService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -39,13 +43,50 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ApartmentGetterDto>> Create(ApartmentCreatorDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var apartment = _mapper.Map<Apartment>(dto);
-            apartment.Id = Guid.NewGuid().ToString();
-            await _apartmentService.AddAsync(apartment);
-            var result = _mapper.Map<ApartmentGetterDto>(apartment);
-            return CreatedAtAction(nameof(GetById), new { id = apartment.Id }, result);
+            var stopwatch = Stopwatch.StartNew();
+            var requestId = HttpContext.TraceIdentifier;
+            
+            _logger.LogInformation("Iniciando creaciÃ³n de apartamento - Code: {Code}, Door: {Door}, FloorId: {FloorId}, RequestId: {RequestId}",
+                dto.Code, dto.Door, dto.FloorId, requestId);
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("ValidaciÃ³n fallida para apartamento - Errores: {ValidationErrors}, RequestId: {RequestId}",
+                        string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)), requestId);
+                    return BadRequest(ModelState);
+                }
+
+                var apartment = _mapper.Map<Apartment>(dto);
+                apartment.Id = Guid.NewGuid().ToString();
+
+                _logger.LogDebug("Apartamento mapeado - ApartmentId: {ApartmentId}, Code: {Code}, Door: {Door}, FloorId: {FloorId}, NumRooms: {NumRooms}, NumBathrooms: {NumBathrooms}, Area: {Area}, RequestId: {RequestId}",
+                    apartment.Id, apartment.Code, apartment.Door, apartment.FloorId, apartment.NumRooms, apartment.NumBathrooms, apartment.Area, requestId);
+
+                await _apartmentService.AddAsync(apartment);
+                
+                stopwatch.Stop();
+                _logger.LogInformation("Apartamento creado exitosamente - ApartmentId: {ApartmentId}, Code: {Code}, Door: {Door}, FloorId: {FloorId}, DuraciÃ³n: {ElapsedMs}ms, RequestId: {RequestId}",
+                    apartment.Id, apartment.Code, apartment.Door, apartment.FloorId, stopwatch.ElapsedMilliseconds, requestId);
+
+                var result = _mapper.Map<ApartmentGetterDto>(apartment);
+                return CreatedAtAction(nameof(GetById), new { id = apartment.Id }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                stopwatch.Stop();
+                _logger.LogError(ex, "Error de operaciÃ³n invÃ¡lida al crear apartamento - Code: {Code}, Door: {Door}, FloorId: {FloorId}, DuraciÃ³n: {ElapsedMs}ms, RequestId: {RequestId}",
+                    dto.Code, dto.Door, dto.FloorId, stopwatch.ElapsedMilliseconds, requestId);
+                return BadRequest($"Error de validaciÃ³n: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                _logger.LogError(ex, "Error inesperado al crear apartamento - Code: {Code}, Door: {Door}, FloorId: {FloorId}, DuraciÃ³n: {ElapsedMs}ms, RequestId: {RequestId}",
+                    dto.Code, dto.Door, dto.FloorId, stopwatch.ElapsedMilliseconds, requestId);
+                return StatusCode(500, "Error interno del servidor al crear el apartamento");
+            }
         }
 
         [HttpPut("{id}")]
@@ -67,10 +108,10 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Envía los datos de un apartamento a la API externa CozyHouse.
+        /// Envï¿½a los datos de un apartamento a la API externa CozyHouse.
         /// </summary>
-        /// <param name="id">Identificador único del apartamento</param>
-        /// <returns>Resultado de la operación</returns>
+        /// <param name="id">Identificador ï¿½nico del apartamento</param>
+        /// <returns>Resultado de la operaciï¿½n</returns>
         [HttpPost("{id}/send-to-cozyhouse")]
         public async Task<IActionResult> PostToCozyHouse(string id)
         {
@@ -81,7 +122,7 @@ namespace WebAPI.Controllers
                 if (apartment == null)
                 {
                     // Mensaje descriptivo si no se encuentra el apartamento
-                    return NotFound($"No se encontró el apartamento con id: {id}");
+                    return NotFound($"No se encontrï¿½ el apartamento con id: {id}");
                 }
 
                 // Mapear la entidad Apartment al DTO CozyHouseCreatorDto
@@ -106,8 +147,8 @@ namespace WebAPI.Controllers
             }
             catch (HttpRequestException ex)
             {
-                // Error de red o conexión con la API externa
-                return StatusCode(503, $"Error de conexión con CozyHouse: {ex.Message}");
+                // Error de red o conexiï¿½n con la API externa
+                return StatusCode(503, $"Error de conexiï¿½n con CozyHouse: {ex.Message}");
             }
             catch (Exception ex)
             {
