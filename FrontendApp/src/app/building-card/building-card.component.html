@@ -26,10 +26,10 @@
         {{ building.name }}
       </div>
       <div class="card-footer-custom d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-        <div class="fw-semibold text-success">
+        <div class="price-box">
           {{ building.price | currency:'EUR' }}
         </div>
-        <div [class]="getStatusBadgeClass()">
+        <div class="status-box" [class]="getStatusBadgeClass()">
           {{ building.statusName || 'Sin estado' }}
         </div>
       </div>

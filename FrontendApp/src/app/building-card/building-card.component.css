@@ -1,10 +1,47 @@
+/* Color especial para el título de la card */
+.info-content.high-contrast h6.card-title {
+  color: #c2fff4;
+}
+/* Caja de precio y estado con mismo tamaño, fondo blanco, color principal y más espacio para el texto */
+.price-box {
+  background: #fff;
+  color: var(--color-primary, #0d4a17);
+  border-radius: 5px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  margin: 0 0.2rem;
+}
+
+.status-box {
+  background: var(--color-primary, #0d4a17);
+  color: #fff;
+  border-radius: 5px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  margin: 0 0.2rem;
+}
+
+.card-footer-custom {
+  gap: 1.2rem;
+}
 .info-content.high-contrast {
-  background: rgba(30, 30, 30, 0.80); /* Fondo oscuro translúcido */
+  background: #0d4a17cc; /* Verde translúcido solicitado */
   color: #fff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
-  /* Mantén el resto de estilos previos */
 }
 
 .building-card-full:focus {
@@ -16,6 +53,9 @@
   overflow: hidden;
   height: 100%;
   min-height: 320px; /* Ajusta según tu diseño */
+  border: 2.5px solid #e0e6ef; /* Borde clarito y suave */
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .building-bg-image {
