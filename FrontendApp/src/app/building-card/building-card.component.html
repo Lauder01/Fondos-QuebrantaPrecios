@@ -1,5 +1,12 @@
 
-<div class="card building-card-full shadow-sm border-0 rounded-4 h-100" (click)="goToDetail()" style="cursor:pointer">
+<div
+  class="card building-card-full shadow-sm border-0 rounded-4 h-100"
+  (click)="goToDetail()"
+  style="cursor:pointer"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Ver detalles de ' + building.name"
+>
   <img
     [src]="building.coverImageUrl"
     [alt]="building.name"
@@ -8,7 +15,7 @@
     loading="lazy"
   />
   <div class="card-info-overlay d-flex flex-column justify-content-end">
-    <div class="info-content">
+    <div class="info-content high-contrast">
       <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
       @if (shouldShowAddress()) {
         <div class="mb-2">
