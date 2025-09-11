@@ -3,12 +3,40 @@ using System.ComponentModel.DataAnnotations;
 namespace WebAPI.Dtos.SpecuLab
 {
     /// <summary>
-    /// DTO para actualizar datos de edificio desde SpecuLab. Está relacionado con el método Patch de SpecuLab a nosotros.
+    /// DTO para actualizar datos de edificio desde SpecuLab. Soporta tanto el formato original como JSON Patch.
     /// </summary>
     public class SpecuLabUpdaterDto
     {
-        [Required(ErrorMessage = "ERR018: El campo Nombre de Estatus es obligatorio")]
-        [StringLength(48, MinimumLength = 1, ErrorMessage = "ERR019: El campo Nombre de Estatus debe tener entre 1 y 48 caracteres")]
-        public required string StatusName { get; set; }
+        // Propiedades para formato original
+        public string? StatusName { get; set; }
+
+        // Propiedades para formato JSON Patch
+        public string? Path { get; set; }
+        public string? Op { get; set; }
+        public string? Value { get; set; }
+
+        // ValidaciÃ³n personalizada: debe tener StatusName O las propiedades de JSON Patch
+        public bool IsValid()
+        {
+            // Formato original: solo StatusName
+            if (!string.IsNullOrWhiteSpace(StatusName) && 
+                string.IsNullOrWhiteSpace(Path) && 
+                string.IsNullOrWhiteSpace(Op) && 
+                string.IsNullOrWhiteSpace(Value))
+            {
+                return true;
+            }
+
+            // Formato JSON Patch: Path, Op y Value
+            if (string.IsNullOrWhiteSpace(StatusName) && 
+                !string.IsNullOrWhiteSpace(Path) && 
+                !string.IsNullOrWhiteSpace(Op) && 
+                !string.IsNullOrWhiteSpace(Value))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
