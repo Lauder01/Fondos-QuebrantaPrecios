@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BuildingCardComponent } from '../building-card/building-card.component';
+import { MapComponent, MapLocation } from '../shared/map/map.component';
 import { BuildingService } from './building.service';
 import { ApiService, DistrictGetterDto, StatusGetterDto } from '../core/api.service';
 import { forkJoin, of, Subject } from 'rxjs';
@@ -12,12 +13,14 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-building-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, BuildingCardComponent],
+  imports: [CommonModule, FormsModule, BuildingCardComponent, MapComponent],
   templateUrl: './building-list.component.html',
   styleUrls: ['./building-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuildingListComponent implements OnInit, OnDestroy {
+export class BuildingListComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
+
   private destroy$ = new Subject<void>();
   loading = false;
   buildings: any[] = [];
@@ -25,6 +28,10 @@ export class BuildingListComponent implements OnInit, OnDestroy {
   page = 1;
   pageSize = 6;
   searchName = '';
+
+  // Propiedades del mapa
+  mapLocations: MapLocation[] = [];
+  showMap = true;
 
   districts: DistrictGetterDto[] = [];
   statuses: StatusGetterDto[] = [];
@@ -63,6 +70,13 @@ export class BuildingListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetAndLoadData();
+  }
+
+  ngAfterViewInit(): void {
+    // Después de que la vista esté inicializada, intentar actualizar el mapa si ya hay datos
+    if (this.buildings.length > 0 && this.mapLocations.length > 0) {
+      this.updateMapLocationsDelayed();
+    }
   }
 
   ngOnDestroy(): void {
@@ -178,10 +192,15 @@ export class BuildingListComponent implements OnInit, OnDestroy {
             console.log('Total count:', this.totalCount);
             console.log('Primer edificio con status:', this.buildings[0]);
 
+            // Actualizar ubicaciones del mapa
+            this.updateMapLocations();
+
             // Forzar detección de cambios múltiples veces para asegurar renderizado
             this.cdr.detectChanges();
             setTimeout(() => {
               this.cdr.detectChanges();
+              // Intentar actualizar el mapa nuevamente después de que todo esté renderizado
+              this.updateMapLocationsDelayed();
             }, 0);
           });
         },
@@ -225,5 +244,64 @@ export class BuildingListComponent implements OnInit, OnDestroy {
   // TrackBy function para optimizar el rendering del *ngFor
   trackByBuildingId(index: number, building: any): string {
     return building?.id || index.toString();
+  }
+
+  // Método para actualizar las ubicaciones del mapa
+  private updateMapLocations(): void {
+    console.log('🏢 Actualizando ubicaciones del mapa con', this.buildings.length, 'edificios');
+
+    this.mapLocations = this.buildings.map(building => {
+      const location = {
+        id: building.id,
+        name: building.name || 'Edificio sin nombre',
+        address: this.buildFullAddress(building)
+      };
+      console.log('🏢 Procesando edificio:', location);
+      return location;
+    });
+
+    console.log('📋 Ubicaciones del mapa creadas:', this.mapLocations.length);
+
+    // Si el mapa ya está inicializado, actualizar las ubicaciones
+    if (this.mapComponent) {
+      console.log('🗺️ Actualizando componente de mapa...');
+      this.mapComponent.updateLocations(this.mapLocations);
+    } else {
+      console.log('⚠️ Componente de mapa no disponible aún');
+    }
+  }
+
+  // Método para actualizar las ubicaciones del mapa con delay
+  private updateMapLocationsDelayed(): void {
+    setTimeout(() => {
+      console.log('🕐 Actualización tardía del mapa...');
+      if (this.mapComponent && this.mapLocations.length > 0) {
+        this.mapComponent.updateLocations(this.mapLocations);
+      }
+    }, 500);
+  }
+
+  // Método para construir la dirección completa
+  private buildFullAddress(building: any): string {
+    let address = '';
+
+    if (building.constructedAddress) {
+      address = building.constructedAddress;
+    } else {
+      // Construir dirección a partir de los componentes disponibles
+      const parts = [];
+      if (building.doorway) parts.push(building.doorway);
+      if (building.districtName) parts.push(building.districtName);
+      if (building.city) parts.push(building.city);
+      if (building.country) parts.push(building.country);
+      address = parts.join(', ');
+    }
+
+    return address || 'Dirección no disponible';
+  }
+
+  // Método para alternar la visibilidad del mapa
+  toggleMap(): void {
+    this.showMap = !this.showMap;
   }
 }
