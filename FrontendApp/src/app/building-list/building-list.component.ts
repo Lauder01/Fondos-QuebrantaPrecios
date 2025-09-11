@@ -74,8 +74,9 @@ export class BuildingListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     // Después de que la vista esté inicializada, intentar actualizar el mapa si ya hay datos
+    // El debounce del mapa evitará llamadas duplicadas, así que podemos llamar directamente
     if (this.buildings.length > 0 && this.mapLocations.length > 0) {
-      this.updateMapLocationsDelayed();
+      this.updateMapLocations();
     }
   }
 
@@ -195,13 +196,8 @@ export class BuildingListComponent implements OnInit, AfterViewInit, OnDestroy {
             // Actualizar ubicaciones del mapa
             this.updateMapLocations();
 
-            // Forzar detección de cambios múltiples veces para asegurar renderizado
+            // Forzar detección de cambios
             this.cdr.detectChanges();
-            setTimeout(() => {
-              this.cdr.detectChanges();
-              // Intentar actualizar el mapa nuevamente después de que todo esté renderizado
-              this.updateMapLocationsDelayed();
-            }, 0);
           });
         },
         error: (error) => {
@@ -262,7 +258,7 @@ export class BuildingListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     console.log('📋 Ubicaciones del mapa creadas:', this.mapLocations.length);
 
-    // Si el mapa ya está inicializado, actualizar las ubicaciones
+    // Actualizar el mapa si está disponible (el debounce interno del mapa evitará llamadas duplicadas)
     if (this.mapComponent) {
       console.log('🗺️ Actualizando componente de mapa...');
       this.mapComponent.updateLocations(this.mapLocations);
@@ -271,14 +267,13 @@ export class BuildingListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Método para actualizar las ubicaciones del mapa con delay
+  // Método para actualizar las ubicaciones del mapa con delay (solo si es necesario)
   private updateMapLocationsDelayed(): void {
-    setTimeout(() => {
+    // Solo actualizar si no se ha actualizado recientemente y hay datos nuevos
+    if (this.mapComponent && this.mapLocations.length > 0) {
       console.log('🕐 Actualización tardía del mapa...');
-      if (this.mapComponent && this.mapLocations.length > 0) {
-        this.mapComponent.updateLocations(this.mapLocations);
-      }
-    }, 500);
+      this.mapComponent.updateLocations(this.mapLocations);
+    }
   }
 
   // Método para construir la dirección completa
