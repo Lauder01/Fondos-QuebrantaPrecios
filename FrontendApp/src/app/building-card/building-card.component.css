@@ -8,19 +8,23 @@
 }
 
 /* Caja de precio y estado: mismo tamaño, alineación y sin duplicados */
+/* Ajuste para hacer más pequeños los contenedores de precio y registrado */
+/* Más anchos para 12 cifras */
+/* Ajuste para 9 cifras */
 .price-box, .status-box {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   min-width: 130px;
-  max-width: 130px;
-  min-height: 44px;
+  max-width: 150px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
   font-weight: 600;
-  padding: 0.5rem 1.2rem;
-  margin: 0 0.2rem;
+  padding: 0.18rem 0.9rem;
+  margin: 0 0.1rem;
   box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  line-height: 1.1;
 }
 .price-box {
   background: #fff;
@@ -59,16 +63,17 @@
   outline: 3px solid #1976d2;
   outline-offset: 2px;
 }
+/* Card principal con borde blanco y sombra gris visible */
 .building-card-full {
   position: relative;
   overflow: hidden;
   height: 100%;
   min-height: 320px;
-  border: 2.5px solid #e0e6ef;
+  border: 2.5px solid #fff !important;
   border-radius: 5px;
   box-sizing: border-box;
-  box-shadow: 0 4px 18px 0 rgba(13, 74, 23, 0.13);
-  transition: box-shadow 0.3s;
+  box-shadow: 0 2px 16px 0 rgba(100,100,100,0.18);
+  transition: box-shadow 0.3s, border-color 0.3s;
 }
 
 .building-bg-image {
@@ -100,6 +105,10 @@
   pointer-events: auto;
 }
 
+.building-card-full:hover {
+  box-shadow: 0 16px 48px 0 rgba(60,60,60,0.38), 0 2px 16px 0 rgba(100,100,100,0.18);
+  border-color: #fff !important;
+}
 .building-card-full:hover .building-bg-image {
   transform: scale(1.05);
 }

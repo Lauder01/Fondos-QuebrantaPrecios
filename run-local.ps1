@@ -4,7 +4,7 @@ Write-Host "=== Iniciando Desarrollo Local ===" -ForegroundColor Green
 Write-Host "===================================" -ForegroundColor Green
 Write-Host ""
 
-$projectRoot = "C:\SC25\Fondos-QuebrantaPrecios"
+$projectRoot = "C:\Users\pmpcurso1\source\repos\summerCamp25\git\Fondos-QuebrantaPrecios"
 if (!(Test-Path $projectRoot)) {
     Write-Host "Error: No se encuentra el directorio del proyecto en $projectRoot" -ForegroundColor Red
     exit 1
