@@ -1,39 +1,30 @@
-<div class="card building-card shadow-sm border-0 rounded-4 h-100" (click)="goToDetail()" style="cursor:pointer">
 
-  <!-- Imagen de portada si existe -->
-  @if (building.hasImages && building.coverImageUrl) {
-    <div class="card-img-container">
-      <img
-        [src]="building.coverImageUrl"
-        [alt]="building.name"
-        class="card-img-top building-cover-image"
-        (error)="onImageError($event)"
-        loading="lazy"
-      />
-    </div>
-  }
-
-  <div class="card-body d-flex flex-column">
-    <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
-    <div class="text-secondary small mb-2">Distrito: {{ building.districtName || '-' }}</div>
-
-    <!-- Solo mostrar dirección si es diferente del nombre -->
-    @if (shouldShowAddress()) {
+<div class="card building-card-full shadow-sm border-0 rounded-4 h-100" (click)="goToDetail()" style="cursor:pointer">
+  <img
+    [src]="building.coverImageUrl"
+    [alt]="building.name"
+    class="building-bg-image"
+    (error)="onImageError($event)"
+    loading="lazy"
+  />
+  <div class="card-info-overlay d-flex flex-column justify-content-end">
+    <div class="info-content">
+      <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
+      @if (shouldShowAddress()) {
+        <div class="mb-2">
+          Dirección: {{ building.constructedAddress }}
+        </div>
+      }
       <div class="mb-2">
-        Dirección: {{ building.constructedAddress }}
+        {{ building.name }}
       </div>
-    }
-
-    <!-- Spacer para empujar el footer hacia abajo -->
-    <div class="flex-grow-1"></div>
-
-    <!-- Footer con precio y status -->
-    <div class="card-footer-custom d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-      <div class="fw-semibold text-success">
-        {{ building.price | currency:'EUR' }}
-      </div>
-      <div [class]="getStatusBadgeClass()">
-        {{ building.statusName || 'Sin estado' }}
+      <div class="card-footer-custom d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+        <div class="fw-semibold text-success">
+          {{ building.price | currency:'EUR' }}
+        </div>
+        <div [class]="getStatusBadgeClass()">
+          {{ building.statusName || 'Sin estado' }}
+        </div>
       </div>
     </div>
   </div>
