@@ -179,12 +179,22 @@ export class ApiService {
 		return this.http.post<FloorGetterDto>(`${this.baseUrl}/Floor`, floor);
 	}
 
-	// Apartment methods
-	createApartment(apartment: ApartmentCreatorDto): Observable<ApartmentGetterDto> {
-		return this.http.post<ApartmentGetterDto>(`${this.baseUrl}/Apartment`, apartment);
-	}
+		// Apartment methods
+		createApartment(apartment: ApartmentCreatorDto): Observable<ApartmentGetterDto> {
+			return this.http.post<ApartmentGetterDto>(`${this.baseUrl}/Apartment`, apartment);
+		}
 
-	getApartmentsByBuildingId(buildingId: string): Observable<ApartmentGetterDto[]> {
-		return this.http.get<ApartmentGetterDto[]>(`${this.baseUrl}/Building/${buildingId}/apartments`);
+		getApartmentsByBuildingId(buildingId: string): Observable<ApartmentGetterDto[]> {
+			return this.http.get<ApartmentGetterDto[]>(`${this.baseUrl}/Building/${buildingId}/apartments`);
+		}
+
+		// Enviar edificio a SpecuLab
+		postToSpeculab(buildingId: string): Observable<string> {
+			return this.http.post(`${this.baseUrl}/Building/${buildingId}/send-to-speculab`, {}, { responseType: 'text' });
+		}
+
+		// Enviar apartamento a CozyHouse
+		postToCozyhouse(apartmentId: string): Observable<string> {
+			return this.http.post(`${this.baseUrl}/Apartment/${apartmentId}/send-to-cozyhouse`, {}, { responseType: 'text' });
+		}
 	}
-}

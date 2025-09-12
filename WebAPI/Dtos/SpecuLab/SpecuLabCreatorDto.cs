@@ -12,7 +12,11 @@ namespace WebAPI.Dtos.SpecuLab
         public required string BuildingCode { get; set; }
 
         [Required(ErrorMessage = "ERR015: El campo Descripción es obligatorio")]
-        public required string Description { get; set; } = string.Empty;
+        private string _description = string.Empty;
+        public string Description {
+            get => _description;
+            set => _description = string.IsNullOrWhiteSpace(value) ? "Edificio sin descripción" : value.Trim();
+        }
 
         [Required(ErrorMessage = "ERR016: El campo Precio del Edificio es obligatorio")]
         [Range(0.0, 9999999999.99, ErrorMessage = "ERR017: El campo Precio del Edificio debe estar entre 0 y 9999999999.99")]

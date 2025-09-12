@@ -690,12 +690,10 @@ namespace WebAPI.Controllers
             if (building == null)
                 return NotFound();
 
-            var dto = new WebAPI.Dtos.SpecuLab.SpecuLabCreatorDto
-            {
-                BuildingCode = building.Code,
-                Description = building.Description ?? string.Empty,
-                BuildingAmount = building.Price?.ToString() ?? "0"
-            };
+            var dto = _mapper.Map<WebAPI.Dtos.SpecuLab.SpecuLabCreatorDto>(building);
+            dto.Description = string.IsNullOrWhiteSpace(dto.Description) ? "Edificio sin descripción" : dto.Description.Trim();
+            dto.BuildingAmount = building.Price?.ToString() ?? "0";
+            dto.MaintenanceAmount = 0; // Valor por defecto, puedes cambiarlo si tienes el dato
 
             // Configura la URL de la API externa
             var apiUrl = "https://devdemoapi3.azurewebsites.net/api/requests"; // URL de SpecuLab

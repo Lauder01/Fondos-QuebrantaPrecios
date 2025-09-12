@@ -59,4 +59,19 @@ export class BuildingCardComponent {
       imgElement.style.display = 'none';
     }
   }
+
+  // Método para obtener la clase CSS del certificado energético
+  getEnergyClass(value: string): string {
+    if (!value) return 'energy-default';
+    switch (value.toUpperCase()) {
+      case 'A': return 'energy-a';
+      case 'B': return 'energy-b';
+      case 'C': return 'energy-c';
+      case 'D': return 'energy-d';
+      case 'E': return 'energy-e';
+      case 'F': return 'energy-f';
+      case 'G': return 'energy-g';
+      default: return 'energy-default';
+    }
+  }
 }

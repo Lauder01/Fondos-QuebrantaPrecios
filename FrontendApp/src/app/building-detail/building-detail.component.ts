@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BuildingService, Building } from '../building-list/building.service';
-import { ApiService, DistrictGetterDto, StatusGetterDto } from '../core/api.service';
-import { Subject } from 'rxjs';
+import { ApiService, DistrictGetterDto, StatusGetterDto, ApartmentGetterDto } from '../core/api.service';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -155,24 +155,61 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              // Actualizar el estado local del edificio
-              if (this.building) {
-                this.building.statusId = pendingStatus.id;
-                this.building.statusName = 'Pendiente';
-              }
-              this.purchasing = false;
-              this.purchaseSuccess = true;
+              // Llamar al endpoint de SpecuLab después de actualizar el edificio
+              this.apiService.postToSpeculab(this.building!.id)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  next: () => {
+                    // Solo si el post a SpecuLab fue exitoso, cambiar el estado local y mostrar éxito
+                    if (this.building) {
+                      this.building.statusId = pendingStatus.id;
+                      this.building.statusName = 'Pendiente';
+                    }
+                    this.purchasing = false;
+                    this.purchaseSuccess = true;
 
-              // Forzar detección de cambios para actualizar la UI inmediatamente
-              this.cdr.detectChanges();
+                    // Forzar detección de cambios para actualizar la UI inmediatamente
+                    this.cdr.detectChanges();
 
-              // Ocultar mensaje de éxito después de 3 segundos
-              setTimeout(() => {
-                this.purchaseSuccess = false;
-                this.cdr.detectChanges();
-              }, 3000);
+                    // Si el edificio pasa a 'Comprado', enviar apartamentos a CozyHouse
+                    if (this.building?.statusName?.toLowerCase() === 'comprado') {
+                      this.apiService.getApartmentsByBuildingId(this.building.id)
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe({
+                          next: (apartments: ApartmentGetterDto[]) => {
+                            if (apartments && apartments.length > 0) {
+                              const requests = apartments.map(a => this.apiService.postToCozyhouse(a.id));
+                              forkJoin(requests).subscribe({
+                                next: (results) => {
+                                  console.log('Todos los apartamentos enviados a CozyHouse:', results);
+                                },
+                                error: (err) => {
+                                  console.error('Error enviando apartamentos a CozyHouse:', err);
+                                }
+                              });
+                            }
+                          },
+                          error: (err) => {
+                            console.error('Error obteniendo apartamentos para CozyHouse:', err);
+                          }
+                        });
+                    }
 
-              console.log('Edificio actualizado a estado Pendiente');
+                    // Ocultar mensaje de éxito después de 3 segundos
+                    setTimeout(() => {
+                      this.purchaseSuccess = false;
+                      this.cdr.detectChanges();
+                    }, 3000);
+
+                    console.log('Edificio actualizado y enviado a SpecuLab');
+                  },
+                  error: (error) => {
+                    // Si falla el post a SpecuLab, NO cambiar el estado ni mostrar éxito
+                    console.error('Error al enviar a SpecuLab:', error);
+                    this.purchasing = false;
+                    this.cdr.detectChanges();
+                  }
+                });
             },
             error: (error) => {
               console.error('Error al actualizar el edificio:', error);

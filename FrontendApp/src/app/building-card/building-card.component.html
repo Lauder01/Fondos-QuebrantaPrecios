@@ -16,23 +16,62 @@
   />
   <div class="card-info-overlay d-flex flex-column justify-content-end">
     <div class="info-content high-contrast">
-      <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
-      @if (shouldShowAddress()) {
-        <div class="mb-2">
-          Dirección: {{ building.constructedAddress }}
-        </div>
-      }
-      <div class="mb-2">
-        {{ building.name }}
-      </div>
-      <div class="card-footer-custom d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-        <div class="price-box">
-          {{ building.price | currency:'EUR' }}
-        </div>
-        <div class="status-box" [class]="getStatusBadgeClass()">
-          {{ building.statusName || 'Sin estado' }}
-        </div>
-      </div>
+          <div class="info-main flex-grow-1">
+            <h6 class="card-title text-primary mb-2">{{ building.name }}</h6>
+            <div class="general-info">
+              <!-- Dirección siempre visible -->
+              <div class="mb-2">
+                Dirección: {{ building.constructedAddress }}
+              </div>
+              <!-- Info adicional visible solo en hover -->
+              <div class="extra-info info-grid info-shadow-container">
+                <div class="info-row">
+                  <span class="info-icon info-icon-distrito" title="Distrito">
+                    <i class="bi bi-geo-alt info-icon-img"></i>
+                    <span class="info-label">Distrito</span>
+                    {{ building.districtName }}
+                  </span>
+                  <span class="info-icon info-icon-plantas" title="Plantas">
+                    <i class="bi bi-building info-icon-img"></i>
+                    <span class="info-label">Plantas</span>
+                    {{ building.floorCount }}
+                  </span>
+                  <span class="info-icon info-icon-apartamentos" title="Apartamentos">
+                    <i class="bi bi-people info-icon-img"></i>
+                    <span class="info-label">Apartamentos</span>
+                    {{ building.apartmentCount }}
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-icon info-icon-ano" title="Año de construcción">
+                    <i class="bi bi-calendar info-icon-img"></i>
+                    <span class="info-label">Año</span>
+                    {{ building.yearBuilt }}
+                  </span>
+                  <span class="info-icon info-icon-ascensor" [ngClass]="{'no-elevator': !building.hasElevator}" title="Ascensor">
+                    <i class="bi bi-arrow-down-up info-icon-img"></i>
+                    <span class="info-label">Ascensor</span>
+                    <i [class]="building.hasElevator ? 'bi bi-check-circle text-success ms-1' : 'bi bi-x-circle text-danger ms-1'"></i>
+                  </span>
+                  <span class="info-icon" title="Certificado energético">
+                    <i class="bi bi-lightning-charge info-icon-img"></i>
+                    <span class="info-label">C.E.</span>
+                    <span [ngClass]="getEnergyClass(building.energyCertificate)" class="fs-5 ms-1">
+                      {{ building.energyCertificate || 'N/A' }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer-custom d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+            <div class="price-box">
+              {{ building.price | currency:'EUR' }}
+            </div>
+            <div class="status-box" [class]="getStatusBadgeClass()">
+              {{ building.statusName || 'Sin estado' }}
+            </div>
+          </div>
     </div>
   </div>
 </div>
