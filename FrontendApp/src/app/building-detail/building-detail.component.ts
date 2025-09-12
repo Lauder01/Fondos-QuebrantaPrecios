@@ -136,7 +136,7 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
             statusId: pendingStatus.id,
             // Incluir todas las propiedades requeridas del edificio
             name: this.building.name,
-            description: this.building.description || '',
+            description: this.building.description && this.building.description.trim() !== '' ? this.building.description : 'Edificio sin descripcion',
             doorway: this.building.doorway,
             floorCount: this.building.floorCount || 0,
             yearBuilt: this.building.yearBuilt || 1970,
