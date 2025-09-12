@@ -34,8 +34,6 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Floor> Floor { get; set; }
 
-    public virtual DbSet<Purchase> Purchase { get; set; }
-
     public virtual DbSet<Request> Request { get; set; }
 
     public virtual DbSet<RequestStatusLog> RequestStatusLog { get; set; }
@@ -211,28 +209,6 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC077FD3A026");
 
             entity.HasOne(d => d.Building).WithMany(p => p.Floor).HasConstraintName("FKFloor82292");
-        });
-
-        modelBuilder.Entity<Purchase>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Purchase__3214EC079EECDF3F");
-
-            entity.ToTable(tb => tb.HasTrigger("TrgPurchaseUpdateUpdatedAt"));
-            entity.Property(e => e.Amount)
-                .HasPrecision(18, 2)
-                .HasDefaultValueSql("((0.00))");
-
-            entity.HasOne(d => d.BuildingCompany).WithMany(p => p.Purchase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPurchase526429");
-
-            entity.HasOne(d => d.Building).WithMany(p => p.Purchase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPurchase78453");
-
-            entity.HasOne(d => d.Request).WithMany(p => p.Purchase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPurchase717750");
         });
 
         modelBuilder.Entity<Request>(entity =>

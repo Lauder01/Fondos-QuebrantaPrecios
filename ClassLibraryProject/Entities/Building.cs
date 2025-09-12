@@ -110,11 +110,11 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public virtual ICollection<BuildingStatusLog> BuildingStatusLog { get; set; } = new List<BuildingStatusLog>();
         /// <summary>
-        /// Colecci�n de compras asociadas al edificio.
+        /// Colección de compras asociadas al edificio.
         /// </summary>
-        public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
+        // public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
         /// <summary>
-        /// Colecci�n de solicitudes asociadas al edificio.
+        /// Colección de solicitudes asociadas al edificio.
         /// </summary>
         public virtual ICollection<Request> Request { get; set; } = new List<Request>();
 
