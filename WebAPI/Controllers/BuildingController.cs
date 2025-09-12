@@ -301,23 +301,66 @@ namespace WebAPI.Controllers
         }
 
         [HttpPatch("speculab/status/bycode/{code}")]
-        public async Task<IActionResult> PatchStatusFromSpecuLab(string code, [FromBody] SpecuLabUpdaterDto dto)
+        public async Task<IActionResult> PatchStatusFromSpecuLab(string code, [FromBody] PatchOperationDto dto)
         {
+            // Validar que el DTO no sea nulo
+            if (dto == null)
+                return BadRequest("El cuerpo de la solicitud no puede estar vacío");
+
             // Buscar el edificio por código
             var building = await _buildingService.GetByCodeAsync(code);
             if (building == null)
                 return NotFound($"No se encontró el edificio con código: {code}");
 
-            // Buscar el StatusId por StatusName
-            var status = await _statusService.GetByNameAsync(dto.StatusName);
-            if (status == null)
-                return NotFound($"No se encontró el estado con nombre: {dto.StatusName}");
+            // Validar la operación JSON Patch
+            if (dto.Op?.ToLower() != "replace")
+                return BadRequest("Solo se admite la operación 'replace'");
 
-            // Actualizar el StatusId del edificio
-            building.StatusId = status.Id;
-            await _buildingService.UpdateAsync(building);
+            try
+            {
+                // Validar y procesar el path
+                var path = dto.Path?.ToLower().TrimStart('/').TrimStart('\\');
+                if (path != "statusid" && path != "status" && path != "statusname")
+                    return BadRequest("Solo se admiten los paths: '/StatusId', '/status' o '/statusname'");
 
-            return Ok($"Status actualizado correctamente a '{dto.StatusName}' para el edificio con código '{code}'.");
+                if (path == "statusid")
+                {
+                    // Si el path es StatusId, asumimos que el value es un GUID del status
+                    if (!Guid.TryParse(dto.Value, out var statusGuid))
+                        return BadRequest("El valor debe ser un GUID válido para StatusId");
+
+                    // Verificar que el status existe
+                    var status = await _statusService.GetByIdAsync(dto.Value);
+                    if (status == null)
+                        return NotFound($"No se encontró el estado con ID: {dto.Value}");
+
+                    // Actualizar directamente con el StatusId
+                    building.StatusId = dto.Value;
+                    await _buildingService.UpdateAsync(building);
+
+                    return Ok($"Status actualizado correctamente a StatusId '{dto.Value}' para el edificio con código '{code}'.");
+                }
+                else
+                {
+                    // Si el path es status o statusname, buscamos por nombre
+                    if (string.IsNullOrWhiteSpace(dto.Value))
+                        return BadRequest("El valor no puede estar vacío");
+
+                    var status = await _statusService.GetByNameAsync(dto.Value);
+                    if (status == null)
+                        return NotFound($"No se encontró el estado con nombre: {dto.Value}");
+
+                    // Actualizar el StatusId del edificio
+                    building.StatusId = status.Id;
+                    await _buildingService.UpdateAsync(building);
+
+                    return Ok($"Status actualizado correctamente a '{dto.Value}' para el edificio con código '{code}'.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al actualizar el status: {ex.Message}");
+            }
         }
 
         private (string DistrictId, string StreetId, string CompanyId, string StatusId) EnsureDefaultDataExists()
