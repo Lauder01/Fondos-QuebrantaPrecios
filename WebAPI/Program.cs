@@ -150,7 +150,6 @@ builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<ZipcodeService>();
 builder.Services.AddScoped<StatusService>();
 builder.Services.AddScoped<BuildingImageService>();
-builder.Services.AddScoped<PurchaseService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

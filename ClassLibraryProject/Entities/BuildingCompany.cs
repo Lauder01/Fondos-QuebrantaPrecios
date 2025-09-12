@@ -28,10 +28,6 @@ namespace ClassLibraryProject.Entities
         /// </summary>
         public virtual ICollection<Building> Building { get; set; } = new List<Building>();
         /// <summary>
-        /// Colección de compras asociadas a la empresa.
-        /// </summary>
-        public virtual ICollection<Purchase> Purchase { get; set; } = new List<Purchase>();
-        /// <summary>
         /// Constructor por defecto requerido por Entity Framework.
         /// </summary>
         public BuildingCompany() { }
