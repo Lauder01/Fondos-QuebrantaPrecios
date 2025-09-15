@@ -220,7 +220,7 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -239,19 +239,29 @@
   overflow: visible;
 }
 
+.btn-icon:hover i {
+  position: static;
+  transform: none;
+  margin-right: 0.5rem;
+}
+
 .btn-icon .btn-text {
   opacity: 0;
   white-space: nowrap;
-  margin-left: 0.5rem;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-10px);
   font-weight: 600;
   font-size: 0.85rem;
+  position: absolute;
+  right: 0.75rem;
+  pointer-events: none;
 }
 
 .btn-icon:hover .btn-text {
   opacity: 1;
   transform: translateX(0);
+  position: static;
+  pointer-events: auto;
 }
 
 /* === BOTÓN ELIMINAR === */
@@ -330,6 +340,10 @@
   width: auto;
   height: auto;
   color: currentColor;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .btn-icon-danger i {
@@ -377,12 +391,4 @@
   opacity: 1 !important;
   visibility: visible !important;
   color: inherit !important;
-}
-
-/* Debug temporal - remover después */
-.btn-icon i.bi-trash,
-.btn-icon i.bi-star-fill {
-  background: rgba(255, 0, 0, 0.1); /* fondo rojo temporal para debug */
-  min-width: 16px;
-  min-height: 16px;
 }
