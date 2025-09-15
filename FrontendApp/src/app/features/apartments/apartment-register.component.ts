@@ -105,39 +105,6 @@ export class ApartmentRegisterComponent implements OnInit {
   }
 
   finishRegistration() {
-    // Siempre inicializar apartamentos si no existen
-    if (Object.keys(this.apartmentsByFloor).length === 0 && this.buildingFloors.length > 0) {
-      let globalAptIndex = 1;
-      this.buildingFloors.forEach(floor => {
-        this.apartmentsByFloor[floor.id] = [];
-        for (let i = 0; i < this.apartmentsPerFloor; i++) {
-          this.apartmentsByFloor[floor.id].push({
-            code: '',
-            door: `${i + 1}${this.getDoorLetter(i + 1)}`,
-            floorId: floor.id,
-            numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 0,
-            numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 0,
-            area: this.area && !isNaN(this.area) ? Number(this.area) : 0
-          });
-        }
-      });
-    }
-    // Si los apartamentos no están inicializados, inicializarlos automáticamente (como en confirmGeneralCharacteristics)
-    if (Object.keys(this.apartmentsByFloor).length === 0 && this.buildingFloors.length > 0) {
-      this.buildingFloors.forEach(floor => {
-        this.apartmentsByFloor[floor.id] = [];
-        for (let i = 0; i < this.apartmentsPerFloor; i++) {
-          this.apartmentsByFloor[floor.id].push({
-            code: '',
-            door: `${i + 1}${this.getDoorLetter(i + 1)}`,
-            floorId: floor.id,
-            numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
-            numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 1,
-            area: this.area && !isNaN(this.area) ? Number(this.area) : 70
-          });
-        }
-      });
-    }
     if (!this.buildingId) {
       alert('Error: No se ha encontrado el ID del edificio');
       return;
