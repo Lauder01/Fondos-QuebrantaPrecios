@@ -307,8 +307,20 @@
   background: var(--color-secondary, #58c2ab);
   color: white;
   border-color: var(--color-secondary, #58c2ab);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(88, 194, 171, 0.5);
+  box-shadow: 0 4px 12px rgba(88, 194, 171, 0.6);
+  /* Mantener el mismo tamaño circular que los otros botones */
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  padding: 0;
+}
+
+.btn-icon-primary.selected:hover {
+  background: var(--color-secondary-dark, #45a085);
+  border-color: var(--color-secondary-dark, #45a085);
+  box-shadow: 0 6px 20px rgba(88, 194, 171, 0.7);
+  /* En hover sí se expande como los demás */
   width: auto;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -317,8 +329,18 @@
 }
 
 .btn-icon-primary.selected .btn-text {
+  opacity: 0;
+  transform: translateX(-10px);
+  position: absolute;
+  right: 0.75rem;
+  pointer-events: none;
+}
+
+.btn-icon-primary.selected:hover .btn-text {
   opacity: 1;
   transform: translateX(0);
+  position: static;
+  pointer-events: auto;
 }
 
 /* === ESTADO DESHABILITADO === */
@@ -364,6 +386,19 @@
 
 .btn-icon-primary.selected i {
   color: white !important;
+  /* Asegurar posicionamiento centrado en estado normal */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-icon-primary.selected:hover i {
+  color: white !important;
+  /* En hover, cambiar a posición normal para alinearse con el texto */
+  position: static;
+  transform: none;
+  margin-right: 0.5rem;
 }
 
 /* === FALLBACKS PARA ICONOS - REMOVIDOS === */
