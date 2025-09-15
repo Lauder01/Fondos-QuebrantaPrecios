@@ -326,53 +326,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 .btn-icon-danger i {
-  color: white !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  color: white;
 }
 
 .btn-icon-danger:hover i {
-  color: white !important;
+  color: white;
 }
 
 .btn-icon-primary i {
-  color: white !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  color: white;
 }
 
 .btn-icon-primary:hover i {
-  color: white !important;
+  color: white;
 }
 
 .btn-icon-primary.selected i {
-  color: white !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  color: white;
 }
 
-/* === FALLBACKS PARA ICONOS === */
-.btn-icon-danger i.bi-trash::before {
-  content: "✕";
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.btn-icon-primary i.bi-star-fill::before {
-  content: "★";
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-/* Si Bootstrap Icons carga correctamente, usar los iconos normales */
-.btn-icon i[class*="bi-"]::before {
-  font-family: "bootstrap-icons" !important;
-}
+/* === FALLBACKS PARA ICONOS - REMOVIDOS === */
+/* Los iconos ahora usan Bootstrap Icons correctamente */
