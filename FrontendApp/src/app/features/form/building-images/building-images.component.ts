@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageService, BuildingImageDto } from '../../../core/image.service';
@@ -14,6 +14,7 @@ export interface BuildingImage {
   imageError?: boolean; // Error al cargar la imagen
   size?: number;
   file?: File; // Archivo temporal antes de subir al servidor
+  blobUrl?: string; // URL blob temporal para limpieza
 }
 
 @Component({
@@ -23,7 +24,7 @@ export interface BuildingImage {
   templateUrl: './building-images.component.html',
   styleUrls: ['./building-images.component.css']
 })
-export class BuildingImagesComponent implements OnInit {
+export class BuildingImagesComponent implements OnInit, OnDestroy {
   @Input() images: BuildingImage[] = [];
   @Input() buildingId: string = ''; // ID del edificio para cargar/guardar imágenes
   @Output() imagesChange = new EventEmitter<BuildingImage[]>();
@@ -42,12 +43,23 @@ export class BuildingImagesComponent implements OnInit {
    * Carga las imágenes existentes del edificio
    */
   loadBuildingImages() {
+    console.log('Iniciando carga de imágenes para buildingId:', this.buildingId);
+
     this.imageService.getBuildingImages(this.buildingId).subscribe({
       next: (buildingImages) => {
-        console.log('Imágenes cargadas:', buildingImages.length);
+        console.log('Respuesta de la API - Total imágenes:', buildingImages.length, buildingImages);
+
         this.images = buildingImages.map(img => {
           const imageUrl = this.imageService.getImageUrl(img.buildingImageId);
-          console.log('URL generada para imagen:', img.fileName, '-> ', imageUrl);
+          console.log('Procesando imagen:', {
+            fileName: img.fileName,
+            buildingImageId: img.buildingImageId,
+            generatedUrl: imageUrl,
+            hasImageData: img.hasImageData,
+            size: img.size,
+            downloadUrl: img.downloadUrl
+          });
+
           return {
             buildingImageId: img.buildingImageId,
             url: imageUrl,
@@ -58,10 +70,23 @@ export class BuildingImagesComponent implements OnInit {
             imageError: false
           };
         });
+
+        console.log('Imágenes procesadas:', this.images);
         this.imagesChange.emit(this.images);
+
+        // En producción, intentar precargar las imágenes
+        if (this.isProduction()) {
+          this.preloadImagesForProduction();
+        }
       },
       error: (error) => {
-        console.error('Error cargando imágenes:', error);
+        console.error('Error completo cargando imágenes:', {
+          error: error,
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          message: error.message
+        });
       }
     });
   }
@@ -80,6 +105,7 @@ export class BuildingImagesComponent implements OnInit {
     // Crear imagen temporal para mostrar
     const tempImage: BuildingImage = {
       url: objectUrl,
+      blobUrl: objectUrl, // Guardar para limpieza posterior
       fileName: file.name,
       altText: '',
       isCover: this.images.length === 0, // Primera imagen es portada por defecto
@@ -111,6 +137,11 @@ export class BuildingImagesComponent implements OnInit {
 
   removeImage(index: number) {
     const image = this.images[index];
+
+    // Limpiar URL blob si existe
+    if (image.blobUrl) {
+      URL.revokeObjectURL(image.blobUrl);
+    }
 
     if (!image.buildingImageId) {
       // Imagen local no guardada, solo remover del array
@@ -165,6 +196,12 @@ export class BuildingImagesComponent implements OnInit {
       return new Promise<void>((resolve, reject) => {
         this.imageService.uploadImage(buildingId, image.file!, image.fileName, image.altText).subscribe({
           next: (response) => {
+            // Limpiar URL blob antes de actualizar con la URL del servidor
+            if (image.blobUrl) {
+              URL.revokeObjectURL(image.blobUrl);
+              image.blobUrl = undefined;
+            }
+
             // Actualizar imagen con datos del servidor
             image.buildingImageId = response.buildingImageId;
             image.url = this.imageService.getImageUrl(response.buildingImageId);
@@ -213,22 +250,19 @@ export class BuildingImagesComponent implements OnInit {
    * Maneja el error al cargar una imagen
    */
   onImageError(event: Event, image: BuildingImage) {
-    console.error('Error cargando imagen:', image.fileName, 'URL:', image.url);
+    console.error('Error cargando imagen:', image.fileName, 'URL actual:', image.url);
 
     const img = event.target as HTMLImageElement;
     console.log('Estado de la imagen:', {
       naturalWidth: img.naturalWidth,
       naturalHeight: img.naturalHeight,
       complete: img.complete,
-      currentSrc: img.currentSrc
+      currentSrc: img.currentSrc,
+      buildingImageId: image.buildingImageId
     });
 
     // En producción, intentar directamente con la API externa
-    const hostname = window.location.hostname;
-    const isProduction = hostname.includes('vercel.app') ||
-                        hostname.includes('vercel.com') ||
-                        hostname.includes('vercel.live') ||
-                        (hostname !== 'localhost' && hostname !== '127.0.0.1');
+    const isProduction = this.isProduction();
 
     if (!image.imageError && image.buildingImageId && isProduction) {
       console.log('Intentando recargar imagen con URL directa de producción...');
@@ -245,8 +279,20 @@ export class BuildingImagesComponent implements OnInit {
     // Si aún falla, intentar con parámetros de cache busting
     if (!image.imageError && image.buildingImageId && !img.src.includes('_retry=')) {
       console.log('Intentando con cache busting...');
-      const cacheBustUrl = `${image.url}?_retry=${Date.now()}`;
+      const timestamp = Date.now();
+      const cacheBustUrl = `${image.url}?_retry=${timestamp}&t=${timestamp}`;
+      console.log('Nueva URL con cache busting:', cacheBustUrl);
       image.url = cacheBustUrl;
+      this.imagesChange.emit(this.images);
+      return;
+    }
+
+    // Último intento: usar headers específicos para Azure
+    if (!image.imageError && image.buildingImageId && !img.src.includes('_final=')) {
+      console.log('Último intento con headers específicos...');
+      const finalUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${image.buildingImageId}?_final=true&crossorigin=anonymous`;
+      console.log('URL final:', finalUrl);
+      image.url = finalUrl;
       this.imagesChange.emit(this.images);
       return;
     }
@@ -290,5 +336,110 @@ export class BuildingImagesComponent implements OnInit {
     });
 
     return Promise.all(imageFilesPromises);
+  }
+
+  /**
+   * Detecta si estamos en producción
+   */
+  private isProduction(): boolean {
+    if (typeof window === 'undefined') return false;
+    const hostname = window.location.hostname;
+    return hostname.includes('vercel.app') ||
+           hostname.includes('vercel.com') ||
+           hostname.includes('vercel.live') ||
+           (hostname !== 'localhost' && hostname !== '127.0.0.1');
+  }
+
+  /**
+   * Precarga las imágenes usando fetch para verificar si están disponibles
+   */
+  private preloadImagesForProduction(): void {
+    console.log('Precargando imágenes para producción...');
+
+    this.images.forEach((image, index) => {
+      if (!image.buildingImageId) return;
+
+      const directUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${image.buildingImageId}`;
+
+      fetch(directUrl, {
+        method: 'HEAD',
+        mode: 'cors',
+        credentials: 'omit'
+      })
+      .then(response => {
+        console.log(`Imagen ${image.fileName} - Status: ${response.status}, Headers:`, {
+          contentType: response.headers.get('content-type'),
+          contentLength: response.headers.get('content-length'),
+          cacheControl: response.headers.get('cache-control'),
+          accessControlAllowOrigin: response.headers.get('access-control-allow-origin')
+        });
+
+        if (!response.ok) {
+          console.warn(`Imagen ${image.fileName} no disponible (${response.status})`);
+          // Marcar como error si no está disponible
+          setTimeout(() => {
+            image.imageError = true;
+            this.imagesChange.emit(this.images);
+          }, 100);
+        }
+      })
+      .catch(error => {
+        console.error(`Error precargando imagen ${image.fileName}:`, error);
+        // Intentar con el método original si falla el preload
+      });
+    });
+  }
+
+  /**
+   * Método temporal para debugging de imágenes
+   */
+  debugImageLoading(): void {
+    console.log('=== DEBUG IMÁGENES ===');
+    console.log('buildingId:', this.buildingId);
+    console.log('Total imágenes:', this.images.length);
+    console.log('Es producción:', this.isProduction());
+    console.log('Hostname:', window.location.hostname);
+
+    this.images.forEach((img, index) => {
+      console.log(`Imagen ${index + 1}:`, {
+        fileName: img.fileName,
+        buildingImageId: img.buildingImageId,
+        url: img.url,
+        isCover: img.isCover,
+        imageError: img.imageError,
+        size: img.size
+      });
+
+      // Intentar cargar la imagen manualmente para ver el error
+      if (img.buildingImageId) {
+        const testUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${img.buildingImageId}`;
+        console.log(`Probando URL directa para ${img.fileName}: ${testUrl}`);
+
+        fetch(testUrl, { method: 'HEAD' })
+          .then(response => {
+            console.log(`${img.fileName} - Respuesta HTTP:`, response.status, response.statusText);
+          })
+          .catch(error => {
+            console.error(`${img.fileName} - Error en fetch:`, error);
+          });
+      }
+    });
+    console.log('=====================');
+  }
+
+  ngOnDestroy() {
+    // Limpiar todas las URLs blob al destruir el componente
+    this.cleanupBlobUrls();
+  }
+
+  /**
+   * Limpia todas las URLs blob para evitar memory leaks
+   */
+  private cleanupBlobUrls(): void {
+    this.images.forEach(image => {
+      if (image.blobUrl) {
+        URL.revokeObjectURL(image.blobUrl);
+      }
+    });
   }
 }

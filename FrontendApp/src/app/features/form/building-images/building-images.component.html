@@ -2,6 +2,13 @@
   <label class="form-label fw-semibold small text-primary-dark">Imágenes del Edificio</label>
   <input type="file" class="form-control" (change)="onFileSelected($event)" multiple accept="image/*">
   <div class="form-text small">Puedes subir varias imágenes. Selecciona una como portada.</div>
+
+  <!-- Botón temporal para debugging en producción -->
+  <div *ngIf="buildingId && images.length > 0" class="mt-2">
+    <button type="button" class="btn btn-sm btn-outline-info" (click)="debugImageLoading()">
+      🔍 Debug Imágenes ({{images.length}})
+    </button>
+  </div>
 </div>
 <div class="gallery-masonry">
   <div class="gallery-card" *ngFor="let img of images; let i = index">
@@ -12,7 +19,10 @@
            [alt]="img.altText || img.fileName"
            (load)="onImageLoad($event)"
            (error)="onImageError($event, img)"
-           loading="lazy">
+           loading="lazy"
+           crossorigin="anonymous"
+           referrerpolicy="no-referrer"
+           decoding="async">
       <div *ngIf="img.imageError" class="gallery-img-placeholder">
         <i class="bi bi-image"></i>
         <small class="text-muted">No se pudo cargar</small>

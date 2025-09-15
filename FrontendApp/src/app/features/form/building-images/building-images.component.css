@@ -225,16 +225,17 @@
   height: 40px;
   min-width: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
 }
 
 .btn-icon:hover {
   width: auto;
-  padding-left: 0.5rem;
+  padding-left: 0.75rem;
   padding-right: 0.75rem;
   min-width: fit-content;
-  border-radius: 1.25rem;
+  border-radius: 20px;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .btn-icon .btn-text {
@@ -253,13 +254,21 @@
 }
 
 .btn-icon-danger {
-  background: #dc3545;
+  background: var(--color-danger, #ef4444);
   color: white;
+  border: 2px solid var(--color-danger, #ef4444);
 }
 
 .btn-icon-danger:hover {
-  background: #c82333;
+  background: var(--color-danger-dark, #b91c1c);
   color: white;
+  border-color: var(--color-danger-dark, #b91c1c);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-icon-danger:active {
+  background: var(--color-danger-dark, #b91c1c);
+  transform: translateY(-1px);
 }
 
 .btn-icon-danger i {
@@ -271,13 +280,21 @@
 }
 
 .btn-icon-primary {
-  background: #28a745;
+  background: var(--color-primary, #275950);
   color: white;
+  border: 2px solid var(--color-primary, #275950);
 }
 
 .btn-icon-primary:hover {
-  background: #218838;
+  background: var(--color-primary-dark, #1b3d36);
   color: white;
+  border-color: var(--color-primary-dark, #1b3d36);
+  box-shadow: 0 6px 20px rgba(39, 89, 80, 0.4);
+}
+
+.btn-icon-primary:active {
+  background: var(--color-primary-dark, #1b3d36);
+  transform: translateY(-1px);
 }
 
 .btn-icon-primary i {
@@ -289,10 +306,16 @@
 }
 
 .btn-icon-primary.selected {
-  background: #1e7e34;
+  background: var(--color-secondary, #58c2ab);
   color: white;
+  border-color: var(--color-secondary, #58c2ab);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 6px 20px rgba(88, 194, 171, 0.5);
+  width: auto;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  min-width: fit-content;
+  border-radius: 20px;
 }
 
 .btn-icon-primary.selected i {
@@ -302,14 +325,6 @@
 .btn-icon-primary.selected .btn-text {
   opacity: 1;
   transform: translateX(0);
-}
-
-.btn-icon-primary.selected {
-  width: auto;
-  padding-left: 0.5rem;
-  padding-right: 0.75rem;
-  min-width: fit-content;
-  border-radius: 1.25rem;
 }
 
 .btn-icon:disabled {
