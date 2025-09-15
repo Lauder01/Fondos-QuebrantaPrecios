@@ -6,7 +6,17 @@
 <div class="gallery-masonry">
   <div class="gallery-card" *ngFor="let img of images; let i = index">
     <div class="gallery-img-wrapper" [ngClass]="{'cover': img.isCover}">
-      <img *ngIf="img.url" [src]="img.url" class="gallery-img" [alt]="img.altText || img.fileName" (load)="($event.target.parentElement ? $event.target.parentElement.classList.add('loaded') : null)">
+      <img *ngIf="img.url"
+           [src]="img.url"
+           class="gallery-img"
+           [alt]="img.altText || img.fileName"
+           (load)="onImageLoad($event)"
+           (error)="onImageError($event, img)"
+           loading="lazy">
+      <div *ngIf="img.imageError" class="gallery-img-placeholder">
+        <i class="bi bi-image"></i>
+        <span class="gallery-filename">{{img.fileName}}</span>
+      </div>
     <!-- Botones superiores eliminados, solo se mantienen los de la parte inferior -->
       <div *ngIf="img.uploading" class="gallery-uploading">
         <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>

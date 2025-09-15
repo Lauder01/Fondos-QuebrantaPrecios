@@ -11,6 +11,7 @@ export interface BuildingImage {
   isCover: boolean;
   uploading?: boolean;
   error?: string;
+  imageError?: boolean; // Error al cargar la imagen
   size?: number;
   file?: File; // Archivo temporal antes de subir al servidor
 }
@@ -43,14 +44,20 @@ export class BuildingImagesComponent implements OnInit {
   loadBuildingImages() {
     this.imageService.getBuildingImages(this.buildingId).subscribe({
       next: (buildingImages) => {
-        this.images = buildingImages.map(img => ({
-          buildingImageId: img.buildingImageId,
-          url: this.imageService.getImageUrl(img.buildingImageId),
-          fileName: img.fileName,
-          altText: img.altText,
-          isCover: img.isCoverImage,
-          size: img.size
-        }));
+        console.log('Imágenes cargadas:', buildingImages.length);
+        this.images = buildingImages.map(img => {
+          const imageUrl = this.imageService.getImageUrl(img.buildingImageId);
+          console.log('URL generada para imagen:', img.fileName, '-> ', imageUrl);
+          return {
+            buildingImageId: img.buildingImageId,
+            url: imageUrl,
+            fileName: img.fileName,
+            altText: img.altText,
+            isCover: img.isCoverImage,
+            size: img.size,
+            imageError: false
+          };
+        });
         this.imagesChange.emit(this.images);
       },
       error: (error) => {
@@ -190,6 +197,40 @@ export class BuildingImagesComponent implements OnInit {
     return Promise.all(uploadPromises).then(() => {
       this.imagesChange.emit(this.images);
     });
+  }
+
+  /**
+   * Maneja el evento de carga exitosa de imagen
+   */
+  onImageLoad(event: Event) {
+    const target = event.target as HTMLImageElement;
+    if (target.parentElement) {
+      target.parentElement.classList.add('loaded');
+    }
+  }
+
+  /**
+   * Maneja el error al cargar una imagen
+   */
+  onImageError(event: Event, image: BuildingImage) {
+    console.error('Error cargando imagen:', image.fileName, 'URL:', image.url);
+
+    // Intentar recargar la imagen una vez más con la URL directa
+    if (!image.imageError && image.buildingImageId) {
+      console.log('Intentando recargar imagen con URL directa...');
+      const directUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${image.buildingImageId}`;
+      const img = event.target as HTMLImageElement;
+
+      if (img.src !== directUrl) {
+        image.url = directUrl;
+        this.imagesChange.emit(this.images);
+        return;
+      }
+    }
+
+    // Si ya intentamos con la URL directa o no hay buildingImageId, mostrar placeholder
+    image.imageError = true;
+    this.imagesChange.emit(this.images);
   }
 
   /**

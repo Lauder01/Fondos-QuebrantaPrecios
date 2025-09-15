@@ -52,7 +52,10 @@ export class ImageService {
    */
   getImageUrl(buildingImageId: string): string {
     // En producción, usar directamente la URL de la API externa para imágenes
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (typeof window !== 'undefined' &&
+        (window.location.hostname.includes('vercel.app') ||
+         window.location.hostname.includes('vercel.com') ||
+         window.location.hostname !== 'localhost')) {
       return `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${buildingImageId}`;
     }
     // En desarrollo, usar el proxy local
