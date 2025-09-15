@@ -1,4 +1,5 @@
 @import './styles/theme-colors.css';
+@import '~bootstrap-icons/font/bootstrap-icons.css';
 
 .form-control + i.bi-check-circle,
 .form-control + i.bi-exclamation-circle {
