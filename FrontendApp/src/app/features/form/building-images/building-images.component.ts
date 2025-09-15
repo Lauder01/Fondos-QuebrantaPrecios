@@ -215,13 +215,21 @@ export class BuildingImagesComponent implements OnInit {
   onImageError(event: Event, image: BuildingImage) {
     console.error('Error cargando imagen:', image.fileName, 'URL:', image.url);
 
+    const img = event.target as HTMLImageElement;
+    console.log('Estado de la imagen:', {
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight,
+      complete: img.complete,
+      currentSrc: img.currentSrc
+    });
+
     // Intentar recargar la imagen una vez más con la URL directa
     if (!image.imageError && image.buildingImageId) {
       console.log('Intentando recargar imagen con URL directa...');
       const directUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${image.buildingImageId}`;
-      const img = event.target as HTMLImageElement;
 
       if (img.src !== directUrl) {
+        console.log('Cambiando URL de:', img.src, 'a:', directUrl);
         image.url = directUrl;
         this.imagesChange.emit(this.images);
         return;
@@ -229,11 +237,10 @@ export class BuildingImagesComponent implements OnInit {
     }
 
     // Si ya intentamos con la URL directa o no hay buildingImageId, mostrar placeholder
+    console.log('Mostrando placeholder para imagen:', image.fileName);
     image.imageError = true;
     this.imagesChange.emit(this.images);
-  }
-
-  /**
+  }  /**
    * Convierte las imágenes pendientes a formato base64 para el endpoint unificado
    */
   async getImagesAsBase64(): Promise<any[]> {
