@@ -85,13 +85,13 @@ export class FormMainComponent {
 					// Ubicación
 					districtId: (formData.location.districtId || '').trim(),
 					streetId: (formData.location.streetId || '').trim(),
-					doorway: (formData.location.buildingNumber || '').trim(),
+					doorway: (formData.location.buildingNumber || '').trim().substring(0, 6) || '1',
 
 					// Detalles Técnicos
-					floorCount: Number(formData.technicalDetails.floorCount) || 1,
-					yearBuilt: Number(formData.technicalDetails.yearBuilt) || 2025,
-					price: formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? Number(formData.technicalDetails.price) : 0,
-					energyCertificate: (formData.technicalDetails.energyCertificate || '').trim(),
+					floorCount: Math.max(1, Number(formData.technicalDetails.floorCount) || 1),
+					yearBuilt: Math.max(1800, Math.min(2100, Number(formData.technicalDetails.yearBuilt) || 2025)),
+					price: Math.max(0, Math.min(9999999999.99, formData.technicalDetails.price !== undefined && formData.technicalDetails.price !== null ? Number(formData.technicalDetails.price) : 0)),
+					energyCertificate: (formData.technicalDetails.energyCertificate || '').trim().substring(0, 10),
 									hasElevator: !!formData.technicalDetails.hasElevator,
 									hasGarage: !!formData.technicalDetails.hasGarage,
 
@@ -99,7 +99,11 @@ export class FormMainComponent {
 					zipcodeId: this.getZipcodeIdFromCode(formData.location.zipCode),
 					constructedAddress: this.buildConstructedAddress(formData),
 					country: (formData.location.country || '').trim(),
-					city: (formData.location.city || '').trim()
+					city: (formData.location.city || '').trim(),
+
+					// Campos para apartamentos (valores por defecto)
+					apartmentsPerFloor: 1,
+					apartmentCount: Math.min(20000, Math.max(0, (Number(formData.technicalDetails.floorCount) || 1) * 1))
 				};
 
 				console.log('=== DEBUG buildingData ===');

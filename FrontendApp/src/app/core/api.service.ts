@@ -69,6 +69,10 @@ export interface BuildingCreatorDto {
 	constructedAddress?: string;
 	country?: string;
 	city?: string;
+
+	// Campos para apartamentos
+	apartmentsPerFloor?: number;
+	apartmentCount?: number;
 }
 
 export interface BuildingGetterDto extends BuildingCreatorDto {
