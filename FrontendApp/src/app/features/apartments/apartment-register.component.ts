@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
-import { ApiService, FloorGetterDto, ApartmentCreatorDto } from '../../core/api.service';
+import { ApiService, FloorGetterDto, ApartmentCreatorDto, BuildingGetterDto } from '../../core/api.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -22,6 +22,7 @@ export class ApartmentRegisterComponent implements OnInit {
   currentFloor: number = 1;
   floors: number[] = [];
   buildingFloors: FloorGetterDto[] = [];
+  buildingData: BuildingGetterDto | null = null;
   isCreatingApartments = false;
   showModal = false;
   successMessage = '';
@@ -41,19 +42,23 @@ export class ApartmentRegisterComponent implements OnInit {
 
   ngOnInit() {
     if (this.buildingId) {
-      // Cargar los floors del edificio
-      this.api.getFloorsByBuildingId(this.buildingId).subscribe({
-        next: (floors) => {
-          this.buildingFloors = floors.sort((a, b) => a.floorNumber - b.floorNumber);
-          this.totalFloors = floors.length;
-          this.floors = floors.map(f => f.floorNumber);
+      // Cargar datos del edificio y floors en paralelo
+      forkJoin({
+        building: this.api.getBuildingById(this.buildingId),
+        floors: this.api.getFloorsByBuildingId(this.buildingId)
+      }).subscribe({
+        next: (data) => {
+          this.buildingData = data.building;
+          this.buildingFloors = data.floors.sort((a, b) => a.floorNumber - b.floorNumber);
+          this.totalFloors = data.floors.length;
+          this.floors = data.floors.map(f => f.floorNumber);
           if (this.floors.length > 0) {
             this.currentFloor = this.floors[0];
           }
         },
         error: (error) => {
-          console.error('Error al cargar los floors del edificio:', error);
-          alert('Error al cargar los pisos del edificio');
+          console.error('Error al cargar los datos del edificio:', error);
+          alert('Error al cargar los datos del edificio');
         }
       });
     }
@@ -64,13 +69,16 @@ export class ApartmentRegisterComponent implements OnInit {
     // Inicializar apartamentos personalizados por planta con los valores del formulario general
     if (this.buildingFloors.length > 0) {
       this.step = 2;
-      let globalAptIndex = 1;
       this.buildingFloors.forEach(floor => {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
+          const doorLetter = this.getDoorLetter(i + 1);
+          const door = `${i + 1}${doorLetter}`;
+          const code = this.generateApartmentCode(floor.floorNumber, door);
+
           this.apartmentsByFloor[floor.id].push({
-            code: '',
-            door: `${i + 1}${this.getDoorLetter(i + 1)}`,
+            code: code,
+            door: door,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
             numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 1,
@@ -125,6 +133,8 @@ export class ApartmentRegisterComponent implements OnInit {
     // Validar y limpiar datos antes de enviar (solo para el paso 2, que ya no se usa)
     const apartmentPayloads: any[] = [];
     const apartmentCreationRequests: any[] = [];
+    let globalApartmentCounter = 1;
+
     for (const floorId in this.apartmentsByFloor) {
       for (const apt of this.apartmentsByFloor[floorId]) {
         // Limpiar y convertir todos los campos con validaciones del backend
@@ -132,8 +142,14 @@ export class ApartmentRegisterComponent implements OnInit {
         const numBathrooms = Number(apt.numBathrooms) || 1;
         const area = Number(apt.area) || 1;
 
+        // Generar código único si está vacío
+        let code = String(apt.code ?? '').trim();
+        if (!code) {
+          code = `APT-${String(globalApartmentCounter).padStart(3, '0')}`;
+        }
+
         const payload = {
-          code: '', // El backend generará el código
+          code: code,
           door: String(apt.door ?? '').trim(),
           floorId: String(apt.floorId ?? '').trim(),
           numRooms: Math.min(Math.max(1, numRooms), 50), // Limitar entre 1-50 (validación backend)
@@ -142,14 +158,18 @@ export class ApartmentRegisterComponent implements OnInit {
         };
 
         // Validar campos obligatorios
-        if (!payload.door || !payload.floorId) {
+        if (!payload.code || !payload.door || !payload.floorId) {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
           return;
         }
 
-        // Validar que la puerta no sea demasiado larga
+        // Validar que el código y la puerta no sean demasiado largos
+        if (payload.code.length > 50) {
+          alert(`El código "${payload.code}" es demasiado largo (máximo 50 caracteres).`);
+          return;
+        }
         if (payload.door.length > 24) {
-          alert(`La puerta "${payload.door}" es demasiado larga (máximo 24 caracteres). Corrige los valores antes de continuar.`);
+          alert(`La puerta "${payload.door}" es demasiado larga (máximo 24 caracteres).`);
           return;
         }
 
@@ -159,6 +179,7 @@ export class ApartmentRegisterComponent implements OnInit {
         }
         apartmentPayloads.push(payload);
         apartmentCreationRequests.push(this.api.createApartment(payload));
+        globalApartmentCounter++;
       }
     }
 
@@ -177,7 +198,23 @@ export class ApartmentRegisterComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al crear apartamentos:', error);
-        alert('Error al crear los apartamentos. Por favor, inténtelo de nuevo.');
+
+        // Mostrar información más específica del error
+        if (error.error) {
+          console.error('Detalles del error:', error.error);
+          if (error.error.errors) {
+            console.error('Errores de validación:', error.error.errors);
+          }
+        }
+
+        let errorMessage = 'Error al crear los apartamentos. ';
+        if (error.status === 400) {
+          errorMessage += 'Datos de entrada inválidos. Revisa los logs de la consola para más detalles.';
+        } else {
+          errorMessage += 'Por favor, inténtelo de nuevo.';
+        }
+
+        alert(errorMessage);
         this.isCreatingApartments = false;
       },
       complete: () => {
@@ -195,20 +232,30 @@ export class ApartmentRegisterComponent implements OnInit {
       return;
     }
 
+    if (!this.buildingData) {
+      alert('Error: No se ha cargado la información del edificio');
+      return;
+    }
+
     const apartmentCreationRequests: any[] = [];
 
     // Crear apartamentos para cada piso según las características generales
     this.buildingFloors.forEach(floor => {
       for (let i = 0; i < this.apartmentsPerFloor; i++) {
+        const doorLetter = this.getDoorLetter(i + 1);
+        const door = `${i + 1}${doorLetter}`;
+        const code = this.generateApartmentCode(floor.floorNumber, door);
+
         const payload = {
-          code: '', // El backend generará el código
-          door: `${i + 1}${this.getDoorLetter(i + 1)}`,
+          code: code,
+          door: door,
           floorId: floor.id,
           numRooms: Math.min(Math.max(1, Number(this.numRooms) || 1), 50),
           numBathrooms: Math.min(Math.max(1, Number(this.numBathrooms) || 1), 20),
           area: Math.max(0.01, Number(this.area) || 70)
         };
 
+        console.log(`Creando apartamento - Code: ${code}, Door: ${door}, FloorId: ${floor.id}, FloorNumber: ${floor.floorNumber}`);
         apartmentCreationRequests.push(this.api.createApartment(payload));
       }
     });
@@ -224,35 +271,84 @@ export class ApartmentRegisterComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al crear apartamentos:', error);
-        alert('Error al crear los apartamentos. Por favor, inténtelo de nuevo.');
+
+        // Mostrar información más específica del error
+        if (error.error) {
+          console.error('Detalles del error:', error.error);
+          if (error.error.errors) {
+            console.error('Errores de validación:', error.error.errors);
+          }
+        }
+
+        let errorMessage = 'Error al crear los apartamentos. ';
+        if (error.status === 400) {
+          errorMessage += 'Datos de entrada inválidos. Revisa los logs de la consola para más detalles.';
+        } else {
+          errorMessage += 'Por favor, inténtelo de nuevo.';
+        }
+
+        alert(errorMessage);
         this.isCreatingApartments = false;
       },
       complete: () => {
         this.isCreatingApartments = false;
       }
     });
-  }
-
-  // Helper method para generar letras para las puertas
+  }  // Helper method para generar letras para las puertas
   getDoorLetter(aptNumber: number): string {
     return String.fromCharCode(64 + aptNumber); // A, B, C, etc.
   }
 
+  // Métodos para generar códigos siguiendo la lógica del backend
+  private getBuildingCode(): string {
+    // Simular la lógica del backend: {CodigoPostal}-{CodigoCalle}-{Portería}
+    // Como no tenemos acceso a los códigos completos, usamos una aproximación
+    if (this.buildingData?.doorway) {
+      // Usar una representación simplificada pero consistente
+      const doorway = this.buildingData.doorway.toUpperCase();
+      const buildingHash = this.buildingData.id.slice(-4).toUpperCase();
+      return `BUILD-${buildingHash}-${doorway}`;
+    }
+    return 'BUILD-TEMP';
+  }
+
+  private generateFloorCode(floorNumber: number): string {
+    // Formato del backend: {CodigoEdificio}-{NumeroPiso:D2}
+    const buildingCode = this.getBuildingCode();
+    const floorNumberFormatted = floorNumber.toString().padStart(2, '0');
+    return `${buildingCode}-${floorNumberFormatted}`;
+  }
+
+  private generateApartmentCode(floorNumber: number, door: string): string {
+    // Formato del backend: {CodigoFloor}-{Puerta}
+    const floorCode = this.generateFloorCode(floorNumber);
+    return `${floorCode}-${door}`;
+  }
+
   addApartment(floorId: string) {
     const apts = this.apartmentsByFloor[floorId];
+    const floor = this.buildingFloors.find(f => f.id === floorId);
+    if (!floor) return;
+
     if (apts && apts.length > 0) {
       // Copiar datos del primer apartamento
       const base = { ...apts[0] };
-      // Generar nueva puerta
+      // Generar nueva puerta y código
       const newIndex = apts.length;
-  base.code = '';
-  base.door = `${newIndex + 1}${this.getDoorLetter(newIndex + 1)}`;
-  apts.push({ ...base });
+      const doorLetter = this.getDoorLetter(newIndex + 1);
+      const door = `${newIndex + 1}${doorLetter}`;
+
+      base.code = this.generateApartmentCode(floor.floorNumber, door);
+      base.door = door;
+      apts.push({ ...base });
     } else if (apts) {
       // Si no hay ninguno, crear uno básico
+      const doorLetter = this.getDoorLetter(1);
+      const door = `1${doorLetter}`;
+
       apts.push({
-        code: '',
-        door: `1${this.getDoorLetter(1)}`,
+        code: this.generateApartmentCode(floor.floorNumber, door),
+        door: door,
         floorId: floorId,
         numRooms: 1,
         numBathrooms: 1,
