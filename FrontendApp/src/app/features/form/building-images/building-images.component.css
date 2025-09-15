@@ -186,18 +186,21 @@
   color: #6c757d;
   padding: 1rem;
   text-align: center;
+  gap: 0.25rem;
 }
 
 .gallery-img-placeholder i {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
   color: #adb5bd;
 }
 
 .gallery-img-placeholder .gallery-filename {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #6c757d;
   margin-top: 0.25rem;
+  word-break: break-word;
+  line-height: 1.2;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.97); }
@@ -212,15 +215,15 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   line-height: 1;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -241,7 +244,7 @@
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-10px);
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .btn-icon:hover .btn-text {
@@ -317,7 +320,7 @@
 }
 
 .btn-icon i {
-  font-size: 1rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   transition: color 0.3s ease;
   line-height: 1;
@@ -329,15 +332,17 @@
 
 /* Fallback para cuando los iconos de Bootstrap no cargan */
 .btn-icon-danger i.bi-trash::before {
-  content: "🗑";
+  content: "✕";
   font-family: system-ui, -apple-system, sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .btn-icon-primary i.bi-star-fill::before {
-  content: "⭐";
+  content: "★";
   font-family: system-ui, -apple-system, sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 /* Si Bootstrap Icons carga correctamente, usar los iconos normales */

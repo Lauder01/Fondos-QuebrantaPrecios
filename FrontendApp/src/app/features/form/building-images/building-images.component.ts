@@ -223,9 +223,15 @@ export class BuildingImagesComponent implements OnInit {
       currentSrc: img.currentSrc
     });
 
-    // Intentar recargar la imagen una vez más con la URL directa
-    if (!image.imageError && image.buildingImageId) {
-      console.log('Intentando recargar imagen con URL directa...');
+    // En producción, intentar directamente con la API externa
+    const hostname = window.location.hostname;
+    const isProduction = hostname.includes('vercel.app') ||
+                        hostname.includes('vercel.com') ||
+                        hostname.includes('vercel.live') ||
+                        (hostname !== 'localhost' && hostname !== '127.0.0.1');
+
+    if (!image.imageError && image.buildingImageId && isProduction) {
+      console.log('Intentando recargar imagen con URL directa de producción...');
       const directUrl = `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${image.buildingImageId}`;
 
       if (img.src !== directUrl) {
@@ -236,7 +242,16 @@ export class BuildingImagesComponent implements OnInit {
       }
     }
 
-    // Si ya intentamos con la URL directa o no hay buildingImageId, mostrar placeholder
+    // Si aún falla, intentar con parámetros de cache busting
+    if (!image.imageError && image.buildingImageId && !img.src.includes('_retry=')) {
+      console.log('Intentando con cache busting...');
+      const cacheBustUrl = `${image.url}?_retry=${Date.now()}`;
+      image.url = cacheBustUrl;
+      this.imagesChange.emit(this.images);
+      return;
+    }
+
+    // Si ya intentamos todas las opciones, mostrar placeholder
     console.log('Mostrando placeholder para imagen:', image.fileName);
     image.imageError = true;
     this.imagesChange.emit(this.images);

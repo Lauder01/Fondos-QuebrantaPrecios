@@ -15,6 +15,7 @@
            loading="lazy">
       <div *ngIf="img.imageError" class="gallery-img-placeholder">
         <i class="bi bi-image"></i>
+        <small class="text-muted">No se pudo cargar</small>
         <span class="gallery-filename">{{img.fileName}}</span>
       </div>
     <!-- Botones superiores eliminados, solo se mantienen los de la parte inferior -->
