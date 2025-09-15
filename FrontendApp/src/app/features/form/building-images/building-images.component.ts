@@ -118,21 +118,45 @@ export class BuildingImagesComponent implements OnInit, OnDestroy {
 
   setAsCover(index: number) {
     const image = this.images[index];
+
+    // Para imágenes no guardadas, solo actualizar estado local
     if (!image.buildingImageId) {
-      console.error('No se puede establecer como portada: imagen no guardada');
+      if (image.isCover) {
+        // Quitar como portada
+        image.isCover = false;
+        console.log('Quitado como portada (local):', image.fileName);
+      } else {
+        // Establecer como portada (quitar de otras primero)
+        this.images.forEach(img => img.isCover = false);
+        image.isCover = true;
+        console.log('Establecido como portada (local):', image.fileName);
+      }
+      this.imagesChange.emit(this.images);
       return;
     }
 
-    this.imageService.setAsCoverImage(image.buildingImageId).subscribe({
-      next: () => {
-        // Actualizar estado local
-        this.images.forEach((img, i) => img.isCover = i === index);
-        this.imagesChange.emit(this.images);
-      },
-      error: (error) => {
-        console.error('Error estableciendo como portada:', error);
-      }
-    });
+    // Para imágenes guardadas en el servidor
+    if (image.isCover) {
+      // Si ya es portada, quitarla (no hay endpoint específico, pero podemos hacerlo local)
+      image.isCover = false;
+      console.log('Quitado como portada:', image.fileName);
+      this.imagesChange.emit(this.images);
+      // TODO: Aquí podrías llamar a un endpoint para quitar portada si existe
+    } else {
+      // Establecer como portada en el servidor
+      this.imageService.setAsCoverImage(image.buildingImageId).subscribe({
+        next: () => {
+          // Actualizar estado local: quitar portada de todas y establecer la actual
+          this.images.forEach((img, i) => img.isCover = i === index);
+          console.log('Establecido como portada:', image.fileName);
+          this.imagesChange.emit(this.images);
+        },
+        error: (error) => {
+          console.error('Error estableciendo como portada:', error);
+          // Mostrar mensaje de error al usuario si es necesario
+        }
+      });
+    }
   }
 
   removeImage(index: number) {

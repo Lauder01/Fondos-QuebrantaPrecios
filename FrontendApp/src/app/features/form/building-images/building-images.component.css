@@ -326,6 +326,14 @@
   padding-right: 0.75rem;
   min-width: fit-content;
   border-radius: 20px;
+  cursor: pointer;
+}
+
+/* Efecto de click para el botón seleccionado */
+.btn-icon-primary.selected:active {
+  background: var(--color-secondary-darker, #359269);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(88, 194, 171, 0.6);
 }
 
 .btn-icon-primary.selected .btn-text {
@@ -349,6 +357,13 @@
   cursor: not-allowed;
   pointer-events: none;
   transform: none !important;
+}
+
+/* === ASEGURAR QUE EL BOTÓN SELECCIONADO NO SE COMPORTE COMO DESHABILITADO === */
+.btn-icon-primary.selected:not(:disabled) {
+  opacity: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 .btn-icon i {
