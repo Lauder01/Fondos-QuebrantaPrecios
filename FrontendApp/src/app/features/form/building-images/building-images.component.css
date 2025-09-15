@@ -272,14 +272,6 @@
   transform: translateY(-1px);
 }
 
-.btn-icon-danger i {
-  color: white !important;
-}
-
-.btn-icon-danger:hover i {
-  color: white !important;
-}
-
 /* === BOTÓN PORTADA === */
 .btn-icon-primary {
   background: var(--color-primary, #275950);
@@ -299,14 +291,6 @@
   transform: translateY(-1px);
 }
 
-.btn-icon-primary i {
-  color: white !important;
-}
-
-.btn-icon-primary:hover i {
-  color: white !important;
-}
-
 /* === ESTADO SELECCIONADO === */
 .btn-icon-primary.selected {
   background: var(--color-secondary, #58c2ab);
@@ -319,10 +303,6 @@
   padding-right: 0.75rem;
   min-width: fit-content;
   border-radius: 20px;
-}
-
-.btn-icon-primary.selected i {
-  color: white !important;
 }
 
 .btn-icon-primary.selected .btn-text {
@@ -347,6 +327,34 @@
   align-items: center;
   justify-content: center;
   color: white !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.btn-icon-danger i {
+  color: white !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.btn-icon-danger:hover i {
+  color: white !important;
+}
+
+.btn-icon-primary i {
+  color: white !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.btn-icon-primary:hover i {
+  color: white !important;
+}
+
+.btn-icon-primary.selected i {
+  color: white !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* === FALLBACKS PARA ICONOS === */
