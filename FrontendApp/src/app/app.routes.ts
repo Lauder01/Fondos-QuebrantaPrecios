@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LandingComponent } from './landing/landing.component';
+import { LandingResolver } from './landing/landing.resolver';
 import { FormMainComponent } from './features/form/form-main.component';
 import { BuildingListComponent } from './building-list/building-list.component';
 import { BuildingDetailComponent } from './building-detail/building-detail.component';
@@ -8,7 +9,7 @@ import { BuildingDetailResolver } from './building-detail/building-detail.resolv
 import { ApartmentRegisterComponent } from './features/apartments/apartment-register.component';
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
+  { path: '', component: LandingComponent, resolve: { data: LandingResolver } },
   { path: 'form', component: FormMainComponent },
   { path: 'buildings', component: BuildingListComponent },
   {
