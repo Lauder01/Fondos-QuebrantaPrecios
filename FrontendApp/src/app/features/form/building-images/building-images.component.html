@@ -19,11 +19,13 @@
         <input type="text" class="form-control form-control-sm gallery-alt-input" [(ngModel)]="img.altText" placeholder="Texto alternativo" [disabled]="!!img.uploading" (blur)="updateAltText(i)">
       </div>
       <div class="gallery-btn-row">
-        <button type="button" class="btn btn-outline-danger gallery-btn" (click)="removeImage(i)" [disabled]="img.uploading">
-          <i class="bi bi-trash"></i> Eliminar
+        <button type="button" class="btn-icon btn-icon-danger" (click)="removeImage(i)" [disabled]="img.uploading" title="Eliminar imagen">
+          <i class="bi bi-trash"></i>
+          <span class="btn-text">Eliminar</span>
         </button>
-        <button type="button" class="btn btn-outline-primary gallery-btn" [class.selected]="img.isCover" (click)="setAsCover(i)" [disabled]="img.uploading || img.isCover">
-          <i class="bi bi-star-fill"></i> Portada
+        <button type="button" class="btn-icon btn-icon-primary" [class.selected]="img.isCover" (click)="setAsCover(i)" [disabled]="img.uploading || img.isCover" [title]="img.isCover ? 'Imagen de portada' : 'Establecer como portada'">
+          <i class="bi bi-star-fill"></i>
+          <span class="btn-text">Portada</span>
         </button>
       </div>
     </div>
