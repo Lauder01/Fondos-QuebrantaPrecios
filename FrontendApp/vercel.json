@@ -10,7 +10,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; img-src 'self' data: https: http:; connect-src 'self' https://nominatim.openstreetmap.org https://nominatim1.openstreetmap.org https://nominatim2.openstreetmap.org https://devdemoapi1.azurewebsites.net https://*.tile.openstreetmap.org; font-src 'self' data:; frame-src 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; img-src 'self' data: https: http: https://devdemoapi1.azurewebsites.net; connect-src 'self' https://nominatim.openstreetmap.org https://nominatim1.openstreetmap.org https://nominatim2.openstreetmap.org https://devdemoapi1.azurewebsites.net https://*.tile.openstreetmap.org; font-src 'self' data:; frame-src 'self';"
         }
       ]
     }
