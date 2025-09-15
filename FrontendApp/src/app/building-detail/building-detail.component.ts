@@ -3,6 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BuildingService, Building } from '../building-list/building.service';
 import { ApiService, DistrictGetterDto, StatusGetterDto, ApartmentGetterDto } from '../core/api.service';
+import { ImageService, BuildingImageDto } from '../core/image.service';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,10 +27,14 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
   districtMap: { [id: string]: string } = {};
   statusMap: { [id: string]: string } = {};
 
+  buildingImages: BuildingImageDto[] = [];
+  imagesLoading = false;
+
   constructor(
     private route: ActivatedRoute,
     private buildingService: BuildingService,
     private apiService: ApiService,
+    private imageService: ImageService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -68,8 +73,27 @@ export class BuildingDetailComponent implements OnInit, OnDestroy {
               districtName: this.districtMap[building.districtId || ''] || 'Distrito no especificado',
               statusName: this.statusMap[building.statusId || ''] || 'Estado no especificado'
             };
+
+            // Cargar imágenes del edificio
+            this.imagesLoading = true;
+            this.imageService.getBuildingImages(building.id)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (images) => {
+                  this.buildingImages = images || [];
+                  this.imagesLoading = false;
+                  this.cdr.detectChanges();
+                },
+                error: (err) => {
+                  console.error('Error cargando imágenes del edificio:', err);
+                  this.buildingImages = [];
+                  this.imagesLoading = false;
+                  this.cdr.detectChanges();
+                }
+              });
           } else {
             this.building = null;
+            this.buildingImages = [];
           }
 
           this.loading = false;
