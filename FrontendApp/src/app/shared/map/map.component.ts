@@ -247,12 +247,75 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private async loadLeaflet() {
     try {
       console.log('🗺️ Cargando Leaflet...');
-      // Importación dinámica de Leaflet solo en el navegador
-      this.L = await import('leaflet');
-      console.log('✅ Leaflet cargado correctamente');
+
+      // Verificar si Leaflet ya está disponible globalmente
+      if (typeof window !== 'undefined' && (window as any).L) {
+        console.log('✅ Leaflet ya disponible globalmente');
+        this.L = (window as any).L;
+        this.fixLeafletIcons();
+        return;
+      }
+
+      // Intentar importación dinámica con fallback
+      try {
+        this.L = await import('leaflet');
+        console.log('✅ Leaflet cargado dinámicamente');
+      } catch (importError) {
+        console.warn('⚠️ Importación dinámica falló, intentando fallback...', importError);
+
+        // Fallback: cargar desde CDN
+        await this.loadLeafletFromCDN();
+      }
+
       this.fixLeafletIcons();
     } catch (error) {
       console.error('❌ Error cargando Leaflet:', error);
+      // En caso de error total, mostrar mensaje de error al usuario
+      this.handleMapLoadError();
+    }
+  }
+
+  private async loadLeafletFromCDN(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (typeof window === 'undefined') {
+        reject(new Error('Window no disponible'));
+        return;
+      }
+
+      // Cargar CSS de Leaflet
+      const cssLink = document.createElement('link');
+      cssLink.rel = 'stylesheet';
+      cssLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(cssLink);
+
+      // Cargar JS de Leaflet
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = () => {
+        this.L = (window as any).L;
+        console.log('✅ Leaflet cargado desde CDN');
+        resolve();
+      };
+      script.onerror = () => {
+        console.error('❌ Error cargando Leaflet desde CDN');
+        reject(new Error('Error cargando Leaflet desde CDN'));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  private handleMapLoadError(): void {
+    // Mostrar un mensaje de error en lugar del mapa
+    if (this.mapElement) {
+      this.mapElement.nativeElement.innerHTML = `
+        <div class="d-flex align-items-center justify-content-center h-100 bg-light border rounded">
+          <div class="text-center text-muted p-4">
+            <i class="bi bi-exclamation-triangle fs-1"></i>
+            <div class="mt-2">No se pudo cargar el mapa</div>
+            <small>Intenta recargar la página</small>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -456,19 +519,53 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private async geocodeAddress(address: string): Promise<{ latitude: number; longitude: number }> {
     // Usar Nominatim (OpenStreetMap) para geocodificación gratuita
     const encodedAddress = encodeURIComponent(address);
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`;
 
-    const response = await fetch(url);
-    const data = await response.json();
+    // Lista de servidores de Nominatim para fallback
+    const nominatimServers = [
+      'https://nominatim.openstreetmap.org',
+      'https://nominatim1.openstreetmap.org',
+      'https://nominatim2.openstreetmap.org'
+    ];
 
-    if (data && data.length > 0) {
-      return {
-        latitude: parseFloat(data[0].lat),
-        longitude: parseFloat(data[0].lon)
-      };
-    } else {
-      throw new Error('No se encontraron coordenadas para la dirección');
+    for (const server of nominatimServers) {
+      try {
+        const url = `${server}/search?format=json&q=${encodedAddress}&limit=1&countrycodes=es`;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'User-Agent': 'FondosQuebrantaPrecios/1.0 (contact@example.com)', // Identificarse correctamente
+            'Accept': 'application/json'
+          }
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+          console.log(`✅ Geocodificación exitosa con ${server}`);
+          return {
+            latitude: parseFloat(data[0].lat),
+            longitude: parseFloat(data[0].lon)
+          };
+        }
+      } catch (error) {
+        console.warn(`⚠️ Error con servidor ${server}:`, error);
+        continue; // Intentar con el siguiente servidor
+      }
     }
+
+    // Si todos los servidores fallan, usar coordenadas por defecto para España
+    console.warn(`❌ No se pudo geocodificar: ${address}, usando coordenadas por defecto`);
+    throw new Error(`No se pudo geocodificar la dirección: ${address}`);
   }
 
   private async executeWithQpsControl<T>(requestFn: () => Promise<T>): Promise<T> {
