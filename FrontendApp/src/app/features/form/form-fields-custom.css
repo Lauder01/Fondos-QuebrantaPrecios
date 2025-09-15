@@ -8,3 +8,12 @@
   color: #545a6e !important;
   opacity: 1;
 }
+
+/* Estilos para iconos en inputs */
+.position-relative .bi {
+  font-size: 1rem !important;
+  color: var(--color-primary) !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+  display: inline-block !important;
+}

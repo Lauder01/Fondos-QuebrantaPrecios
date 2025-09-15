@@ -51,6 +51,11 @@ export class ImageService {
    * Descarga una imagen por su ID (devuelve la URL para usar en img src)
    */
   getImageUrl(buildingImageId: string): string {
+    // En producción, usar directamente la URL de la API externa para imágenes
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      return `https://devdemoapi1.azurewebsites.net/api/ImageStorage/download/${buildingImageId}`;
+    }
+    // En desarrollo, usar el proxy local
     return `${this.baseUrl}/download/${buildingImageId}`;
   }
 

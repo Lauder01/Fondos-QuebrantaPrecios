@@ -74,15 +74,20 @@
 						Registrar Edificio
 					</button>
 
-					<!-- Botón después de crear el edificio -->
-					<button
-						*ngIf="createdBuildingId"
-						type="button"
-						class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary"
-						style="background-color: var(--color-primary-dark);"
-						(click)="continueToApartments()">
-						<i class="bi bi-building me-2"></i>Continuar con el Registro
-					</button>
+					<!-- Botón después de crear el edificio (fallback manual) -->
+					<div *ngIf="createdBuildingId" class="text-center">
+						<p class="text-success mb-2">
+							<i class="bi bi-check-circle-fill me-2"></i>
+							Edificio registrado exitosamente. Redirigiendo automáticamente...
+						</p>
+						<button
+							type="button"
+							class="btn btn-lg px-5 shadow rounded-3 font-weight-semibold text-white border-primary"
+							style="background-color: var(--color-primary-dark);"
+							(click)="continueToApartments()">
+							<i class="bi bi-building me-2"></i>Ir a Registro de Apartamentos
+						</button>
+					</div>
         </div>
       </div>
     </div>

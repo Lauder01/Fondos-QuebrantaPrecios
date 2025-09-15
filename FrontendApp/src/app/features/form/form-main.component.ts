@@ -134,7 +134,11 @@ export class FormMainComponent {
 							next: (result) => {
 								console.log('Edificio e imágenes creados exitosamente:', result);
 								this.createdBuildingId = result.id;
-								alert(`Edificio "${result.name || 'Sin nombre'}" e imágenes registrados exitosamente. Continúe con el registro de apartamentos.`);
+								alert(`Edificio "${result.name || 'Sin nombre'}" e imágenes registrados exitosamente. Redirigiendo al registro de apartamentos...`);
+								// Redirigir automáticamente después del registro exitoso
+								setTimeout(() => {
+									this.router.navigate(['/apartments/register', result.id]);
+								}, 1000); // Pequeño delay para que el usuario vea el mensaje
 							},
 							error: (error) => {
 								console.error('Error al crear el edificio con imágenes:', error);
@@ -151,7 +155,11 @@ export class FormMainComponent {
 						next: (result) => {
 							console.log('Edificio creado exitosamente:', result);
 							this.createdBuildingId = result.id;
-							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente. Continúe con el registro de apartamentos.`);
+							alert(`Edificio "${result.name || 'Sin nombre'}" registrado exitosamente. Redirigiendo al registro de apartamentos...`);
+							// Redirigir automáticamente después del registro exitoso
+							setTimeout(() => {
+								this.router.navigate(['/apartments/register', result.id]);
+							}, 1000); // Pequeño delay para que el usuario vea el mensaje
 						},
 						error: (error) => {
 							console.error('Error al crear el edificio:', error);
