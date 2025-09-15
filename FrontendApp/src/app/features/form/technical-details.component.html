@@ -7,7 +7,7 @@
 			<div class="position-relative">
 				<input id="floorCount" type="number" class="form-control form-control-sm ps-4-5" formControlName="floorCount" placeholder="1"
 					[ngClass]="{'is-invalid': formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched}">
-				<i class="bi bi-layers position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+				<i class="bi bi-layers position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 			</div>
 			<div *ngIf="formGroup.get('floorCount')?.invalid && formGroup.get('floorCount')?.touched" class="invalid-feedback d-block small">
 				Debe indicar el número de plantas.
@@ -20,7 +20,7 @@
 			<div class="position-relative">
 				<input id="yearBuilt" type="number" class="form-control form-control-sm ps-4-5" formControlName="yearBuilt" placeholder="2025"
 					[ngClass]="{'is-invalid': formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched}">
-				<i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+				<i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 			</div>
 			<div *ngIf="formGroup.get('yearBuilt')?.invalid && formGroup.get('yearBuilt')?.touched" class="invalid-feedback d-block small">
 				Debe indicar el año de construcción.
@@ -33,7 +33,7 @@
 			<div class="position-relative">
 				<input id="price" type="number" class="form-control form-control-sm ps-4-5" formControlName="price" placeholder="0"
 					[ngClass]="{'is-invalid': formGroup.get('price')?.invalid && formGroup.get('price')?.touched}">
-				<i class="bi bi-currency-euro position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+				<i class="bi bi-currency-euro position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 			</div>
 			<div *ngIf="formGroup.get('price')?.invalid && formGroup.get('price')?.touched" class="invalid-feedback d-block small">
 				Debe indicar el precio.
@@ -55,7 +55,7 @@
 						<option value="F">F</option>
 						<option value="G">G</option>
 					</select>
-					<i class="bi bi-lightning-charge position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+					<i class="bi bi-lightning-charge position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 				</div>
 				<div class="energy-indicator" [ngClass]="getEnergyClass(formGroup.get('energyCertificate')?.value)">
 				</div>

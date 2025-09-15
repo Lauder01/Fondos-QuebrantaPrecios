@@ -6,7 +6,7 @@
 			<div class="position-relative">
 				<input id="name" type="text" class="form-control form-control-sm ps-4-5" formControlName="name" placeholder="Torre de los Jardines"
 					[ngClass]="{'is-valid': formGroup.get('name')?.valid && formGroup.get('name')?.touched && formGroup.get('name')?.value}">
-        <i class="bi bi-building position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+        <i class="bi bi-building position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 			</div>
 		</div>
 		<div class="col-md-6 position-relative">
@@ -42,7 +42,7 @@
 					</option>
 				</select>
 
-				<i class="bi bi-person-badge position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary"></i>
+				<i class="bi bi-person-badge position-absolute top-50 start-0 translate-middle-y ms-2 text-primary" style="z-index: 10; pointer-events: none;"></i>
 
 				<!-- Botón para limpiar selección -->
 				<button
