@@ -220,7 +220,7 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -236,6 +236,7 @@
   border-radius: 20px;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: visible;
 }
 
 .btn-icon .btn-text {
@@ -326,27 +327,62 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: auto;
+  height: auto;
+  color: currentColor;
 }
 
 .btn-icon-danger i {
-  color: white;
+  color: white !important;
 }
 
 .btn-icon-danger:hover i {
-  color: white;
+  color: white !important;
 }
 
 .btn-icon-primary i {
-  color: white;
+  color: white !important;
 }
 
 .btn-icon-primary:hover i {
-  color: white;
+  color: white !important;
 }
 
 .btn-icon-primary.selected i {
-  color: white;
+  color: white !important;
 }
 
 /* === FALLBACKS PARA ICONOS - REMOVIDOS === */
 /* Los iconos ahora usan Bootstrap Icons correctamente */
+
+/* === ESTILOS ESPECÍFICOS PARA BOOTSTRAP ICONS === */
+.btn-icon i[class*="bi-"] {
+  font-family: "bootstrap-icons" !important;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Asegurar que los pseudo-elementos ::before estén visibles */
+.btn-icon i[class*="bi-"]::before {
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: inherit !important;
+}
+
+/* Debug temporal - remover después */
+.btn-icon i.bi-trash,
+.btn-icon i.bi-star-fill {
+  background: rgba(255, 0, 0, 0.1); /* fondo rojo temporal para debug */
+  min-width: 16px;
+  min-height: 16px;
+}
