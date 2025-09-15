@@ -67,14 +67,13 @@ export class ApartmentRegisterComponent implements OnInit {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
           this.apartmentsByFloor[floor.id].push({
-            code: `APT-${globalAptIndex.toString().padStart(3, '0')}`,
+            code: '',
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
             numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 1,
             area: this.area && !isNaN(this.area) ? Number(this.area) : 70
           });
-          globalAptIndex++;
         }
       });
       this.currentFloor = this.buildingFloors[0].floorNumber;
@@ -113,14 +112,13 @@ export class ApartmentRegisterComponent implements OnInit {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
           this.apartmentsByFloor[floor.id].push({
-            code: `APT-${globalAptIndex.toString().padStart(3, '0')}`,
+            code: '',
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 0,
             numBathrooms: this.numBathrooms && !isNaN(this.numBathrooms) ? Number(this.numBathrooms) : 0,
             area: this.area && !isNaN(this.area) ? Number(this.area) : 0
           });
-          globalAptIndex++;
         }
       });
     }
@@ -130,7 +128,7 @@ export class ApartmentRegisterComponent implements OnInit {
         this.apartmentsByFloor[floor.id] = [];
         for (let i = 0; i < this.apartmentsPerFloor; i++) {
           this.apartmentsByFloor[floor.id].push({
-            code: `${floor.floorNumber}-${(i + 1).toString().padStart(2, '0')}`,
+            code: '',
             door: `${i + 1}${this.getDoorLetter(i + 1)}`,
             floorId: floor.id,
             numRooms: this.numRooms && !isNaN(this.numRooms) ? Number(this.numRooms) : 1,
@@ -160,7 +158,7 @@ export class ApartmentRegisterComponent implements OnInit {
         const area = Number(apt.area) || 1;
 
         const payload = {
-          code: String(apt.code ?? '').trim(),
+          code: '', // El backend generará el código
           door: String(apt.door ?? '').trim(),
           floorId: String(apt.floorId ?? '').trim(),
           numRooms: Math.min(Math.max(1, numRooms), 50), // Limitar entre 1-50 (validación backend)
@@ -169,14 +167,8 @@ export class ApartmentRegisterComponent implements OnInit {
         };
 
         // Validar campos obligatorios
-        if (!payload.code || !payload.door || !payload.floorId) {
+        if (!payload.door || !payload.floorId) {
           alert('Por favor, completa todos los campos requeridos en todos los apartamentos.');
-          return;
-        }
-
-        // Validar que el código no sea demasiado largo
-        if (payload.code.length > 50) {
-          alert(`El código "${payload.code}" es demasiado largo (máximo 50 caracteres). Corrige los valores antes de continuar.`);
           return;
         }
 
@@ -186,31 +178,19 @@ export class ApartmentRegisterComponent implements OnInit {
           return;
         }
 
-        // Validar que código y puerta no sean iguales (validación del backend)
-        if (payload.code === payload.door) {
-          alert(`El apartamento con código "${payload.code}" no puede tener la misma puerta "${payload.door}". Los códigos y puertas deben ser diferentes.`);
-          return;
-        }
-
         // Advertir si se han ajustado valores extremos
         if (numRooms !== payload.numRooms || numBathrooms !== payload.numBathrooms) {
-          console.warn(`Apartamento ${payload.code}: Valores ajustados - Habitaciones: ${numRooms} → ${payload.numRooms}, Baños: ${numBathrooms} → ${payload.numBathrooms}`);
+          console.warn(`Apartamento: Valores ajustados - Habitaciones: ${numRooms} → ${payload.numRooms}, Baños: ${numBathrooms} → ${payload.numBathrooms}`);
         }
         apartmentPayloads.push(payload);
         apartmentCreationRequests.push(this.api.createApartment(payload));
       }
     }
 
-    // Validar que no haya códigos duplicados
-    const codes = apartmentPayloads.map(apt => apt.code);
-    const duplicateCodes = codes.filter((code, index) => codes.indexOf(code) !== index);
-    if (duplicateCodes.length > 0) {
-      alert(`Se han encontrado códigos duplicados: ${duplicateCodes.join(', ')}. Por favor, asegúrate de que todos los códigos sean únicos.`);
-      return;
-    }
+  // (No es necesario validar códigos duplicados, el backend los generará)
 
-    // Log para depuración: mostrar los datos que se envían a la API
-    console.log('Datos de apartamentos enviados a la API:', JSON.stringify(apartmentPayloads, null, 2));
+  // Log para depuración: mostrar los datos que se envían a la API
+  console.log('Datos de apartamentos enviados a la API:', JSON.stringify(apartmentPayloads, null, 2));
 
     this.isCreatingApartments = true;
 
@@ -242,15 +222,15 @@ export class ApartmentRegisterComponent implements OnInit {
     if (apts && apts.length > 0) {
       // Copiar datos del primer apartamento
       const base = { ...apts[0] };
-      // Generar nuevo código y puerta
+      // Generar nueva puerta
       const newIndex = apts.length;
-      base.code = `${this.currentFloor}-${(newIndex + 1).toString().padStart(2, '0')}`;
-      base.door = `${newIndex + 1}${this.getDoorLetter(newIndex + 1)}`;
-      apts.push({ ...base });
+  base.code = '';
+  base.door = `${newIndex + 1}${this.getDoorLetter(newIndex + 1)}`;
+  apts.push({ ...base });
     } else if (apts) {
       // Si no hay ninguno, crear uno básico
       apts.push({
-        code: `${this.currentFloor}-01`,
+        code: '',
         door: `1${this.getDoorLetter(1)}`,
         floorId: floorId,
         numRooms: 1,

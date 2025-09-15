@@ -1,36 +1,31 @@
-import { Component } from '@angular/core';
-import { BuildingCardComponent } from '../building-card/building-card.component';
+import { Router } from '@angular/router';
+
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BuildingService, Building } from '../building-list/building.service';
 import { CommonModule } from '@angular/common';
+import { BuildingCardComponent } from '../building-card/building-card.component';
+import { ApiService, DistrictGetterDto, StatusGetterDto } from '../core/api.service';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
   templateUrl: './landing.component.html',
-  styleUrl: './landing.component.css',
+  styleUrls: ['./landing.component.css'],
   imports: [CommonModule, BuildingCardComponent]
 })
-export class LandingComponent {
-  buildings = [
-    {
-      id: 1,
-      name: 'Edificio Central',
-      district: 'Centro',
-      address: 'Calle Mayor 123',
-      price: 250000
-    },
-    {
-      id: 2,
-      name: 'Residencial Norte',
-      district: 'Norte',
-      address: 'Av. Libertad 45',
-      price: 180000
-    },
-    {
-      id: 3,
-      name: 'Torre Sur',
-      district: 'Sur',
-      address: 'Paseo del Prado 8',
-      price: 320000
-    }
-  ];
+export class LandingComponent implements OnInit {
+  buildings: any[] = [];
+
+  constructor(private route: ActivatedRoute, private router: Router) {}
+  goToBuildings() {
+    this.router.navigate(['/buildings']);
+  }
+
+  ngOnInit(): void {
+    const data = this.route.snapshot.data['data'];
+    this.buildings = data?.buildings || [];
+  }
 }

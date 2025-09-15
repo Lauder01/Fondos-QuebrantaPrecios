@@ -1,15 +1,22 @@
 <main>
 	<article>
-		<h1 class="text-center mb-4">Bienvenido a nuestra plataforma</h1>
-		<p class="text-center">Una plataforma ágil donde las constructoras registran sus proyectos
-			 y nuestra empresa encuentra nuevas oportunidades de inversión. Simple, claro y eficiente.</p>
-	<main>
-		<section class="buildings-list-section mt-5 w-100">
-			<h5 class="mb-4 text-primary">Edificios destacados</h5>
-			<div class="row g-4 justify-content-center">
-				<div class="col-12 col-md-6 col-lg-4" *ngFor="let b of buildings | slice:0:3">
-					<app-building-card [building]="b"></app-building-card>
-				</div>
+			<h1 class="text-center mb-4">Bienvenido a Fondos QuebrantaPrecios</h1>
+			<div class="mx-auto mb-3" style="max-width: 600px;">
+				<p class="lead text-center mb-2">
+					En Fondos QuebrantaPrecios, las constructoras pueden registrar y mostrar sus edificios disponibles, mientras compradores e inversionistas encuentran nuevas oportunidades de valor.
+				</p>
+				<p class="text-center mb-0">
+					Nuestra plataforma centraliza toda la información necesaria para facilitar la evaluación, gestión y adquisición de propiedades.
+				</p>
 			</div>
-		</section>
-	</main>
+			<button class="btn btn-primary d-block mx-auto mt-3 w-25" type="button" (click)="goToBuildings()">Ver edificios</button>
+	</article>
+	<section class="buildings-list-section mt-5 w-100">
+		<h5 class="mb-4 text-primary text-center">Edificios destacados</h5>
+		<div class="row g-4 justify-content-center">
+			<div class="col-12 col-md-6 col-lg-4" *ngFor="let b of buildings">
+				<app-building-card [building]="b"></app-building-card>
+			</div>
+		</div>
+	</section>
+</main>
