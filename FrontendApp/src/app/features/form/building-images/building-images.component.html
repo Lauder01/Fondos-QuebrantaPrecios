@@ -40,13 +40,22 @@
         <input type="text" class="form-control form-control-sm gallery-alt-input" [(ngModel)]="img.altText" placeholder="Texto alternativo" [disabled]="!!img.uploading" (blur)="updateAltText(i)">
       </div>
       <div class="gallery-btn-row">
-        <button type="button" class="btn-icon btn-icon-danger" (click)="removeImage(i)" [disabled]="img.uploading" title="Eliminar imagen">
-          <i class="bi bi-trash" aria-hidden="true"></i>
+        <button type="button"
+                class="action-btn btn-delete"
+                (click)="removeImage(i)"
+                [disabled]="img.uploading"
+                title="Eliminar imagen">
+          <i class="bi bi-trash btn-icon" aria-hidden="true"></i>
           <span class="btn-text">Eliminar</span>
         </button>
-        <button type="button" class="btn-icon btn-icon-primary" [class.selected]="img.isCover" (click)="setAsCover(i)" [disabled]="img.uploading || img.isCover" [title]="img.isCover ? 'Imagen de portada' : 'Establecer como portada'">
-          <i class="bi bi-star-fill" aria-hidden="true"></i>
-          <span class="btn-text">Portada</span>
+        <button type="button"
+                class="action-btn btn-cover"
+                [class.selected]="img.isCover"
+                (click)="setAsCover(i)"
+                [disabled]="img.uploading || img.isCover"
+                [title]="img.isCover ? 'Imagen de portada' : 'Establecer como portada'">
+          <i class="bi bi-star-fill btn-icon" aria-hidden="true"></i>
+          <span class="btn-text">{{img.isCover ? 'Portada' : 'Portada'}}</span>
         </button>
       </div>
     </div>
