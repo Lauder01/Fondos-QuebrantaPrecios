@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/FrontendApp/browser",
   "installCommand": "npm install && npm run setup-bootstrap-ci",
-  "framework": "angular",
+  "framework": null,
   "headers": [
     {
       "source": "/(.*)",

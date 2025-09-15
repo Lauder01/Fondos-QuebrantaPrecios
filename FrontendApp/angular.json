@@ -53,7 +53,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "ssr": false
             },
             "staging": {
               "fileReplacements": [
