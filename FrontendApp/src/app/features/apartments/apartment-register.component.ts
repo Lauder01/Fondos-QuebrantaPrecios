@@ -23,6 +23,8 @@ export class ApartmentRegisterComponent implements OnInit {
   floors: number[] = [];
   buildingFloors: FloorGetterDto[] = [];
   isCreatingApartments = false;
+  showModal = false;
+  successMessage = '';
 
   // Estructura para apartamentos personalizados por planta
   apartmentsByFloor: { [floorId: string]: ApartmentCreatorDto[] } = {};
@@ -114,7 +116,13 @@ export class ApartmentRegisterComponent implements OnInit {
       return; // Evitar múltiples clics
     }
 
-    // Validar y limpiar datos antes de enviar
+    // Si estamos en el paso 1, crear apartamentos automáticamente con características generales
+    if (this.step === 1) {
+      this.createApartmentsFromGeneralCharacteristics();
+      return;
+    }
+
+    // Validar y limpiar datos antes de enviar (solo para el paso 2, que ya no se usa)
     const apartmentPayloads: any[] = [];
     const apartmentCreationRequests: any[] = [];
     for (const floorId in this.apartmentsByFloor) {
@@ -165,8 +173,54 @@ export class ApartmentRegisterComponent implements OnInit {
     forkJoin(apartmentCreationRequests).subscribe({
       next: (results) => {
         console.log('Apartamentos creados exitosamente:', results);
-        alert(`Se han creado ${results.length} apartamentos exitosamente`);
-        this.router.navigate(['/buildings']); // Navegar de vuelta a la lista de edificios
+        this.showSuccessModal(results.length);
+      },
+      error: (error) => {
+        console.error('Error al crear apartamentos:', error);
+        alert('Error al crear los apartamentos. Por favor, inténtelo de nuevo.');
+        this.isCreatingApartments = false;
+      },
+      complete: () => {
+        this.isCreatingApartments = false;
+      }
+    });
+  }
+
+  private createApartmentsFromGeneralCharacteristics() {
+    if (this.apartmentsPerFloor < 1) this.apartmentsPerFloor = 1;
+
+    // Validar que tenemos los datos básicos
+    if (!this.buildingFloors.length) {
+      alert('Error: No se han encontrado pisos para este edificio');
+      return;
+    }
+
+    const apartmentCreationRequests: any[] = [];
+
+    // Crear apartamentos para cada piso según las características generales
+    this.buildingFloors.forEach(floor => {
+      for (let i = 0; i < this.apartmentsPerFloor; i++) {
+        const payload = {
+          code: '', // El backend generará el código
+          door: `${i + 1}${this.getDoorLetter(i + 1)}`,
+          floorId: floor.id,
+          numRooms: Math.min(Math.max(1, Number(this.numRooms) || 1), 50),
+          numBathrooms: Math.min(Math.max(1, Number(this.numBathrooms) || 1), 20),
+          area: Math.max(0.01, Number(this.area) || 70)
+        };
+
+        apartmentCreationRequests.push(this.api.createApartment(payload));
+      }
+    });
+
+    console.log('Creando apartamentos con características generales...');
+    this.isCreatingApartments = true;
+
+    // Ejecutar todas las creaciones en paralelo
+    forkJoin(apartmentCreationRequests).subscribe({
+      next: (results) => {
+        console.log('Apartamentos creados exitosamente:', results);
+        this.showSuccessModal(results.length);
       },
       error: (error) => {
         console.error('Error al crear apartamentos:', error);
@@ -212,5 +266,15 @@ export class ApartmentRegisterComponent implements OnInit {
     if (apts && apts.length > index) {
       apts.splice(index, 1);
     }
+  }
+
+  showSuccessModal(apartmentCount: number) {
+    this.successMessage = `Se han registrado ${apartmentCount} apartamentos exitosamente`;
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.router.navigate(['/buildings']); // Navegar de vuelta a la lista de edificios
   }
 }
