@@ -1,17 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ApiService, DistrictGetterDto, ZipcodeGetterDto, StreetGetterDto } from '../../core/api.service';
+import { MapComponent, MapLocation } from '../../shared/map/map.component';
 
 @Component({
     selector: 'app-location',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule],
+    imports: [ReactiveFormsModule, CommonModule, MapComponent],
     templateUrl: './location.component.html',
 })
 
-export class LocationComponent implements OnInit {
+export class LocationComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) formGroup!: FormGroup;
+    @ViewChild(MapComponent) mapComponent!: MapComponent;
 
     allDistricts: DistrictGetterDto[] = [];
     allZipcodes: ZipcodeGetterDto[] = [];
@@ -50,6 +52,9 @@ export class LocationComponent implements OnInit {
     constructedAddress = '';
     showConstructedAddress = false;
 
+    // Propiedades del mapa
+    mapLocations: MapLocation[] = [];
+
     constructor(private api: ApiService) {}
 
     ngOnInit() {
@@ -72,6 +77,10 @@ export class LocationComponent implements OnInit {
         });
     }
 
+    ngAfterViewInit() {
+        // El mapa se inicializará automáticamente cuando sea necesario
+    }
+
     private updateStreetFieldState() {
         const streetControl = this.formGroup.get('streetId');
         if (this.selectedDistrict) {
@@ -89,7 +98,35 @@ export class LocationComponent implements OnInit {
         const country = this.formGroup.get('country')?.value || '';
 
         this.constructedAddress = `${street}, ${number}, ${zipcode} ${city}, ${country}`.trim();
+        const wasShowingAddress = this.showConstructedAddress;
         this.showConstructedAddress = street && number && zipcode && city && country ? true : false;
+
+        // Actualizar ubicaciones del mapa cuando se completa la dirección
+        if (this.showConstructedAddress) {
+            this.updateMapLocations();
+        } else {
+            // Limpiar el mapa si no hay dirección completa
+            this.mapLocations = [];
+            if (this.mapComponent) {
+                this.mapComponent.updateLocations(this.mapLocations);
+            }
+        }
+    }
+
+    private updateMapLocations() {
+        if (this.constructedAddress && this.showConstructedAddress) {
+            this.mapLocations = [{
+                id: 'current-location',
+                name: 'Ubicación del edificio',
+                address: this.constructedAddress
+            }];
+
+            // Actualizar el mapa si está disponible
+            if (this.mapComponent) {
+                console.log('🗺️ Actualizando mapa con nueva dirección:', this.constructedAddress);
+                this.mapComponent.updateLocations(this.mapLocations);
+            }
+        }
     }
 
     onDistrictInput(value: string) {

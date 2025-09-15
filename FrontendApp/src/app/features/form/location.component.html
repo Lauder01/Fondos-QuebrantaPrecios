@@ -202,6 +202,31 @@
                 readonly>
         </div>
     </div>
+
+    <!-- Mapa de ubicación -->
+    <div class="row g-2 mt-3" [class.expanded]="showConstructedAddress" [class.collapsed]="!showConstructedAddress" *ngIf="showConstructedAddress">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
+                        Ubicación en el mapa
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <app-map
+                        #mapComponent
+                        [locations]="mapLocations"
+                        height="300px"
+                        [centerLat]="40.4168"
+                        [centerLng]="-3.7038"
+                        [zoom]="15"
+                        [interactive]="true">
+                    </app-map>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
