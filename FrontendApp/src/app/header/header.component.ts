@@ -13,6 +13,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
         <!-- Brand Section -->
         <div class="brand-section">
           <a routerLink="/" class="brand-link" aria-label="Inicio">
+            <img src="assets/images/logo.png" alt="Logo de Fondos QuebrantaPrecios" class="brand-logo">
             <span class="brand-text">Fondos QuebrantaPrecios</span>
           </a>
         </div>
