@@ -161,13 +161,28 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       if (cached) {
         const data = JSON.parse(cached);
         const now = Date.now();
+        let foundInvalidCoords = false;
 
-        // Filtrar entradas expiradas
+        // Filtrar entradas expiradas y coordenadas inválidas
         Object.entries(data).forEach(([key, value]: [string, any]) => {
           if (value.timestamp && (now - value.timestamp) < (this.CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000)) {
+
+            // Detectar coordenadas por defecto incorrectas (Madrid)
+            if (value.latitude === 40.4168 && value.longitude === -3.7038) {
+              console.warn(`🧹 Eliminando coordenadas incorrectas del caché para: ${key}`);
+              foundInvalidCoords = true;
+              return; // No agregar al caché
+            }
+
             this.geocodeCache.set(key, { latitude: value.latitude, longitude: value.longitude });
           }
         });
+
+        if (foundInvalidCoords) {
+          // Guardar el caché limpio
+          this.saveCacheToStorage();
+          console.log('✅ Caché limpiado de coordenadas incorrectas');
+        }
 
         console.log(`💾 Cargadas ${this.geocodeCache.size} ubicaciones del caché`);
       }
@@ -191,6 +206,36 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       localStorage.setItem(this.CACHE_KEY, JSON.stringify(data));
     } catch (error) {
       console.warn('Error guardando caché de geocodificación:', error);
+    }
+  }
+
+  private clearGeocodeCache(): void {
+    try {
+      this.geocodeCache.clear();
+      localStorage.removeItem(this.CACHE_KEY);
+      console.log('🧹 Caché de geocodificación limpiado');
+    } catch (error) {
+      console.warn('Error limpiando caché de geocodificación:', error);
+    }
+  }
+
+  // Método público para limpiar caché desde consola del navegador
+  public clearCache(): void {
+    this.clearGeocodeCache();
+  }
+
+  // Método público para inspeccionar el caché desde consola del navegador
+  public inspectCache(): void {
+    console.log('🔍 Estado actual del caché de geocodificación:');
+    console.log(`📊 Total de entradas: ${this.geocodeCache.size}`);
+
+    if (this.geocodeCache.size > 0) {
+      console.log('📝 Entradas en caché:');
+      this.geocodeCache.forEach((coords, address) => {
+        console.log(`  "${address}" → [${coords.latitude}, ${coords.longitude}]`);
+      });
+    } else {
+      console.log('🗂️ El caché está vacío');
     }
   }
 
@@ -545,10 +590,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Nominatim API
         const url = `${strategy.server}/search?${strategy.params}`;
+        console.log(`🌐 URL de geocodificación: ${url}`);
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
 
+        console.log(`📡 Enviando request de geocodificación...`);
         const response = await fetch(url, {
           signal: controller.signal,
           headers: {
@@ -558,21 +605,27 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         clearTimeout(timeoutId);
+        console.log(`📨 Response status: ${response.status} ${response.statusText}`);
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log(`📦 Response data:`, data);
 
         if (data && data.length > 0) {
           console.log(`✅ Geocodificación exitosa con ${strategy.server} (${strategy.description})`);
+          console.log(`📍 Primer resultado:`, data[0]);
 
           // Nominatim API response format
           const latitude = parseFloat(data[0].lat);
           const longitude = parseFloat(data[0].lon);
 
+          console.log(`🎯 Coordenadas obtenidas: ${latitude}, ${longitude}`);
           return { latitude, longitude };
+        } else {
+          console.warn(`⚠️ Sin resultados para estrategia: ${strategy.description}`);
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
@@ -589,17 +642,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // Si todos los servidores fallan, usar coordenadas por defecto para España
-    console.warn(`❌ No se pudo geocodificar: ${address}, usando coordenadas por defecto para España`);
-
-    // Coordenadas aproximadas del centro de España (Madrid)
-    const defaultCoords = {
-      latitude: 40.4168,
-      longitude: -3.7038
-    };
-
-    console.log(`🏠 Usando coordenadas por defecto: ${defaultCoords.latitude}, ${defaultCoords.longitude}`);
-    return defaultCoords;
+    // Si todos los servidores fallan, lanzar error para que no se muestre el marcador
+    console.warn(`❌ No se pudo geocodificar: ${address}, no se mostrará en el mapa`);
+    throw new Error(`No se pudo geocodificar la dirección: ${address}`);
   }
 
   private async executeWithQpsControl<T>(requestFn: () => Promise<T>): Promise<T> {
