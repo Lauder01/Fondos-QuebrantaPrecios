@@ -42,8 +42,16 @@
   transform: translateY(-2px);
 }
 
+.brand-logo {
+  height: 2em;
+  width: 2em;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
 .brand-text {
-  font-size: 1.5rem;
+  font-size: 2em;
+  vertical-align: middle;
   font-weight: 700;
   color: var(--color-white);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
