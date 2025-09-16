@@ -520,16 +520,31 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     // Usar Nominatim (OpenStreetMap) para geocodificación gratuita
     const encodedAddress = encodeURIComponent(address);
 
-    // Lista de servidores de Nominatim para fallback
-    const nominatimServers = [
-      'https://nominatim.openstreetmap.org',
-      'https://nominatim1.openstreetmap.org',
-      'https://nominatim2.openstreetmap.org'
+    // Estrategias de geocodificación con diferentes parámetros para mejorar la precisión
+    const geocodingStrategies = [
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=1&countrycodes=es&addressdetails=1`,
+        description: 'Búsqueda estándar con detalles de dirección'
+      },
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=1&countrycodes=es&bounded=1&viewbox=-18.16,27.64,4.33,43.79`,
+        description: 'Búsqueda limitada al área de España'
+      },
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=3&countrycodes=es`,
+        description: 'Búsqueda con más resultados para mejor precisión'
+      }
     ];
 
-    for (const server of nominatimServers) {
+    for (const strategy of geocodingStrategies) {
       try {
-        const url = `${server}/search?format=json&q=${encodedAddress}&limit=1&countrycodes=es`;
+        console.log(`🔍 Intentando geocodificación: ${strategy.description}`);
+
+        // Nominatim API
+        const url = `${strategy.server}/search?${strategy.params}`;
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
@@ -551,21 +566,40 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         const data = await response.json();
 
         if (data && data.length > 0) {
-          console.log(`✅ Geocodificación exitosa con ${server}`);
-          return {
-            latitude: parseFloat(data[0].lat),
-            longitude: parseFloat(data[0].lon)
-          };
+          console.log(`✅ Geocodificación exitosa con ${strategy.server} (${strategy.description})`);
+
+          // Nominatim API response format
+          const latitude = parseFloat(data[0].lat);
+          const longitude = parseFloat(data[0].lon);
+
+          return { latitude, longitude };
         }
       } catch (error) {
-        console.warn(`⚠️ Error con servidor ${server}:`, error);
-        continue; // Intentar con el siguiente servidor
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+        console.warn(`⚠️ Error con estrategia "${strategy.description}": ${errorMessage}`);
+
+        // Log más detallado para debugging
+        if (error instanceof TypeError && errorMessage.includes('Failed to fetch')) {
+          console.warn('💡 Posible problema de red o CORS. Verificar conectividad.');
+        } else if (error instanceof DOMException && error.name === 'AbortError') {
+          console.warn('⏱️ Timeout en la geocodificación. El servidor tardó más de 10 segundos.');
+        }
+
+        continue; // Intentar con la siguiente estrategia
       }
     }
 
     // Si todos los servidores fallan, usar coordenadas por defecto para España
-    console.warn(`❌ No se pudo geocodificar: ${address}, usando coordenadas por defecto`);
-    throw new Error(`No se pudo geocodificar la dirección: ${address}`);
+    console.warn(`❌ No se pudo geocodificar: ${address}, usando coordenadas por defecto para España`);
+
+    // Coordenadas aproximadas del centro de España (Madrid)
+    const defaultCoords = {
+      latitude: 40.4168,
+      longitude: -3.7038
+    };
+
+    console.log(`🏠 Usando coordenadas por defecto: ${defaultCoords.latitude}, ${defaultCoords.longitude}`);
+    return defaultCoords;
   }
 
   private async executeWithQpsControl<T>(requestFn: () => Promise<T>): Promise<T> {
