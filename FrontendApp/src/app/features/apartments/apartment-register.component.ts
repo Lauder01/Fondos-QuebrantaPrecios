@@ -194,7 +194,11 @@ export class ApartmentRegisterComponent implements OnInit {
     forkJoin(apartmentCreationRequests).subscribe({
       next: (results) => {
         console.log('Apartamentos creados exitosamente:', results);
-        this.showSuccessModal(results.length);
+        this.isCreatingApartments = false;
+        this.successMessage = 'Apartamentos creados correctamente';
+        setTimeout(() => {
+          this.router.navigate(['/buildings']);
+        }, 2000);
       },
       error: (error) => {
         console.error('Error al crear apartamentos:', error);
@@ -267,7 +271,11 @@ export class ApartmentRegisterComponent implements OnInit {
     forkJoin(apartmentCreationRequests).subscribe({
       next: (results) => {
         console.log('Apartamentos creados exitosamente:', results);
-        this.showSuccessModal(results.length);
+        this.isCreatingApartments = false;
+        this.successMessage = 'Apartamentos creados correctamente';
+        setTimeout(() => {
+          this.router.navigate(['/buildings']);
+        }, 2000);
       },
       error: (error) => {
         console.error('Error al crear apartamentos:', error);
