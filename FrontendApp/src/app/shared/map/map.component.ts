@@ -520,24 +520,31 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     // Usar Nominatim (OpenStreetMap) para geocodificación gratuita
     const encodedAddress = encodeURIComponent(address);
 
-    // Lista de servidores de geocodificación para fallback
-    const geocodingServers = [
-      'https://nominatim.openstreetmap.org',
-      'https://nominatim.openstreetmap.org',
-      'https://photon.komoot.io/api',
+    // Estrategias de geocodificación con diferentes parámetros para mejorar la precisión
+    const geocodingStrategies = [
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=1&countrycodes=es&addressdetails=1`,
+        description: 'Búsqueda estándar con detalles de dirección'
+      },
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=1&countrycodes=es&bounded=1&viewbox=-18.16,27.64,4.33,43.79`,
+        description: 'Búsqueda limitada al área de España'
+      },
+      {
+        server: 'https://nominatim.openstreetmap.org',
+        params: `format=json&q=${encodedAddress}&limit=3&countrycodes=es`,
+        description: 'Búsqueda con más resultados para mejor precisión'
+      }
     ];
 
-    for (const server of geocodingServers) {
+    for (const strategy of geocodingStrategies) {
       try {
-        let url: string;
+        console.log(`🔍 Intentando geocodificación: ${strategy.description}`);
 
-        if (server.includes('photon.komoot.io')) {
-          // Photon API uses different parameters
-          url = `${server}?q=${encodedAddress}&limit=1&osm_tag=place&lang=es`;
-        } else {
-          // Nominatim API
-          url = `${server}/search?format=json&q=${encodedAddress}&limit=1&countrycodes=es`;
-        }
+        // Nominatim API
+        const url = `${strategy.server}/search?${strategy.params}`;
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
@@ -559,30 +566,17 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         const data = await response.json();
 
         if (data && data.length > 0) {
-          console.log(`✅ Geocodificación exitosa con ${server}`);
+          console.log(`✅ Geocodificación exitosa con ${strategy.server} (${strategy.description})`);
 
-          let latitude: number, longitude: number;
-
-          if (server.includes('photon.komoot.io')) {
-            // Photon API response format
-            const coordinates = data[0].geometry?.coordinates;
-            if (coordinates && coordinates.length >= 2) {
-              longitude = parseFloat(coordinates[0]);
-              latitude = parseFloat(coordinates[1]);
-            } else {
-              throw new Error('Respuesta de Photon sin coordenadas válidas');
-            }
-          } else {
-            // Nominatim API response format
-            latitude = parseFloat(data[0].lat);
-            longitude = parseFloat(data[0].lon);
-          }
+          // Nominatim API response format
+          const latitude = parseFloat(data[0].lat);
+          const longitude = parseFloat(data[0].lon);
 
           return { latitude, longitude };
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-        console.warn(`⚠️ Error con servidor ${server}: ${errorMessage}`);
+        console.warn(`⚠️ Error con estrategia "${strategy.description}": ${errorMessage}`);
 
         // Log más detallado para debugging
         if (error instanceof TypeError && errorMessage.includes('Failed to fetch')) {
@@ -591,7 +585,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           console.warn('⏱️ Timeout en la geocodificación. El servidor tardó más de 10 segundos.');
         }
 
-        continue; // Intentar con el siguiente servidor
+        continue; // Intentar con la siguiente estrategia
       }
     }
 
