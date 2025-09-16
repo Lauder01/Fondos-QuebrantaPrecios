@@ -47,6 +47,8 @@
   width: 2em;
   object-fit: cover;
   vertical-align: middle;
+  background-color: transparent;
+  border: none;
 }
 
 .brand-text {
